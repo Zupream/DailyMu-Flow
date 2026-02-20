@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DailyMu Calendar — BA Flow Documentation</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  --primary: #C2185B;
+  --primary-dark: #9A1248;
+  --primary-light: #E91E78;
+  --secondary: #7B1FA2;
+  --secondary-dark: #5C1780;
+  --secondary-light: #9C27B0;
+  --accent-orange: #E6A855;
+  --accent-red: #D32F2F;
+  --accent-purple: #7B1FA2;
+  --accent-pink: #E91E63;
+  --accent-amber: #F9A825;
+  --bg-dark: #FDF2F7;
+  --bg-card: rgba(194, 24, 91, 0.05);
+  --bg-card-hover: rgba(194, 24, 91, 0.1);
+  --text-primary: #2E1520;
+  --text-secondary: #5E3548;
+  --text-muted: #9A7085;
+  --grid-color: rgba(194, 24, 91, 0.06);
+  --border-color: rgba(194, 24, 91, 0.12);
+  --transition-fast: 200ms;
+  --transition-normal: 350ms;
+  --transition-slow: 500ms;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+}
+
+.grid-bg {
+  position: fixed; inset: 0;
+  background:
+    linear-gradient(135deg, #FDF2F7 0%, #F3E5F5 25%, #FCE4EC 50%, #EDE7F6 75%, #FDF2F7 100%),
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 400% 400%, 40px 40px, 40px 40px;
+  animation: gradientShift 20s ease infinite;
+  z-index: 0; pointer-events: none;
+}
+.grid-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(194,24,91,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(194,24,91,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.presentation { position: relative; width: 100vw; height: 100vh; overflow: hidden; z-index: 1; }
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: clamp(24px, 3vw, 48px);
+  opacity: 0; visibility: hidden; transform: translateX(60px);
+  transition: opacity var(--transition-slow) ease, transform var(--transition-slow) cubic-bezier(0.34,1.56,0.64,1), visibility 0s var(--transition-slow);
+  overflow-y: auto;
+}
+.slide.active { opacity: 1; visibility: visible; transform: translateX(0); transition-delay: 0s; }
+.slide.prev { transform: translateX(-60px); }
+
+.slide-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(12px, 1.5vw, 24px); flex-shrink: 0; }
+.slide-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: clamp(10px,1vw,13px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(194,24,91,0.1); color: var(--primary); border: 1px solid rgba(194,24,91,0.2); }
+.slide-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+.slide-number { font-size: clamp(11px,1vw,14px); font-weight: 500; color: var(--text-muted); font-family: 'Inter', monospace; }
+
+.slide-title { font-size: clamp(22px,3vw,48px); font-weight: 800; line-height: 1.15; margin-bottom: clamp(4px,0.6vw,10px); letter-spacing: -0.02em; background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.slide-subtitle { font-size: clamp(12px,1.2vw,18px); color: var(--text-secondary); font-weight: 400; line-height: 1.5; max-width: 700px; }
+.slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+
+/* Cover */
+.cover-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: clamp(12px,1.5vw,24px); }
+.cover-logo { font-size: clamp(60px,8vw,120px); line-height: 1; }
+.cover-title { font-size: clamp(28px,4.5vw,64px); font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease infinite; background-size: 200% 200%; }
+.cover-subtitle { font-size: clamp(13px,1.6vw,22px); color: var(--text-secondary); font-weight: 400; max-width: 600px; }
+.cover-roles { display: flex; gap: clamp(10px,1.2vw,20px); margin-top: clamp(10px,1.2vw,20px); flex-wrap: wrap; justify-content: center; }
+.role-chip { padding: clamp(6px,0.7vw,10px) clamp(14px,1.4vw,24px); border-radius: 50px; font-size: clamp(10px,1vw,14px); font-weight: 600; border: 1px solid var(--border-color); background: var(--bg-card); transition: all var(--transition-fast) ease; }
+.role-chip:hover { transform: translateY(-2px) scale(1.05); }
+
+/* Flow */
+.flow-container { display: flex; flex-direction: column; gap: clamp(8px,1vw,14px); max-width: 1200px; margin: 0 auto; width: 100%; }
+.flow-row { display: flex; align-items: center; gap: clamp(5px,0.6vw,10px); flex-wrap: wrap; justify-content: center; }
+.flow-step { display: flex; align-items: center; gap: clamp(4px,0.5vw,8px); padding: clamp(6px,0.7vw,12px) clamp(10px,1vw,16px); border-radius: 10px; font-size: clamp(9px,1vw,14px); font-weight: 500; transition: all var(--transition-fast) ease; white-space: nowrap; border: 1px solid var(--border-color); background: var(--bg-card); backdrop-filter: blur(8px); }
+.flow-step:hover { transform: translateY(-2px); background: var(--bg-card-hover); }
+.flow-step .icon { font-size: clamp(12px,1.2vw,18px); }
+.flow-arrow { color: var(--text-muted); font-size: clamp(12px,1.3vw,20px); flex-shrink: 0; }
+
+.flow-step.highlight-blue { background: rgba(194,24,91,0.08); border-color: rgba(194,24,91,0.25); color: var(--primary); }
+.flow-step.highlight-green { background: rgba(76,175,80,0.1); border-color: rgba(76,175,80,0.3); color: #2E7D32; }
+.flow-step.highlight-orange { background: rgba(230,168,85,0.1); border-color: rgba(230,168,85,0.3); color: #B8860B; }
+.flow-step.highlight-red { background: rgba(211,47,47,0.08); border-color: rgba(211,47,47,0.25); color: #D32F2F; }
+.flow-step.highlight-purple { background: rgba(123,31,162,0.1); border-color: rgba(123,31,162,0.25); color: #7B1FA2; }
+.flow-step.highlight-amber { background: rgba(249,168,37,0.1); border-color: rgba(249,168,37,0.25); color: #9A7B2F; }
+
+/* Cards Grid */
+.cards-grid { display: grid; gap: clamp(8px,1vw,14px); max-width: 1200px; margin: 0 auto; width: 100%; }
+.cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.cards-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+.card { padding: clamp(12px,1.2vw,20px); border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-card); backdrop-filter: blur(8px); transition: all var(--transition-fast) ease; }
+.card:hover { transform: translateY(-3px); background: var(--bg-card-hover); border-color: rgba(194,24,91,0.25); }
+.card-icon { font-size: clamp(20px,2.2vw,36px); margin-bottom: clamp(4px,0.6vw,10px); }
+.card-title { font-size: clamp(11px,1.1vw,16px); font-weight: 700; margin-bottom: clamp(3px,0.4vw,6px); color: var(--text-primary); }
+.card-desc { font-size: clamp(9px,0.9vw,13px); color: var(--text-secondary); line-height: 1.5; }
+.card-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: clamp(8px,0.7vw,11px); font-weight: 600; margin-top: 6px; }
+.tag-blue { background: rgba(194,24,91,0.1); color: var(--primary); }
+.tag-green { background: rgba(76,175,80,0.12); color: #2E7D32; }
+.tag-orange { background: rgba(230,168,85,0.15); color: #B8860B; }
+.tag-red { background: rgba(211,47,47,0.12); color: #D32F2F; }
+.tag-purple { background: rgba(123,31,162,0.12); color: #7B1FA2; }
+
+/* Decision Tree */
+.decision-tree { display: flex; flex-direction: column; align-items: center; gap: clamp(6px,0.8vw,12px); }
+.decision-node { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 12px; font-size: clamp(10px,1vw,14px); font-weight: 600; text-align: center; max-width: 500px; }
+.decision-diamond { background: rgba(230,168,85,0.1); border: 1px solid rgba(230,168,85,0.3); color: #9A7B2F; position: relative; }
+.decision-diamond::before { content: '\25C6'; margin-right: 8px; opacity: 0.6; }
+.decision-branches { display: flex; gap: clamp(16px,2vw,32px); justify-content: center; }
+.branch { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.branch-label { font-size: clamp(10px,0.9vw,13px); font-weight: 700; padding: 3px 12px; border-radius: 8px; }
+.branch-yes { background: rgba(76,175,80,0.12); color: #2E7D32; }
+.branch-no { background: rgba(211,47,47,0.1); color: #D32F2F; }
+.branch-box { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 10px; font-size: clamp(9px,0.9vw,13px); background: var(--bg-card); border: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); max-width: 280px; }
+
+/* Split Row & Mini Cards */
+.split-row { display: flex; gap: clamp(8px,1vw,16px); justify-content: center; flex-wrap: wrap; }
+.mini-card { flex: 1; min-width: 180px; max-width: 350px; padding: clamp(10px,1vw,18px); border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); }
+.mini-card-title { font-size: clamp(11px,1.1vw,15px); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.mini-card ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.mini-card ul li { font-size: clamp(9px,0.85vw,12px); color: var(--text-secondary); padding-left: 14px; position: relative; }
+.mini-card ul li::before { content: '\203A'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+
+/* Two Column */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px,1.5vw,28px); max-width: 1200px; margin: 0 auto; width: 100%; }
+.col-section { display: flex; flex-direction: column; gap: clamp(6px,0.8vw,12px); }
+
+.section-label { font-size: clamp(9px,0.8vw,12px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: clamp(6px,0.8vw,12px); padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
+.bullet-list { list-style: none; display: flex; flex-direction: column; gap: clamp(4px,0.5vw,8px); }
+.bullet-list li { display: flex; align-items: flex-start; gap: clamp(6px,0.6vw,10px); font-size: clamp(10px,1vw,14px); color: var(--text-secondary); line-height: 1.5; }
+.bullet-list li .bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 7px; }
+
+/* Vertical Flow */
+.vertical-flow { display: flex; flex-direction: column; align-items: center; gap: clamp(4px,0.5vw,8px); }
+.v-arrow { color: var(--text-muted); font-size: clamp(14px,1.4vw,20px); }
+
+/* State Machine */
+.state-machine { display: flex; align-items: center; justify-content: center; gap: clamp(4px,0.6vw,10px); flex-wrap: wrap; margin: clamp(6px,0.8vw,12px) 0; }
+.state-node { padding: clamp(6px,0.6vw,12px) clamp(10px,1vw,20px); border-radius: 10px; font-size: clamp(9px,0.9vw,13px); font-weight: 600; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); min-width: clamp(70px,7vw,120px); }
+.state-arrow { color: var(--text-muted); font-size: clamp(14px,1.4vw,22px); }
+
+/* End Slide */
+.end-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; }
+.end-title { font-size: clamp(32px,4.5vw,72px); font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s ease infinite; background-size: 200% 200%; }
+
+/* Highlight tags */
+.hl { font-weight: 700; }
+.hl-blue { color: var(--primary); }
+.hl-green { color: #2E7D32; }
+.hl-orange { color: #B8860B; }
+.hl-red { color: #D32F2F; }
+.hl-purple { color: #7B1FA2; }
+
+/* Nav Bar */
+.nav-bar { position: fixed; bottom: clamp(16px,2vw,28px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 16px; background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); border: 1px solid rgba(194,24,91,0.12); box-shadow: 0 4px 24px rgba(0,0,0,0.08); z-index: 100; }
+.nav-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
+.nav-btn:hover { background: rgba(194,24,91,0.08); color: var(--primary); border-color: rgba(194,24,91,0.3); }
+.nav-btn:active { transform: scale(0.92); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-progress { display: flex; align-items: center; gap: 3px; }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); opacity: 0.3; transition: all var(--transition-fast) ease; cursor: pointer; }
+.nav-dot.active { background: var(--primary); opacity: 1; width: 20px; border-radius: 4px; }
+.nav-dot:hover { opacity: 0.7; }
+.nav-counter { font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: 'Inter', monospace; min-width: 50px; text-align: center; }
+
+/* Dropdown */
+.page-dropdown { position: fixed; bottom: clamp(72px,8vw,96px); left: 50%; transform: translateX(-50%) translateY(10px); background: rgba(255,255,255,0.95); backdrop-filter: blur(16px); box-shadow: 0 4px 24px rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 14px; padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto; min-width: 300px; opacity: 0; visibility: hidden; transition: all var(--transition-fast) ease; }
+.page-dropdown.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.page-dropdown-item { display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: all var(--transition-fast) ease; }
+.page-dropdown-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+.page-dropdown-item.active { background: rgba(194,24,91,0.1); color: var(--primary); font-weight: 600; }
+.page-dropdown-item .item-num { font-weight: 700; font-family: 'Inter', monospace; font-size: 10px; min-width: 24px; text-align: center; padding: 2px 6px; border-radius: 6px; background: rgba(194,24,91,0.06); }
+
+/* Fullscreen */
+.fullscreen-btn { position: fixed; top: 16px; right: 16px; z-index: 100; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.8); backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
+.fullscreen-btn:hover { color: var(--primary); border-color: rgba(194,24,91,0.3); }
+
+@keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes popIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+@keyframes gradientShift { 0% { background-position: 0% 50%; } 25% { background-position: 50% 100%; } 50% { background-position: 100% 50%; } 75% { background-position: 50% 0%; } 100% { background-position: 0% 50%; } }
+@keyframes floatUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+.slide.active .anim-item { animation: fadeInUp 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; }
+.slide.active .anim-item:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim-item:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim-item:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim-item:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim-item:nth-child(5) { animation-delay: 0.4s; }
+.slide.active .anim-item:nth-child(6) { animation-delay: 0.48s; }
+.slide.active .anim-item:nth-child(7) { animation-delay: 0.56s; }
+.slide.active .anim-item:nth-child(8) { animation-delay: 0.64s; }
+.slide.active .anim-item:nth-child(9) { animation-delay: 0.72s; }
+.slide.active .anim-item:nth-child(10) { animation-delay: 0.8s; }
+
+/* Enhanced card hover animation */
+.card { transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); }
+.card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 32px rgba(194,24,91,0.12); }
+
+/* Flow step bounce */
+.flow-step { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.flow-step:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(194,24,91,0.1); }
+
+/* Cover logo float */
+.slide.active .cover-logo { animation: floatUp 3s ease-in-out infinite; }
+
+/* State node pulse on hover */
+.state-node { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.state-node:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(194,24,91,0.1); }
+
+/* Mini card pop */
+.mini-card { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+.mini-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(194,24,91,0.08); }
+
+/* Role chip bounce */
+.role-chip { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* Decision diamond pulse */
+.decision-diamond { transition: all 0.3s ease; }
+.decision-diamond:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(230,168,85,0.15); }
+
+/* Slide title entrance */
+.slide.active .slide-title { animation: fadeInLeft 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+.slide.active .slide-subtitle { animation: fadeInLeft 0.7s 0.1s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; animation-fill-mode: forwards; }
+.slide.active .slide-header { animation: fadeInRight 0.5s ease forwards; }
+
+/* Section label slide in */
+.slide.active .section-label { animation: fadeInLeft 0.5s ease forwards; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+@media (max-width: 768px) {
+  .cards-grid.cols-4, .cards-grid.cols-5 { grid-template-columns: repeat(2, 1fr); }
+  .cards-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="presentation" id="presentation">
+
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-content cover-content">
+      <div class="cover-logo">🔮</div>
+      <div class="cover-title">DailyMu Calendar</div>
+      <div class="cover-subtitle">BA Flow Documentation — ภาพรวม User Flow ทั้งหมดของแอปปฏิทินดูดวง</div>
+      <div class="cover-roles">
+        <div class="role-chip anim-item" style="border-color: rgba(194,24,91,0.3); color: var(--primary);">📋 BA Team</div>
+        <div class="role-chip anim-item" style="border-color: rgba(123,31,162,0.3); color: #7B1FA2;">🎯 Project: DailyMu</div>
+        <div class="role-chip anim-item" style="border-color: rgba(230,168,85,0.3); color: #B8860B;">🔮 Horoscope Calendar App</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: OVERVIEW -->
+  <div class="slide" data-slide="1">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Overview</div>
+      <div class="slide-number">01 / 13</div>
+    </div>
+    <div class="slide-title">Flow ทั้งหมดของ DailyMu</div>
+    <div class="slide-subtitle">รวม 10 User Flows หลัก + 11 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-5" style="margin-top: 16px;">
+        <div class="card anim-item">
+          <div class="card-icon">📝</div>
+          <div class="card-title">Register</div>
+          <div class="card-desc">สมัครด้วย Email หรือ Social Login</div>
+          <div class="card-tag tag-blue">DAIL-27</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">🔑</div>
+          <div class="card-title">Login</div>
+          <div class="card-desc">เข้าสู่ระบบด้วย Email/Password หรือ Social</div>
+          <div class="card-tag tag-blue">DAIL-22</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">🔒</div>
+          <div class="card-title">Forgot Password</div>
+          <div class="card-desc">Reset password ผ่าน Email link</div>
+          <div class="card-tag tag-blue">DAIL-30</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">📜</div>
+          <div class="card-title">Consent (PDPA)</div>
+          <div class="card-desc">ยอมรับ Terms & Privacy Policy</div>
+          <div class="card-tag tag-purple">DAIL-96</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">👋</div>
+          <div class="card-title">Onboarding</div>
+          <div class="card-desc">แนะนำแอป First-time user</div>
+          <div class="card-tag tag-green">DAIL-31</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">Birth Profile</div>
+          <div class="card-desc">ตั้งค่าข้อมูลดวงครั้งแรก</div>
+          <div class="card-tag tag-green">DAIL-23</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">👥</div>
+          <div class="card-title">Multi Profile</div>
+          <div class="card-desc">เพิ่ม/สลับโปรไฟล์ดวง</div>
+          <div class="card-tag tag-orange">DAIL-32</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">🏠</div>
+          <div class="card-title">Today (Feature)</div>
+          <div class="card-desc">Daily Summary, Calendar, ทำนาย</div>
+          <div class="card-tag tag-orange">DAIL-33</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">🔔</div>
+          <div class="card-title">Notification</div>
+          <div class="card-desc">ศูนย์แจ้งเตือน + Push</div>
+          <div class="card-tag tag-red">DAIL-93</div>
+        </div>
+        <div class="card anim-item">
+          <div class="card-icon">👤</div>
+          <div class="card-title">Profile</div>
+          <div class="card-desc">แก้ไขโปรไฟล์, Settings, Logout</div>
+          <div class="card-tag tag-purple">DAIL-75</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: REGISTER -->
+  <div class="slide" data-slide="2">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-27 / Authentication</div>
+      <div class="slide-number">02 / 13</div>
+    </div>
+    <div class="slide-title">Register Flow</div>
+    <div class="slide-subtitle">สมัครสมาชิกด้วย Email + Password หรือ Social Login (Google / Apple / Facebook)</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">REGISTER — EMAIL + PASSWORD (DAIL-28)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📝</span> เปิดหน้า Register</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-blue"><span class="icon">✉️</span> กรอก Email + Password</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email ซ้ำ?</div>
+        </div>
+      </div>
+      <div class="decision-tree anim-item" style="margin-top: 10px;">
+        <div class="decision-node decision-diamond">Email มีอยู่ในระบบหรือไม่?</div>
+        <div class="decision-branches" style="margin-top: 10px;">
+          <div class="branch">
+            <div class="branch-label branch-no">ไม่มี (ใหม่)</div>
+            <div class="branch-box">สร้าง User → Login ทันที<br><span style="font-size:10px;color:var(--primary)">password_set = true</span></div>
+          </div>
+          <div class="branch">
+            <div class="branch-label branch-yes">มีแล้ว</div>
+            <div class="branch-box">แสดง Error<br>"Email นี้ถูกใช้งานแล้ว"</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">REGISTER — SOCIAL LOGIN (DAIL-29)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-purple"><span class="icon">🔗</span> เลือก Social Login</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">🔄</span> Redirect → Provider</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📧</span> ได้ social_id + email</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email</div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-step highlight-green"><span class="icon">🆕</span> ใหม่ → สร้าง User</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-red"><span class="icon">🔐</span> Force ตั้ง Password</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">✅</span> Login สำเร็จ</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 12px;">
+        <div class="mini-card">
+          <div class="mini-card-title">🎯 Key Rule</div>
+          <ul>
+            <li>Email เป็น Primary Identity</li>
+            <li>Social ต้องตั้ง Password ด้วย</li>
+            <li>ไม่มี User ซ้ำจาก email เดียวกัน</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">📦 Data ที่สร้าง</div>
+          <ul>
+            <li>email, password (hashed)</li>
+            <li>auth_methods: [email] หรือ [email, social]</li>
+            <li>password_set: true</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: LOGIN -->
+  <div class="slide" data-slide="3">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-22 / Authentication</div>
+      <div class="slide-number">03 / 13</div>
+    </div>
+    <div class="slide-title">Login Flow</div>
+    <div class="slide-subtitle">เข้าสู่ระบบด้วย Email + Password หรือ Social Login</div>
+    <div class="slide-content">
+      <div class="two-col" style="margin-top: 12px;">
+        <div class="col-section anim-item">
+          <div class="section-label">LOGIN — EMAIL + PASSWORD (DAIL-25)</div>
+          <div class="flow-container">
+            <div class="vertical-flow">
+              <div class="flow-step highlight-blue" style="width:100%;justify-content:center;"><span class="icon">✉️</span> กรอก Email + Password</div>
+              <div class="v-arrow">↓</div>
+              <div class="flow-step highlight-orange" style="width:100%;justify-content:center;"><span class="icon">🔍</span> ตรวจ Credential</div>
+              <div class="v-arrow">↓</div>
+              <div class="decision-tree" style="width:100%;">
+                <div class="decision-branches">
+                  <div class="branch">
+                    <div class="branch-label branch-yes">Valid</div>
+                    <div class="branch-box">✅ Login สำเร็จ</div>
+                  </div>
+                  <div class="branch">
+                    <div class="branch-label branch-no">Invalid</div>
+                    <div class="branch-box">❌ แสดง Error</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">LOGIN — SOCIAL (DAIL-26)</div>
+          <div class="flow-container">
+            <div class="vertical-flow">
+              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">🔗</span> เลือก Social Provider</div>
+              <div class="v-arrow">↓</div>
+              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">🔄</span> Redirect + ส่งกลับ email</div>
+              <div class="v-arrow">↓</div>
+              <div class="decision-tree" style="width:100%;">
+                <div class="decision-branches">
+                  <div class="branch">
+                    <div class="branch-label branch-yes">มี Email</div>
+                    <div class="branch-box">Login + ผูก social_id</div>
+                  </div>
+                  <div class="branch">
+                    <div class="branch-label branch-no">ไม่มี</div>
+                    <div class="branch-box">→ Register Social<br>(DAIL-29)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">💡 Precondition</div>
+          <ul>
+            <li>User มี account ในระบบแล้ว</li>
+            <li>password_set = true</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">✅ Acceptance Criteria</div>
+          <ul>
+            <li>Login ได้ทั้ง Email และ Social user</li>
+            <li>ใช้ password เดียวกันเสมอ</li>
+            <li>ไม่สร้าง user ซ้ำจาก email เดียวกัน</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: FORGOT PASSWORD -->
+  <div class="slide" data-slide="4">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-30 / Authentication</div>
+      <div class="slide-number">04 / 13</div>
+    </div>
+    <div class="slide-title">Forgot / Reset Password</div>
+    <div class="slide-subtitle">ตั้งรหัสผ่านใหม่ผ่าน Email Link พร้อม Token Validation</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">FLOW A: REQUEST RESET</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">🔑</span> กด "ลืมรหัสผ่าน"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-blue"><span class="icon">✉️</span> กรอก Email</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email</div>
+        </div>
+      </div>
+      <div class="decision-tree anim-item" style="margin-top: 10px;">
+        <div class="decision-node decision-diamond">Email มีในระบบ?</div>
+        <div class="decision-branches" style="margin-top: 10px;">
+          <div class="branch">
+            <div class="branch-label branch-yes">มี</div>
+            <div class="branch-box">สร้าง Reset Token (15 นาที)<br>ส่ง Email พร้อม Reset Link</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label branch-no">ไม่มี</div>
+            <div class="branch-box">"ไม่พบอีเมลนี้ในระบบ"<br>CTA → สมัครสมาชิก</div>
+          </div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">FLOW B: SET NEW PASSWORD</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-purple"><span class="icon">📧</span> เปิด Reset Link</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Token</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">🔐</span> กรอก Password ใหม่</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">✅</span> สำเร็จ → Login</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Edge Cases</div>
+          <ul>
+            <li>Token หมดอายุ → "ลิงก์หมดอายุ" + CTA reset ใหม่</li>
+            <li>Social-only user (ไม่เคยตั้ง password) → ไม่อนุญาต forgot password</li>
+            <li>Reset link ใช้ได้ครั้งเดียว</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">✅ Criteria</div>
+          <ul>
+            <li>ส่ง reset link ไปที่ email ที่มี</li>
+            <li>แจ้งชัดเจนเมื่อ email ไม่พบ</li>
+            <li>Password ใหม่ใช้ login ได้ทันที</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: CONSENT -->
+  <div class="slide" data-slide="5">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-96 / Legal</div>
+      <div class="slide-number">05 / 13</div>
+    </div>
+    <div class="slide-title">Consent: Terms & Privacy (PDPA)</div>
+    <div class="slide-subtitle">ข้อตกลงและเงื่อนไขก่อนใช้งานแอป — Blocking screen ทั้งตอน Register และ Policy Update</div>
+    <div class="slide-content">
+      <div class="two-col" style="margin-top: 10px;">
+        <div class="col-section anim-item">
+          <div class="section-label">FLOW 1: FIRST LOGIN / REGISTER</div>
+          <div class="flow-container">
+            <div class="vertical-flow">
+              <div class="flow-step highlight-blue" style="width:100%;justify-content:center;"><span class="icon">👤</span> Register / First Login สำเร็จ</div>
+              <div class="v-arrow">↓</div>
+              <div class="flow-step highlight-orange" style="width:100%;justify-content:center;"><span class="icon">📜</span> แสดงหน้า "ข้อตกลงและเงื่อนไข"</div>
+              <div class="v-arrow">↓</div>
+              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">☑️</span> ติ๊ก Checkbox 2 อัน</div>
+              <div class="v-arrow">↓</div>
+              <div class="flow-step highlight-green" style="width:100%;justify-content:center;"><span class="icon">✅</span> กด "ยอมรับ" → เข้าหน้าหลัก</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">UI COMPONENTS</div>
+          <div class="mini-card" style="max-width:100%;">
+            <div class="mini-card-title">📋 หน้า Consent ประกอบด้วย</div>
+            <ul>
+              <li>Header: "ข้อตกลงและเงื่อนไข"</li>
+              <li>☑️ Checkbox 1: ยอมรับข้อกำหนดการใช้งาน + ลิงก์อ่านเพิ่มเติม</li>
+              <li>☑️ Checkbox 2: ยอมรับนโยบายความเป็นส่วนตัว + ลิงก์อ่านเพิ่มเติม</li>
+              <li>ปุ่ม "ยอมรับ" — disabled จนกว่าติ๊กทั้ง 2</li>
+              <li>กรณี Policy Update: ข้อความแจ้งว่า "เราได้อัปเดตข้อกำหนด..."</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="max-width:100%;margin-top:8px;">
+            <div class="mini-card-title">💾 Data ที่เก็บ</div>
+            <ul>
+              <li>consent_id, user_id, consent_version</li>
+              <li>terms_accepted, privacy_accepted</li>
+              <li>accepted_at (timestamp), ip_address</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="state-machine anim-item" style="margin-top: 12px;">
+        <div class="state-node highlight-blue">📡 /api/consent/check</div>
+        <div class="state-arrow">→</div>
+        <div class="state-node highlight-green">📝 /api/consent/accept</div>
+        <div class="state-arrow">→</div>
+        <div class="state-node highlight-purple">📄 /api/consent/latest-policy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: ONBOARDING -->
+  <div class="slide" data-slide="6">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-31 / Onboarding</div>
+      <div class="slide-number">06 / 13</div>
+    </div>
+    <div class="slide-title">App Onboarding (First-time)</div>
+    <div class="slide-subtitle">แนะนำแอปสำหรับผู้ใช้ใหม่ → นำไปสู่ Birth Profile Setup</div>
+    <div class="slide-content">
+      <div class="flow-container anim-item" style="margin-top: 10px;">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">🎉</span> Register/Login สำเร็จ</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📜</span> Consent (PDPA)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">👋</span> Onboarding Screens</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">⭐</span> Birth Profile Setup</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 20px;">
+        <div class="card">
+          <div class="card-icon">📱</div>
+          <div class="card-title">Screen 1: Welcome</div>
+          <div class="card-desc">แนะนำ DailyMu Calendar — ปฏิทินดูดวงส่วนตัว</div>
+          <div class="card-tag tag-blue">Swipe / Next</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔮</div>
+          <div class="card-title">Screen 2: Features</div>
+          <div class="card-desc">Daily Summary, Calendar ดูดวง, ทำนาย, ช่วยตัดสินใจ</div>
+          <div class="card-tag tag-purple">Swipe / Next</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">Screen 3: CTA</div>
+          <div class="card-desc">"มาผูกดวงกัน!" → นำไป Birth Profile Setup</div>
+          <div class="card-tag tag-green">เริ่มต้น</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">💡 Behavior</div>
+          <ul>
+            <li>แสดงแค่ครั้งแรกเท่านั้น</li>
+            <li>Swipe ซ้าย-ขวา หรือกด Next/Skip</li>
+            <li>กด Skip ได้ → ข้ามไป Birth Profile</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🔄 User Journey (สรุป)</div>
+          <ul>
+            <li>Register → Consent → Onboarding → Birth Profile → Home</li>
+            <li>ครั้งต่อไป Login → Home ตรง</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: BIRTH PROFILE -->
+  <div class="slide" data-slide="7">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-23 / Profile Setup</div>
+      <div class="slide-number">07 / 13</div>
+    </div>
+    <div class="slide-title">Birth Profile Setup</div>
+    <div class="slide-subtitle">สร้างโปรไฟล์ดวงแรก — Step Form เพื่อผูกข้อมูลดวง</div>
+    <div class="slide-content">
+      <div class="flow-container anim-item" style="margin-top: 10px;">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">1️⃣</span> ข้อมูลพื้นฐาน</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">2️⃣</span> ข้อมูลดวง</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">3️⃣</span> ยืนยัน & บันทึก</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">✅</span> เข้าหน้าหลัก</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 16px;">
+        <div class="card">
+          <div class="card-icon">👤</div>
+          <div class="card-title">Step 1: ข้อมูลพื้นฐาน</div>
+          <div class="card-desc">ชื่อโปรไฟล์ (max 20 ตัว), เลือก Avatar/สี, ความสัมพันธ์ (ตัวเอง/คู่รัก/ครอบครัว/เพื่อน)</div>
+          <div class="card-tag tag-blue">Required</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔮</div>
+          <div class="card-title">Step 2: ข้อมูลดวง</div>
+          <div class="card-desc">วันเกิด (Date picker), เวลาเกิด (Optional), ระบบดวง (ไทย/จีน/สากล)</div>
+          <div class="card-tag tag-purple">Required + Optional</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">✅</div>
+          <div class="card-title">Step 3: ยืนยัน</div>
+          <div class="card-desc">แสดง Summary → กด "ยืนยัน" → บันทึก → Redirect หน้าหลัก</div>
+          <div class="card-tag tag-green">Complete</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">💾 Data Structure</div>
+          <ul>
+            <li>profile_name, avatar_color, relationship</li>
+            <li>birth_date, birth_time (optional)</li>
+            <li>horoscope_system, is_primary: true</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Note</div>
+          <ul>
+            <li>โปรไฟล์แรก = primary profile</li>
+            <li>ใช้คำนวณดวงทุกที่ในแอป</li>
+            <li>สร้างเพิ่มได้ภายหลัง (max 5)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: MULTI PROFILE -->
+  <div class="slide" data-slide="8">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-32 / Profile</div>
+      <div class="slide-number">08 / 13</div>
+    </div>
+    <div class="slide-title">Multi Profile (Add / Switch)</div>
+    <div class="slide-subtitle">เพิ่มและสลับโปรไฟล์ดวงสำหรับคนใกล้ชิด — สูงสุด 5 โปรไฟล์</div>
+    <div class="slide-content">
+      <div class="state-machine anim-item" style="margin-top: 10px;">
+        <div class="state-node highlight-blue">👤 Profile 1 (Active ✅)</div>
+        <div class="state-node highlight-purple">👥 Profile 2</div>
+        <div class="state-node highlight-orange">💛 Profile 3</div>
+        <div class="state-node" style="border-style:dashed;">➕ เพิ่ม</div>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 16px;">
+        <div class="card">
+          <div class="card-icon">➕</div>
+          <div class="card-title">เพิ่มโปรไฟล์</div>
+          <div class="card-desc">กด "+เพิ่ม" → เช็คจำนวน (max 5) → Step Form เหมือน Birth Profile Setup</div>
+          <div class="card-tag tag-green">Add Flow</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">สลับโปรไฟล์</div>
+          <div class="card-desc">กด Chip โปรไฟล์อื่น → Confirmation → ดวงเปลี่ยนทั้งแอป (Today + Calendar)</div>
+          <div class="card-tag tag-blue">Switch Flow</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🗑️</div>
+          <div class="card-title">ลบโปรไฟล์</div>
+          <div class="card-desc">กดแก้ไข → ลบได้ (ยกเว้นโปรไฟล์สุดท้าย) → Confirm popup</div>
+          <div class="card-tag tag-red">Delete Flow</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📏 ข้อจำกัด</div>
+          <ul>
+            <li>สูงสุด 5 โปรไฟล์</li>
+            <li>ต้องมีอย่างน้อย 1 โปรไฟล์เสมอ</li>
+            <li>แต่ละโปรไฟล์มี avatar/สีแยก</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🎯 Use Cases</div>
+          <ul>
+            <li>ดูดวงให้ตัวเอง + คู่รัก</li>
+            <li>ดูดวงให้ครอบครัว/ลูก</li>
+            <li>เปรียบเทียบดวงแต่ละคน</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: TODAY FEATURE -->
+  <div class="slide" data-slide="9">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-33 / Core Feature</div>
+      <div class="slide-number">09 / 13</div>
+    </div>
+    <div class="slide-title">หน้า Today — Core Feature</div>
+    <div class="slide-subtitle">หน้าหลักของแอป ประกอบด้วย 3 Sections: Daily Summary, Calendar, ทำนายดวง</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 10px;">
+        <div class="card">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">Section 1: Daily Summary</div>
+          <div class="card-desc">สรุปดวงวันนี้ — แสดงสถานะ (ดี/กลาง/ระวัง), AI Summary 2-3 บรรทัด, Highlight ด้านต่างๆ (การเงิน, ความรัก, สุขภาพ, การงาน), Lucky items</div>
+          <div class="card-tag tag-blue">DAIL-54</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📅</div>
+          <div class="card-title">Section 2: Calendar</div>
+          <div class="card-desc">ปฏิทินดูดวง — Grid 7 คอลัมน์, จุดสี (🟢ดี 🟡ปกติ 🔴ระวัง), เลื่อนดูล่วงหน้า 1 ปี, กดวันดู Day Detail</div>
+          <div class="card-tag tag-purple">DAIL-73</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔮</div>
+          <div class="card-title">Section 3: ทำนายดวง Shortcuts</div>
+          <div class="card-desc">Shortcut cards → redirect ไป Tab ทำนาย: 🎋 เซียมซี, 🃏 ไพ่ทำนาย, 💭 ทำนายฝัน</div>
+          <div class="card-tag tag-orange">DAIL-74</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">DAILY SUMMARY FLOW (SECTION 1)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📱</span> เปิดแอป</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> เช็คผูกดวง?</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">⏳</span> Loading</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">⭐</span> แสดง Daily Summary</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 12px;">CALENDAR FLOW (SECTION 2)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-purple"><span class="icon">📅</span> แสดงปฏิทินเดือนนี้</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-blue"><span class="icon">👆</span> กดเลือกวัน</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">📋</span> Day Detail (AI สรุป)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: NOTIFICATION -->
+  <div class="slide" data-slide="10">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-93 / Engagement</div>
+      <div class="slide-number">10 / 13</div>
+    </div>
+    <div class="slide-title">Notification Center</div>
+    <div class="slide-subtitle">ระบบแจ้งเตือน 2 Tabs + Push Notification + Settings ที่ปรับได้</div>
+    <div class="slide-content">
+      <div class="two-col" style="margin-top: 10px;">
+        <div class="col-section anim-item">
+          <div class="section-label">NOTIFICATION CENTER UI</div>
+          <div class="cards-grid cols-2">
+            <div class="card">
+              <div class="card-icon">🔔</div>
+              <div class="card-title">Tab 1: กิจกรรม</div>
+              <div class="card-desc">ดวงประจำวัน, แจ้งวันดวงดี/ระวัง, อัปเดตแอป</div>
+              <div class="card-tag tag-blue">Activity</div>
+            </div>
+            <div class="card">
+              <div class="card-icon">📢</div>
+              <div class="card-title">Tab 2: ข่าวสาร</div>
+              <div class="card-desc">โปรโมชัน, ฟีเจอร์ใหม่, ประกาศจากทีมงาน</div>
+              <div class="card-tag tag-purple">News</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label">PUSH NOTIFICATION TYPES</div>
+          <div class="mini-card" style="max-width:100%;">
+            <div class="mini-card-title">📲 Push ที่ส่ง</div>
+            <ul>
+              <li>ดวงประจำวัน (เช้า ตามเวลาที่ตั้ง)</li>
+              <li>วันดวงดี/ระวัง (แจ้งล่วงหน้า 1 วัน)</li>
+              <li>อัปเดตจากแอป (ฟีเจอร์ใหม่, โปรโมชัน)</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="max-width:100%;margin-top:8px;">
+            <div class="mini-card-title">⚙️ Settings</div>
+            <ul>
+              <li>Toggle เปิด/ปิดแต่ละประเภท</li>
+              <li>เลือกเวลาแจ้งเตือน (default 07:00)</li>
+              <li>เช็ค OS permission → แจ้งให้เปิดใน Settings</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="flow-container anim-item" style="margin-top: 14px;">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">🔔</span> กดไอคอนแจ้งเตือน</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📋</span> Notification Center</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">👆</span> กดรายการ</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">📄</span> Navigate ไปหน้าที่เกี่ยวข้อง</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: PROFILE -->
+  <div class="slide" data-slide="11">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-75 / Profile</div>
+      <div class="slide-number">11 / 13</div>
+    </div>
+    <div class="slide-title">Profile Management</div>
+    <div class="slide-subtitle">แก้ไขโปรไฟล์, จัดการโปรไฟล์ดวง, Settings (PDPA), About/Contact, Logout</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-4 anim-item" style="margin-top: 10px;">
+        <div class="card">
+          <div class="card-icon">✏️</div>
+          <div class="card-title">แก้ไขโปรไฟล์</div>
+          <div class="card-desc">เปลี่ยน Avatar, Display Name, Email (read-only ถ้า social)</div>
+          <div class="card-tag tag-blue">DAIL-76</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔮</div>
+          <div class="card-title">โปรไฟล์ดูดวง</div>
+          <div class="card-desc">สร้าง/แก้ไข/ลบ/สลับ Horoscope Profiles (max 5)</div>
+          <div class="card-tag tag-purple">DAIL-77</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">การตั้งค่า</div>
+          <div class="card-desc">Notification toggles, Privacy/PDPA, ลบบัญชี</div>
+          <div class="card-tag tag-orange">DAIL-78</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">ℹ️</div>
+          <div class="card-title">เกี่ยวกับเรา / ติดต่อ</div>
+          <div class="card-desc">App info, Social links, FAQ, Logout</div>
+          <div class="card-tag tag-green">DAIL-79</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 14px;">DELETE ACCOUNT FLOW (DAIL-78)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-red"><span class="icon">🗑️</span> กด "ลบบัญชี"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">⚠️</span> Warning Page</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-red"><span class="icon">⌨️</span> พิมพ์ "ลบบัญชี"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-red"><span class="icon">💀</span> ลบข้อมูลทั้งหมด</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Redirect → Login</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 12px;">LOGOUT FLOW (DAIL-79)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-orange"><span class="icon">🚪</span> กด "ออกจากระบบ"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">❓</span> Confirm popup</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">🔒</span> ลบ session/token</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Redirect → Login</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: SUMMARY JOURNEY -->
+  <div class="slide" data-slide="12">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>Summary</div>
+      <div class="slide-number">12 / 13</div>
+    </div>
+    <div class="slide-title">User Journey (End-to-End)</div>
+    <div class="slide-subtitle">ภาพรวม journey ตั้งแต่เปิดแอปครั้งแรก จนถึงใช้งานประจำวัน</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">FIRST-TIME USER JOURNEY</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📝</span> Register</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📜</span> Consent</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">👋</span> Onboarding</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">⭐</span> Birth Profile</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">🏠</span> Home (Today)</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">RETURNING USER JOURNEY</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">🔑</span> Login</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔍</span> Consent Check</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">🏠</span> Home (Today)</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">APP NAVIGATION (DAILY USE)</div>
+      <div class="state-machine anim-item">
+        <div class="state-node highlight-blue">🏠 Today<br><span style="font-size:9px;">Daily Summary + Calendar</span></div>
+        <div class="state-arrow">⇄</div>
+        <div class="state-node highlight-purple">🔮 ทำนาย<br><span style="font-size:9px;">เซียมซี, ไพ่, ฝัน</span></div>
+        <div class="state-arrow">⇄</div>
+        <div class="state-node highlight-orange">🔔 แจ้งเตือน<br><span style="font-size:9px;">กิจกรรม + ข่าวสาร</span></div>
+        <div class="state-arrow">⇄</div>
+        <div class="state-node highlight-green">👤 Profile<br><span style="font-size:9px;">Settings + โปรไฟล์ดวง</span></div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📊 สรุปจำนวน Flows</div>
+          <ul>
+            <li>10 Main Flows (Parent Tasks)</li>
+            <li>11 Sub-tasks</li>
+            <li>All tasks status: Done ✅</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">🎯 Key Design Decisions</div>
+          <ul>
+            <li>Email เป็น Primary Identity</li>
+            <li>Social Login ต้องตั้ง Password ด้วย</li>
+            <li>Consent (PDPA) เป็น Blocking screen</li>
+            <li>Multi Profile สูงสุด 5 โปรไฟล์</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: THANK YOU -->
+  <div class="slide" data-slide="13">
+    <div class="slide-content end-content">
+      <div style="font-size: clamp(60px,8vw,100px);" class="anim-item">🔮</div>
+      <div class="end-title anim-item">Thank You</div>
+      <div class="slide-subtitle anim-item" style="max-width: 520px;">DailyMu Calendar — BA Flow Documentation</div>
+      <div class="cover-roles anim-item" style="margin-top: 24px;">
+        <div class="role-chip">📋 BA Team</div>
+        <div class="role-chip">🔮 DailyMu Calendar</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen (F)">⛶</button>
+<div class="page-dropdown" id="pageDropdown"></div>
+
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="homeBtn" title="Home (H)" style="font-size: 18px;">⌂</button>
+  <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
+  <div class="nav-progress" id="navProgress"></div>
+  <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
+  <div class="nav-counter" id="navCounter">1 / 14</div>
+  <button class="nav-btn" id="menuBtn" title="Slide Menu">☰</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0;
+  let animTimer = null;
+  let dropdownOpen = false;
+
+  const slideTitles = [
+    'Cover — DailyMu Calendar',
+    '01 — Flow ทั้งหมด (Overview)',
+    '02 — Register Flow',
+    '03 — Login Flow',
+    '04 — Forgot / Reset Password',
+    '05 — Consent (PDPA)',
+    '06 — App Onboarding',
+    '07 — Birth Profile Setup',
+    '08 — Multi Profile',
+    '09 — Today (Core Feature)',
+    '10 — Notification Center',
+    '11 — Profile Management',
+    '12 — User Journey (Summary)',
+    '13 — Thank You'
+  ];
+
+  const navProgress = document.getElementById('navProgress');
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goToSlide(i));
+    navProgress.appendChild(dot);
+  }
+
+  const dropdown = document.getElementById('pageDropdown');
+  slideTitles.forEach((title, i) => {
+    const item = document.createElement('div');
+    item.className = 'page-dropdown-item' + (i === 0 ? ' active' : '');
+    item.innerHTML = '<span class="item-num">' + String(i).padStart(2, '0') + '</span> ' + title;
+    item.addEventListener('click', (e) => { e.stopPropagation(); const t = i; toggleDropdown(false); requestAnimationFrame(() => goToSlide(t)); });
+    dropdown.appendChild(item);
+  });
+
+  function goToSlide(index) {
+    if (index === currentSlide || index < 0 || index >= totalSlides) return;
+    if (animTimer) { clearTimeout(animTimer); slides.forEach(s => { s.classList.remove('active', 'prev'); s.style.transform = ''; }); }
+    const prev = slides[currentSlide];
+    const next = slides[index];
+    const goingForward = index > currentSlide;
+    prev.classList.remove('active');
+    if (goingForward) prev.classList.add('prev');
+    next.style.transition = 'none';
+    next.style.transform = goingForward ? 'translateX(60px)' : 'translateX(-60px)';
+    next.style.opacity = '0';
+    next.offsetHeight;
+    next.style.transition = '';
+    next.style.transform = '';
+    next.style.opacity = '';
+    next.classList.add('active');
+    currentSlide = index;
+    updateUI();
+    animTimer = setTimeout(() => { prev.classList.remove('prev'); prev.style.transform = ''; animTimer = null; }, 500);
+  }
+
+  function updateUI() {
+    document.getElementById('navCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    const dots = navProgress.querySelectorAll('.nav-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+    document.getElementById('homeBtn').disabled = currentSlide === 0;
+    const items = dropdown.querySelectorAll('.page-dropdown-item');
+    items.forEach((item, i) => item.classList.toggle('active', i === currentSlide));
+  }
+
+  function toggleDropdown(state) { dropdownOpen = state !== undefined ? state : !dropdownOpen; dropdown.classList.toggle('open', dropdownOpen); }
+
+  document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
+  document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
+  document.getElementById('menuBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
+  document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+    else if (e.key === 'Home' || e.key === 'h' || e.key === 'H') { e.preventDefault(); goToSlide(0); }
+    else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+    else if (e.key === 'f' || e.key === 'F') { document.getElementById('fullscreenBtn').click(); }
+    else if (e.key === 'Escape') { toggleDropdown(false); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) { diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1); } });
+  document.addEventListener('click', (e) => { if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false); });
+
+  updateUI();
+})();
+</script>
+
+</body>
+</html>
