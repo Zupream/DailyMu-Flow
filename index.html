@@ -8,25 +8,25 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary: #1E3A5F;
-  --primary-dark: #152C49;
-  --primary-light: #2A5080;
-  --secondary: #4ECDC4;
-  --secondary-dark: #3BB5AD;
-  --secondary-light: #6FD9D2;
-  --accent-orange: #F7A072;
-  --accent-red: #E74C3C;
-  --accent-purple: #8E6AAF;
+  --primary: #9333EA;
+  --primary-dark: #7E22CE;
+  --primary-light: #A855F7;
+  --secondary: #F9A8D4;
+  --secondary-dark: #EC4899;
+  --secondary-light: #FBCFE8;
+  --accent-orange: #FB923C;
+  --accent-red: #F43F5E;
+  --accent-purple: #A78BFA;
   --accent-pink: #D4688E;
-  --accent-amber: #F0B849;
-  --bg-dark: #F0F4F8;
-  --bg-card: rgba(30, 58, 95, 0.05);
-  --bg-card-hover: rgba(30, 58, 95, 0.1);
-  --text-primary: #1A2332;
-  --text-secondary: #4A5B6E;
-  --text-muted: #7A8B9E;
-  --grid-color: rgba(30, 58, 95, 0.06);
-  --border-color: rgba(30, 58, 95, 0.12);
+  --accent-amber: #FBBF24;
+  --bg-dark: #FFF5F9;
+  --bg-card: rgba(180, 130, 200, 0.08);
+  --bg-card-hover: rgba(180, 130, 200, 0.16);
+  --text-primary: #4A3B5C;
+  --text-secondary: #6B5B7B;
+  --text-muted: #9B8BAB;
+  --grid-color: rgba(180, 130, 200, 0.06);
+  --border-color: rgba(180, 130, 200, 0.12);
   --transition-fast: 200ms;
   --transition-normal: 350ms;
   --transition-slow: 500ms;
@@ -48,18 +48,17 @@ body {
 .grid-bg {
   position: fixed; inset: 0;
   background:
-    linear-gradient(135deg, #F0F4F8 0%, #E8EEF4 25%, #EBF4F8 50%, #E4EDF6 75%, #F0F4F8 100%),
+    linear-gradient(135deg, #FFF5F9 0%, #FDF0F5 25%, #FBF0FA 50%, #F8EDF7 75%, #FFF5F9 100%),
     linear-gradient(var(--grid-color) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 400% 400%, 40px 40px, 40px 40px;
-  animation: gradientShift 20s ease infinite;
+  background-size: 100% 100%, 40px 40px, 40px 40px;
   z-index: 0; pointer-events: none;
 }
 .grid-bg::after {
   content: ''; position: absolute; inset: 0;
   background-image:
-    linear-gradient(rgba(30,58,95,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(30,58,95,0.05) 1px, transparent 1px);
+    linear-gradient(rgba(180,130,200,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(180,130,200,0.05) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -77,18 +76,18 @@ body {
 .slide.prev { transform: translateX(-60px); }
 
 .slide-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(12px, 1.5vw, 24px); flex-shrink: 0; }
-.slide-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: clamp(10px,1vw,13px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(30,58,95,0.1); color: var(--primary); border: 1px solid rgba(30,58,95,0.2); }
+.slide-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: clamp(10px,1vw,13px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(147,51,234,0.08); color: var(--primary); border: 1px solid rgba(147,51,234,0.2); }
 .slide-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
 .slide-number { font-size: clamp(11px,1vw,14px); font-weight: 500; color: var(--text-muted); font-family: 'Inter', monospace; }
 
-.slide-title { font-size: clamp(22px,3vw,48px); font-weight: 800; line-height: 1.15; margin-bottom: clamp(4px,0.6vw,10px); letter-spacing: -0.02em; background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.slide-title { font-size: clamp(22px,3vw,48px); font-weight: 800; line-height: 1.15; margin-bottom: clamp(4px,0.6vw,10px); letter-spacing: -0.02em; background: linear-gradient(135deg, #C084FC 0%, #F9A8D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .slide-subtitle { font-size: clamp(12px,1.2vw,18px); color: var(--text-secondary); font-weight: 400; line-height: 1.5; max-width: 700px; }
 .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
 
 /* Cover */
 .cover-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: clamp(12px,1.5vw,24px); }
 .cover-logo { font-size: clamp(60px,8vw,120px); line-height: 1; }
-.cover-title { font-size: clamp(28px,4.5vw,64px); font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease infinite; background-size: 200% 200%; }
+.cover-title { font-size: clamp(28px,4.5vw,64px); font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, #C084FC 0%, #D4688E 50%, #F9A8D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease infinite; background-size: 200% 200%; }
 .cover-subtitle { font-size: clamp(13px,1.6vw,22px); color: var(--text-secondary); font-weight: 400; max-width: 600px; }
 .cover-roles { display: flex; gap: clamp(10px,1.2vw,20px); margin-top: clamp(10px,1.2vw,20px); flex-wrap: wrap; justify-content: center; }
 .role-chip { padding: clamp(6px,0.7vw,10px) clamp(14px,1.4vw,24px); border-radius: 50px; font-size: clamp(10px,1vw,14px); font-weight: 600; border: 1px solid var(--border-color); background: var(--bg-card); transition: all var(--transition-fast) ease; }
@@ -102,12 +101,12 @@ body {
 .flow-step .icon { font-size: clamp(12px,1.2vw,18px); }
 .flow-arrow { color: var(--text-muted); font-size: clamp(12px,1.3vw,20px); flex-shrink: 0; }
 
-.flow-step.highlight-blue { background: rgba(30,58,95,0.08); border-color: rgba(30,58,95,0.25); color: var(--primary); }
-.flow-step.highlight-green { background: rgba(76,175,80,0.1); border-color: rgba(76,175,80,0.3); color: #2E7D32; }
-.flow-step.highlight-orange { background: rgba(230,168,85,0.1); border-color: rgba(230,168,85,0.3); color: #B8860B; }
-.flow-step.highlight-red { background: rgba(211,47,47,0.08); border-color: rgba(211,47,47,0.25); color: #D32F2F; }
-.flow-step.highlight-purple { background: rgba(142,106,175,0.1); border-color: rgba(142,106,175,0.25); color: #8E6AAF; }
-.flow-step.highlight-amber { background: rgba(249,168,37,0.1); border-color: rgba(249,168,37,0.25); color: #9A7B2F; }
+.flow-step.highlight-blue { background: rgba(147,51,234,0.08); border-color: rgba(147,51,234,0.2); color: #7C3AED; }
+.flow-step.highlight-green { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); color: #059669; }
+.flow-step.highlight-orange { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.3); color: #C2410C; }
+.flow-step.highlight-red { background: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.25); color: #E11D48; }
+.flow-step.highlight-purple { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.25); color: #7C3AED; }
+.flow-step.highlight-amber { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.25); color: #B45309; }
 
 /* Cards Grid */
 .cards-grid { display: grid; gap: clamp(8px,1vw,14px); max-width: 1200px; margin: 0 auto; width: 100%; }
@@ -116,27 +115,27 @@ body {
 .cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .cards-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
 .card { padding: clamp(12px,1.2vw,20px); border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-card); backdrop-filter: blur(8px); transition: all var(--transition-fast) ease; }
-.card:hover { transform: translateY(-3px); background: var(--bg-card-hover); border-color: rgba(30,58,95,0.25); }
+.card:hover { transform: translateY(-3px); background: var(--bg-card-hover); border-color: rgba(147,51,234,0.25); }
 .card-icon { font-size: clamp(20px,2.2vw,36px); margin-bottom: clamp(4px,0.6vw,10px); }
 .card-title { font-size: clamp(11px,1.1vw,16px); font-weight: 700; margin-bottom: clamp(3px,0.4vw,6px); color: var(--text-primary); }
 .card-desc { font-size: clamp(9px,0.9vw,13px); color: var(--text-secondary); line-height: 1.5; }
 .card-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: clamp(8px,0.7vw,11px); font-weight: 600; margin-top: 6px; }
-.tag-blue { background: rgba(30,58,95,0.1); color: var(--primary); }
-.tag-green { background: rgba(76,175,80,0.12); color: #2E7D32; }
-.tag-orange { background: rgba(230,168,85,0.15); color: #B8860B; }
-.tag-red { background: rgba(211,47,47,0.12); color: #D32F2F; }
-.tag-purple { background: rgba(142,106,175,0.12); color: #8E6AAF; }
+.tag-blue { background: rgba(147,51,234,0.1); color: #7C3AED; }
+.tag-green { background: rgba(52,211,153,0.12); color: #059669; }
+.tag-orange { background: rgba(251,146,60,0.12); color: #C2410C; }
+.tag-red { background: rgba(244,63,94,0.12); color: #E11D48; }
+.tag-purple { background: rgba(167,139,250,0.12); color: #7C3AED; }
 
 /* Decision Tree */
 .decision-tree { display: flex; flex-direction: column; align-items: center; gap: clamp(6px,0.8vw,12px); }
 .decision-node { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 12px; font-size: clamp(10px,1vw,14px); font-weight: 600; text-align: center; max-width: 500px; }
-.decision-diamond { background: rgba(230,168,85,0.1); border: 1px solid rgba(230,168,85,0.3); color: #9A7B2F; position: relative; }
+.decision-diamond { background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.3); color: #C2410C; position: relative; }
 .decision-diamond::before { content: '\25C6'; margin-right: 8px; opacity: 0.6; }
 .decision-branches { display: flex; gap: clamp(16px,2vw,32px); justify-content: center; }
 .branch { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .branch-label { font-size: clamp(10px,0.9vw,13px); font-weight: 700; padding: 3px 12px; border-radius: 8px; }
-.branch-yes { background: rgba(76,175,80,0.12); color: #2E7D32; }
-.branch-no { background: rgba(211,47,47,0.1); color: #D32F2F; }
+.branch-yes { background: rgba(52,211,153,0.12); color: #059669; }
+.branch-no { background: rgba(244,63,94,0.1); color: #E11D48; }
 .branch-box { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 10px; font-size: clamp(9px,0.9vw,13px); background: var(--bg-card); border: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); max-width: 280px; }
 
 /* Split Row & Mini Cards */
@@ -167,20 +166,20 @@ body {
 
 /* End Slide */
 .end-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; }
-.end-title { font-size: clamp(32px,4.5vw,72px); font-weight: 900; background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s ease infinite; background-size: 200% 200%; }
+.end-title { font-size: clamp(32px,4.5vw,72px); font-weight: 900; background: linear-gradient(135deg, #C084FC, #F9A8D4, #A78BFA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s ease infinite; background-size: 200% 200%; }
 
 /* Highlight tags */
 .hl { font-weight: 700; }
-.hl-blue { color: var(--primary); }
-.hl-green { color: #2E7D32; }
-.hl-orange { color: #B8860B; }
-.hl-red { color: #D32F2F; }
-.hl-purple { color: #8E6AAF; }
+.hl-blue { color: #7C3AED; }
+.hl-green { color: #059669; }
+.hl-orange { color: #C2410C; }
+.hl-red { color: #E11D48; }
+.hl-purple { color: #7C3AED; }
 
 /* Nav Bar */
-.nav-bar { position: fixed; bottom: clamp(16px,2vw,28px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 16px; background: rgba(255,255,255,0.88); backdrop-filter: blur(16px); border: 1px solid rgba(30,58,95,0.12); box-shadow: 0 4px 24px rgba(0,0,0,0.08); z-index: 100; }
+.nav-bar { position: fixed; bottom: clamp(16px,2vw,28px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 16px; background: rgba(255,245,249,0.92); backdrop-filter: blur(16px); border: 1px solid rgba(180,130,200,0.15); box-shadow: 0 4px 24px rgba(147,51,234,0.06); z-index: 100; }
 .nav-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
-.nav-btn:hover { background: rgba(30,58,95,0.08); color: var(--primary); border-color: rgba(30,58,95,0.3); }
+.nav-btn:hover { background: rgba(147,51,234,0.08); color: var(--primary); border-color: rgba(147,51,234,0.25); }
 .nav-btn:active { transform: scale(0.92); }
 .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .nav-progress { display: flex; align-items: center; gap: 3px; }
@@ -190,16 +189,16 @@ body {
 .nav-counter { font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: 'Inter', monospace; min-width: 50px; text-align: center; }
 
 /* Dropdown */
-.page-dropdown { position: fixed; bottom: clamp(72px,8vw,96px); left: 50%; transform: translateX(-50%) translateY(10px); background: rgba(255,255,255,0.95); backdrop-filter: blur(16px); box-shadow: 0 4px 24px rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 14px; padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto; min-width: 300px; opacity: 0; visibility: hidden; transition: all var(--transition-fast) ease; }
+.page-dropdown { position: fixed; bottom: clamp(72px,8vw,96px); left: 50%; transform: translateX(-50%) translateY(10px); background: rgba(255,245,249,0.96); backdrop-filter: blur(16px); box-shadow: 0 4px 24px rgba(147,51,234,0.08); border: 1px solid var(--border-color); border-radius: 14px; padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto; min-width: 300px; opacity: 0; visibility: hidden; transition: all var(--transition-fast) ease; }
 .page-dropdown.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
 .page-dropdown-item { display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: all var(--transition-fast) ease; }
 .page-dropdown-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-.page-dropdown-item.active { background: rgba(30,58,95,0.1); color: var(--primary); font-weight: 600; }
-.page-dropdown-item .item-num { font-weight: 700; font-family: 'Inter', monospace; font-size: 10px; min-width: 24px; text-align: center; padding: 2px 6px; border-radius: 6px; background: rgba(30,58,95,0.06); }
+.page-dropdown-item.active { background: rgba(147,51,234,0.1); color: var(--primary); font-weight: 600; }
+.page-dropdown-item .item-num { font-weight: 700; font-family: 'Inter', monospace; font-size: 10px; min-width: 24px; text-align: center; padding: 2px 6px; border-radius: 6px; background: rgba(147,51,234,0.06); }
 
 /* Fullscreen */
-.fullscreen-btn { position: fixed; top: 16px; right: 16px; z-index: 100; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.8); backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
-.fullscreen-btn:hover { color: var(--primary); border-color: rgba(30,58,95,0.3); }
+.fullscreen-btn { position: fixed; top: 16px; right: 16px; z-index: 100; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,245,249,0.85); backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(147,51,234,0.06); color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
+.fullscreen-btn:hover { color: var(--primary); border-color: rgba(147,51,234,0.25); }
 
 @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -224,29 +223,29 @@ body {
 
 /* Enhanced card hover animation */
 .card { transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-.card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 32px rgba(30,58,95,0.12); }
+.card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 32px rgba(147,51,234,0.12); }
 
 /* Flow step bounce */
 .flow-step { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.flow-step:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(30,58,95,0.1); }
+.flow-step:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(147,51,234,0.1); }
 
 /* Cover logo float */
 .slide.active .cover-logo { animation: floatUp 3s ease-in-out infinite; }
 
 /* State node pulse on hover */
 .state-node { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.state-node:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(30,58,95,0.1); }
+.state-node:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(147,51,234,0.1); }
 
 /* Mini card pop */
 .mini-card { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.mini-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(30,58,95,0.08); }
+.mini-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(147,51,234,0.08); }
 
 /* Role chip bounce */
 .role-chip { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 
 /* Decision diamond pulse */
 .decision-diamond { transition: all 0.3s ease; }
-.decision-diamond:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(230,168,85,0.15); }
+.decision-diamond:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(251,146,60,0.15); }
 
 /* Slide title entrance */
 .slide.active .slide-title { animation: fadeInLeft 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
@@ -265,6 +264,7 @@ body {
   .cards-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
   .two-col { grid-template-columns: 1fr; }
 }
+
   </style>
 </head>
 <body>
@@ -280,9 +280,9 @@ body {
       <div class="cover-title">DailyMu Calendar</div>
       <div class="cover-subtitle">BA Flow Documentation — ภาพรวม User Flow ทั้งหมดของแอปปฏิทินดูดวง</div>
       <div class="cover-roles">
-        <div class="role-chip anim-item" style="border-color: rgba(30,58,95,0.3); color: var(--primary);">📋 BA Team</div>
-        <div class="role-chip anim-item" style="border-color: rgba(78,205,196,0.3); color: #3BB5AD;">🎯 Project: DailyMu</div>
-        <div class="role-chip anim-item" style="border-color: rgba(230,168,85,0.3); color: #B8860B;">🔮 Horoscope Calendar App</div>
+        <div class="role-chip anim-item" style="border-color: rgba(192,132,252,0.3); color: #9333EA;">📋 BA Team</div>
+        <div class="role-chip anim-item" style="border-color: rgba(249,168,212,0.3); color: #EC4899;">🎯 Project: DailyMu</div>
+        <div class="role-chip anim-item" style="border-color: rgba(167,139,250,0.3); color: #7C3AED;">🔮 Horoscope Calendar App</div>
       </div>
     </div>
   </div>
@@ -291,10 +291,10 @@ body {
   <div class="slide" data-slide="1">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>Overview</div>
-      <div class="slide-number">01 / 13</div>
+      <div class="slide-number">02 / 18</div>
     </div>
     <div class="slide-title">Flow ทั้งหมดของ DailyMu</div>
-    <div class="slide-subtitle">รวม 10 User Flows หลัก + 11 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management</div>
+    <div class="slide-subtitle">รวม 10 User Flows หลัก + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management รวมถึง Calendar Views</div>
     <div class="slide-content">
       <div class="cards-grid cols-5" style="margin-top: 16px;">
         <div class="card anim-item">
@@ -358,6 +358,27 @@ body {
           <div class="card-tag tag-purple">DAIL-75</div>
         </div>
       </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">FORTUNE ENGINES (MICROSERVICES)</div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 4px;">
+        <div class="card">
+          <div class="card-icon">🎋</div>
+          <div class="card-title">เซียมซีวันนี้</div>
+          <div class="card-desc">สุ่มเซียมซี ได้คำทำนายประจำวัน + AI Interpretation</div>
+          <div class="card-tag tag-orange">DAIL-74 / Engine A</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🃏</div>
+          <div class="card-title">เปิดไพ่ทำนาย</div>
+          <div class="card-desc">เลือกไพ่ 3 ใบ พลิกดูดวงวันนี้ + AI เชื่อมดวง</div>
+          <div class="card-tag tag-purple">DAIL-74 / Engine B</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💭</div>
+          <div class="card-title">ทำนายฝัน</div>
+          <div class="card-desc">พิมพ์หรือเลือก keyword ฝัน แปลความหมาย + AI</div>
+          <div class="card-tag tag-green">DAIL-74 / Engine C</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -365,7 +386,7 @@ body {
   <div class="slide" data-slide="2">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-27 / Authentication</div>
-      <div class="slide-number">02 / 13</div>
+      <div class="slide-number">03 / 18</div>
     </div>
     <div class="slide-title">Register Flow</div>
     <div class="slide-subtitle">สมัครสมาชิกด้วย Email + Password หรือ Social Login (Google / Apple / Facebook)</div>
@@ -437,7 +458,7 @@ body {
   <div class="slide" data-slide="3">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-22 / Authentication</div>
-      <div class="slide-number">03 / 13</div>
+      <div class="slide-number">04 / 18</div>
     </div>
     <div class="slide-title">Login Flow</div>
     <div class="slide-subtitle">เข้าสู่ระบบด้วย Email + Password หรือ Social Login</div>
@@ -514,7 +535,7 @@ body {
   <div class="slide" data-slide="4">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-30 / Authentication</div>
-      <div class="slide-number">04 / 13</div>
+      <div class="slide-number">05 / 18</div>
     </div>
     <div class="slide-title">Forgot / Reset Password</div>
     <div class="slide-subtitle">ตั้งรหัสผ่านใหม่ผ่าน Email Link พร้อม Token Validation</div>
@@ -579,7 +600,7 @@ body {
   <div class="slide" data-slide="5">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-96 / Legal</div>
-      <div class="slide-number">05 / 13</div>
+      <div class="slide-number">06 / 18</div>
     </div>
     <div class="slide-title">Consent: Terms & Privacy (PDPA)</div>
     <div class="slide-subtitle">ข้อตกลงและเงื่อนไขก่อนใช้งานแอป — Blocking screen ทั้งตอน Register และ Policy Update</div>
@@ -635,7 +656,7 @@ body {
   <div class="slide" data-slide="6">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-31 / Onboarding</div>
-      <div class="slide-number">06 / 13</div>
+      <div class="slide-number">07 / 18</div>
     </div>
     <div class="slide-title">App Onboarding (First-time)</div>
     <div class="slide-subtitle">แนะนำแอปสำหรับผู้ใช้ใหม่ → นำไปสู่ Birth Profile Setup</div>
@@ -695,7 +716,7 @@ body {
   <div class="slide" data-slide="7">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-23 / Profile Setup</div>
-      <div class="slide-number">07 / 13</div>
+      <div class="slide-number">08 / 18</div>
     </div>
     <div class="slide-title">Birth Profile Setup</div>
     <div class="slide-subtitle">สร้างโปรไฟล์ดวงแรก — Step Form เพื่อผูกข้อมูลดวง</div>
@@ -756,7 +777,7 @@ body {
   <div class="slide" data-slide="8">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-32 / Profile</div>
-      <div class="slide-number">08 / 13</div>
+      <div class="slide-number">09 / 18</div>
     </div>
     <div class="slide-title">Multi Profile (Add / Switch)</div>
     <div class="slide-subtitle">เพิ่มและสลับโปรไฟล์ดวงสำหรับคนใกล้ชิด — สูงสุด 5 โปรไฟล์</div>
@@ -812,7 +833,7 @@ body {
   <div class="slide" data-slide="9">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-33 / Core Feature</div>
-      <div class="slide-number">09 / 13</div>
+      <div class="slide-number">10 / 18</div>
     </div>
     <div class="slide-title">หน้า Today — Core Feature</div>
     <div class="slide-subtitle">หน้าหลักของแอป ประกอบด้วย 3 Sections: Daily Summary, Calendar, ทำนายดวง</div>
@@ -862,11 +883,274 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 10: NOTIFICATION -->
+  <!-- SLIDE 10: FORTUNE TELLING SHORTCUTS (DAIL-74) -->
   <div class="slide" data-slide="10">
     <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-74 / Fortune</div>
+      <div class="slide-number">11 / 18</div>
+    </div>
+    <div class="slide-title">ทำนายดวงวันนี้ — Shortcut Cards + Engines</div>
+    <div class="slide-subtitle">Shortcut cards ในหน้า Today → Redirect ไป Tab ทำนาย พร้อม 3 Engines: เซียมซี, ไพ่ทำนาย, ทำนายฝัน</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">SHORTCUT CARDS (หน้า TODAY)</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📱</span> เลื่อนถึง Section ทำนาย</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">🎋</span> เซียมซีวันนี้</div>
+          <div class="flow-step highlight-purple"><span class="icon">🃏</span> เปิดไพ่ทำนาย</div>
+          <div class="flow-step highlight-purple"><span class="icon">💭</span> ทำนายฝัน</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">🔮</span> Redirect → Tab ทำนาย</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 14px;">
+        <div class="card">
+          <div class="card-icon">🎋</div>
+          <div class="card-title">Engine A: เซียมซีวันนี้</div>
+          <div class="card-desc">Animation กระบอกเซียมซี → กดเขย่า/Shake → เซียมซีตก → แสดงเลขเซียมซี + คำทำนาย + AI Interpretation + ระดับ (ดี/กลาง/ระวัง) + ปุ่มแชร์/เขย่าใหม่</div>
+          <div class="card-tag tag-blue">Shake / กดเขย่า</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🃏</div>
+          <div class="card-title">Engine B: เปิดไพ่ทำนาย</div>
+          <div class="card-desc">แสดงไพ่คว่ำหน้า → เลือกไพ่ 3 ใบ → Animation พลิกไพ่ → ชื่อไพ่ + ภาพ + ความหมาย + AI Interpretation เชื่อมดวงวันนี้ + ปุ่มแชร์/เปิดใหม่</div>
+          <div class="card-tag tag-purple">เลือก 3 ใบ</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💭</div>
+          <div class="card-title">Engine C: ทำนายฝัน</div>
+          <div class="card-desc">Text input "คุณฝันเห็นอะไร?" + Suggestion chips (งู, น้ำ, ปลา, เลขเด็ด) → กดทำนาย → ความหมายฝัน + AI Interpretation เชื่อมดวง + ปุ่มแชร์/ทำนายใหม่</div>
+          <div class="card-tag tag-orange">พิมพ์ / เลือก chip</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">🎯 Key Rules</div>
+          <ul>
+            <li>Section นี้ไม่ call API (static shortcut)</li>
+            <li>Cards scroll แนวนอนได้ (Scalable)</li>
+            <li>Engine ล่ม → ยังแสดง card แต่หน้า engine แสดง error</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">📊 Acceptance Criteria</div>
+          <ul>
+            <li>แสดง 3 Shortcut Cards ครบ (icon + ชื่อ + subtitle)</li>
+            <li>กด Card → redirect ไป Tab ทำนายตรง engine</li>
+            <li>ทุก engine มีปุ่มแชร์ผลลัพธ์</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: CALENDAR MONTHLY VIEW (DAIL-99) -->
+  <div class="slide" data-slide="11">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-99 / Calendar</div>
+      <div class="slide-number">12 / 18</div>
+    </div>
+    <div class="slide-title">Calendar — Monthly View</div>
+    <div class="slide-subtitle">ปฏิทินรายเดือน แสดงภาพรวมดวงทั้งเดือน เพื่อวางแผนล่วงหน้าว่าวันไหนดวงดี/ควรระวัง</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">MAIN FLOW</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📅</span> เข้าหน้า Calendar</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📊</span> แสดง Grid อา–ส (เดือนปัจจุบัน)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🔵</span> แต่ละวันมีจุดสีสถานะดวง</div>
+        </div>
+        <div class="flow-row" style="margin-top: 8px;">
+          <div class="flow-step highlight-blue"><span class="icon">◀️</span> เลื่อนเดือน ◀ ▶</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">👆</span> กดวัน → Day Detail</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📋</span> กด "ดูทั้งหมด" → ล่วงหน้า 1 ปี</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 14px;">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">🟢</div>
+          <div class="card-title">ดวงดี</div>
+          <div class="card-desc">จุดสีเขียว — วันนี้ดวงดี เหมาะทำกิจกรรมสำคัญ</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">🟡</div>
+          <div class="card-title">ดวงปกติ</div>
+          <div class="card-desc">จุดสีเหลือง — ดวงกลางๆ ดำเนินชีวิตตามปกติ</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">🔴</div>
+          <div class="card-title">ควรระวัง</div>
+          <div class="card-desc">จุดสีแดง — ควรระมัดระวัง หลีกเลี่ยงความเสี่ยง</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📐 UI Spec</div>
+          <ul>
+            <li>Grid: อาทิตย์–เสาร์ (7 คอลัมน์)</li>
+            <li>วันปัจจุบันมี highlight แยกชัดเจน</li>
+            <li>มี Legend อธิบายสี</li>
+            <li>เลื่อนดูล่วงหน้าได้ 1 ปี</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Edge Cases</div>
+          <ul>
+            <li>เดือนที่ยังไม่มีข้อมูลดวง (เกิน 1 ปี) → empty state</li>
+            <li>วันที่ไม่มีข้อมูล → ไม่แสดงจุดสี</li>
+            <li>สถานะสีต้องตรงกับผลคำนวณดวง</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: DAY DETAIL (DAIL-100) -->
+  <div class="slide" data-slide="12">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-100 / Calendar</div>
+      <div class="slide-number">13 / 18</div>
+    </div>
+    <div class="slide-title">Calendar — Day Detail</div>
+    <div class="slide-subtitle">รายละเอียดดวงรายวัน พร้อมคำแนะนำที่นำไปใช้ในชีวิตจริงได้</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">MAIN FLOW</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">👆</span> กดเลือกวันจากปฏิทิน/Today</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📋</span> แสดงหน้า Day Detail</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">📤</span> แชร์ดวงวันนั้น</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">◀️</span> กด Back → กลับปฏิทิน</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-5 anim-item" style="margin-top: 14px;">
+        <div class="card">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">สถานะดวง</div>
+          <div class="card-desc">ดี / กลาง / ระวัง พร้อม icon + visual indicator</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <div class="card-title">AI Summary</div>
+          <div class="card-desc">ข้อความสรุปสั้นๆ อ่านจบในไม่กี่วินาที</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <div class="card-title">สีมงคล</div>
+          <div class="card-desc">แยกตามเรื่อง: การงาน, การเงิน, ความรัก</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">✅</div>
+          <div class="card-title">Do & Don't</div>
+          <div class="card-desc">สิ่งที่ควรทำ / ไม่ควรทำ ประจำวัน</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌟</div>
+          <div class="card-title">ดาวเกิด / ดาวจร</div>
+          <div class="card-desc">ตำแหน่งดาวประจำวันนั้น</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📤 Share Feature</div>
+          <ul>
+            <li>แชร์เป็นรูปภาพไป Social</li>
+            <li>Copy link ได้</li>
+            <li>Share ล้มเหลว → error message</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Edge Cases</div>
+          <ul>
+            <li>วันที่ข้อมูลยังไม่พร้อม → loading/placeholder</li>
+            <li>วันในอดีตไม่มี AI Summary → แสดงเฉพาะข้อมูลดาว</li>
+            <li>AI Summary ต้องตรงกับ active profile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: WEEKLY VIEW (DAIL-101) -->
+  <div class="slide" data-slide="13">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-101 / Calendar</div>
+      <div class="slide-number">14 / 18</div>
+    </div>
+    <div class="slide-title">Weekly View — ดวงรายสัปดาห์</div>
+    <div class="slide-subtitle">ภาพรวมดวงรายสัปดาห์ (อาทิตย์–เสาร์) พร้อม AI สรุปและไฮไลท์วันสำคัญ เพื่อวางแผนสัปดาห์</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">MAIN FLOW</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📅</span> เข้า Calendar → เลือก "รายสัปดาห์"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📊</span> แสดง Weekly View (อา–ส)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">◀▶</span> เลื่อนซ้าย/ขวาดูสัปดาห์อื่น</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">👆</span> กดวัน → Day Detail</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-4 anim-item" style="margin-top: 14px;">
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <div class="card-title">AI Summary สัปดาห์</div>
+          <div class="card-desc">ภาพรวมทั้งสัปดาห์ สรุปโดย AI</div>
+          <div class="card-tag tag-blue">Weekly</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <div class="card-title">Timeline 7 วัน</div>
+          <div class="card-desc">แถบสีสถานะดวงแต่ละวัน (ดี/กลาง/ระวัง) เรียง อา–ส</div>
+          <div class="card-tag tag-purple">Visual</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">วันไฮไลท์</div>
+          <div class="card-desc">วันดีที่สุด + วันควรระวัง พร้อมเหตุผลสั้นๆ</div>
+          <div class="card-tag tag-orange">Highlight</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">✅</div>
+          <div class="card-title">Do & Don't สัปดาห์</div>
+          <div class="card-desc">คำแนะนำระดับสัปดาห์ สิ่งที่ควรทำ/ไม่ควรทำ</div>
+          <div class="card-tag tag-green">Advice</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📐 Spec</div>
+          <ul>
+            <li>แสดง 7 วัน (อาทิตย์–เสาร์) consistent กับ Monthly</li>
+            <li>สัปดาห์ข้ามเดือน → แสดงครบ 7 วัน ไม่ตัดตามเดือน</li>
+            <li>กดวันใน Timeline → เข้า Day Detail</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Edge Cases</div>
+          <ul>
+            <li>สัปดาห์ในอนาคตที่ AI ยังไม่คำนวณ → แสดงเฉพาะข้อมูลดาว</li>
+            <li>ไม่แสดง AI summary สำหรับสัปดาห์ที่ยังไม่มีข้อมูล</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: NOTIFICATION -->
+  <div class="slide" data-slide="14">
+    <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-93 / Engagement</div>
-      <div class="slide-number">10 / 13</div>
+      <div class="slide-number">15 / 18</div>
     </div>
     <div class="slide-title">Notification Center</div>
     <div class="slide-subtitle">ระบบแจ้งเตือน 2 Tabs + Push Notification + Settings ที่ปรับได้</div>
@@ -923,11 +1207,11 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 11: PROFILE -->
-  <div class="slide" data-slide="11">
+  <!-- SLIDE 15: PROFILE -->
+  <div class="slide" data-slide="15">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-75 / Profile</div>
-      <div class="slide-number">11 / 13</div>
+      <div class="slide-number">16 / 18</div>
     </div>
     <div class="slide-title">Profile Management</div>
     <div class="slide-subtitle">แก้ไขโปรไฟล์, จัดการโปรไฟล์ดวง, Settings (PDPA), About/Contact, Logout</div>
@@ -987,11 +1271,11 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 12: SUMMARY JOURNEY -->
-  <div class="slide" data-slide="12">
+  <!-- SLIDE 16: SUMMARY JOURNEY -->
+  <div class="slide" data-slide="16">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>Summary</div>
-      <div class="slide-number">12 / 13</div>
+      <div class="slide-number">17 / 18</div>
     </div>
     <div class="slide-title">User Journey (End-to-End)</div>
     <div class="slide-subtitle">ภาพรวม journey ตั้งแต่เปิดแอปครั้งแรก จนถึงใช้งานประจำวัน</div>
@@ -1035,8 +1319,8 @@ body {
           <div class="mini-card-title">📊 สรุปจำนวน Flows</div>
           <ul>
             <li>10 Main Flows (Parent Tasks)</li>
-            <li>11 Sub-tasks</li>
-            <li>All tasks status: Done ✅</li>
+            <li>15 Sub-tasks (รวม Calendar Views)</li>
+            <li>DAIL-74: Done ✅ | DAIL-99, 100, 101: In Progress 🔄</li>
           </ul>
         </div>
         <div class="mini-card">
@@ -1052,8 +1336,8 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 13: THANK YOU -->
-  <div class="slide" data-slide="13">
+  <!-- SLIDE 17: THANK YOU -->
+  <div class="slide" data-slide="17">
     <div class="slide-content end-content">
       <div style="font-size: clamp(60px,8vw,100px);" class="anim-item">🔮</div>
       <div class="end-title anim-item">Thank You</div>
@@ -1075,7 +1359,7 @@ body {
   <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
   <div class="nav-progress" id="navProgress"></div>
   <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
-  <div class="nav-counter" id="navCounter">1 / 14</div>
+  <div class="nav-counter" id="navCounter">1 / 18</div>
   <button class="nav-btn" id="menuBtn" title="Slide Menu">☰</button>
 </div>
 
@@ -1098,10 +1382,14 @@ body {
     '07 — Birth Profile Setup',
     '08 — Multi Profile',
     '09 — Today (Core Feature)',
-    '10 — Notification Center',
-    '11 — Profile Management',
-    '12 — User Journey (Summary)',
-    '13 — Thank You'
+    '10 — ทำนายดวง Shortcuts (DAIL-74)',
+    '11 — Calendar Monthly View (DAIL-99)',
+    '12 — Day Detail (DAIL-100)',
+    '13 — Weekly View (DAIL-101)',
+    '14 — Notification Center',
+    '15 — Profile Management',
+    '16 — User Journey (Summary)',
+    '17 — Thank You'
   ];
 
   const navProgress = document.getElementById('navProgress');
@@ -1174,6 +1462,8 @@ body {
   document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
   document.addEventListener('touchend', (e) => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) { diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1); } });
   document.addEventListener('click', (e) => { if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false); });
+
+  updateUI();
 
   updateUI();
 })();
