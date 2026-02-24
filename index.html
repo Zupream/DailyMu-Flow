@@ -1405,7 +1405,7 @@ body {
   slideTitles.forEach((title, i) => {
     const item = document.createElement('div');
     item.className = 'page-dropdown-item' + (i === 0 ? ' active' : '');
-    item.innerHTML = '<span class="item-num">' + String(i).padStart(2, '0') + '</span> ' + title;
+    item.innerHTML = '<span class="item-num">' + String(i + 1).padStart(2, '0') + '</span> ' + title;
     item.addEventListener('click', (e) => { e.stopPropagation(); const t = i; toggleDropdown(false); requestAnimationFrame(() => goToSlide(t)); });
     dropdown.appendChild(item);
   });
