@@ -293,10 +293,10 @@ body {
   <div class="slide" data-slide="1">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>Overview</div>
-      <div class="slide-number">02 / 18</div>
+      <div class="slide-number">02 / 19</div>
     </div>
     <div class="slide-title">Flow ทั้งหมดของ DailyMu</div>
-    <div class="slide-subtitle">รวม 10 User Flows หลัก + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management รวมถึง Calendar Views</div>
+    <div class="slide-subtitle">รวม 11 User Flows หลัก + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management รวมถึง Calendar Views และ Share Card</div>
     <div class="slide-content">
       <div class="cards-grid cols-5" style="margin-top: 16px;">
         <div class="card anim-item">
@@ -354,6 +354,12 @@ body {
           <div class="card-tag tag-red">DAIL-93</div>
         </div>
         <div class="card anim-item">
+          <div class="card-icon">📤</div>
+          <div class="card-title">Share Card</div>
+          <div class="card-desc">แชร์ดวงให้เพื่อน โดยไม่เปิดเผยข้อมูลส่วนตัว</div>
+          <div class="card-tag tag-green">DAIL-80</div>
+        </div>
+        <div class="card anim-item">
           <div class="card-icon">👤</div>
           <div class="card-title">Profile</div>
           <div class="card-desc">แก้ไขโปรไฟล์, Settings, Logout</div>
@@ -388,10 +394,10 @@ body {
   <div class="slide" data-slide="2">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-27 / Authentication</div>
-      <div class="slide-number">03 / 18</div>
+      <div class="slide-number">03 / 19</div>
     </div>
     <div class="slide-title">Register Flow</div>
-    <div class="slide-subtitle">สมัครสมาชิกด้วย Email + Password หรือ Social Login (Google / Apple / Facebook)</div>
+    <div class="slide-subtitle">สมัครสมาชิกด้วย Email + Password หรือ Social Login (Google / Apple / Facebook / LINE)</div>
     <div class="slide-content">
       <div class="section-label anim-item">REGISTER — EMAIL + PASSWORD (DAIL-28)</div>
       <div class="flow-container anim-item">
@@ -408,11 +414,15 @@ body {
         <div class="decision-branches" style="margin-top: 10px;">
           <div class="branch">
             <div class="branch-label branch-no">ไม่มี (ใหม่)</div>
-            <div class="branch-box">สร้าง User → Login ทันที<br><span style="font-size:10px;color:var(--primary)">password_set = true</span></div>
+            <div class="branch-box">สร้าง User → Login ทันที</div>
           </div>
           <div class="branch">
-            <div class="branch-label branch-yes">มีแล้ว</div>
-            <div class="branch-box">แสดง Error<br>"Email นี้ถูกใช้งานแล้ว"</div>
+            <div class="branch-label branch-yes">มีแล้ว (email user)</div>
+            <div class="branch-box">แสดง Error<br>"อีเมลนี้ถูกใช้งานแล้ว"</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label branch-yes">มีแล้ว (social user)</div>
+            <div class="branch-box">แจ้ง "อีเมลนี้ลงทะเบียนแล้ว<br>กรุณาใช้ Social Login"</div>
           </div>
         </div>
       </div>
@@ -430,9 +440,7 @@ body {
         <div class="flow-row">
           <div class="flow-step highlight-green"><span class="icon">🆕</span> ใหม่ → สร้าง User</div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-red"><span class="icon">🔐</span> Force ตั้ง Password</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">✅</span> Login สำเร็จ</div>
+          <div class="flow-step highlight-green"><span class="icon">✅</span> Login สำเร็จทันที (ไม่ต้องตั้ง Password)</div>
         </div>
       </div>
       <div class="split-row anim-item" style="margin-top: 12px;">
@@ -440,16 +448,17 @@ body {
           <div class="mini-card-title">🎯 Key Rule</div>
           <ul>
             <li>Email เป็น Primary Identity</li>
-            <li>Social ต้องตั้ง Password ด้วย</li>
+            <li>Social ไม่ต้องตั้ง Password</li>
             <li>ไม่มี User ซ้ำจาก email เดียวกัน</li>
+            <li>รองรับ 4 providers: Google / Facebook / Apple / LINE</li>
           </ul>
         </div>
         <div class="mini-card">
           <div class="mini-card-title">📦 Data ที่สร้าง</div>
           <ul>
-            <li>email, password (hashed)</li>
-            <li>auth_methods: [email] หรือ [email, social]</li>
-            <li>password_set: true</li>
+            <li>email, password (hashed) — เฉพาะ Email Register</li>
+            <li>email, social_id — เฉพาะ Social Register</li>
+            <li>user_identities ตาราง (provider: GOOGLE/FB/APPLE/LINE)</li>
           </ul>
         </div>
       </div>
@@ -460,7 +469,7 @@ body {
   <div class="slide" data-slide="3">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-22 / Authentication</div>
-      <div class="slide-number">04 / 18</div>
+      <div class="slide-number">04 / 19</div>
     </div>
     <div class="slide-title">Login Flow</div>
     <div class="slide-subtitle">เข้าสู่ระบบด้วย Email + Password หรือ Social Login</div>
@@ -518,14 +527,15 @@ body {
           <div class="mini-card-title">💡 Precondition</div>
           <ul>
             <li>User มี account ในระบบแล้ว</li>
-            <li>password_set = true</li>
+            <li>Email Login: ต้องสมัครด้วย Email + Password</li>
+            <li>Social Login: ไม่ต้องมี password</li>
           </ul>
         </div>
         <div class="mini-card">
           <div class="mini-card-title">✅ Acceptance Criteria</div>
           <ul>
-            <li>Login ได้ทั้ง Email และ Social user</li>
-            <li>ใช้ password เดียวกันเสมอ</li>
+            <li>Email user: Login ด้วย email + password</li>
+            <li>Social user: Login ด้วย Social Provider (Google/FB/Apple/LINE)</li>
             <li>ไม่สร้าง user ซ้ำจาก email เดียวกัน</li>
           </ul>
         </div>
@@ -537,7 +547,7 @@ body {
   <div class="slide" data-slide="4">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-30 / Authentication</div>
-      <div class="slide-number">05 / 18</div>
+      <div class="slide-number">05 / 19</div>
     </div>
     <div class="slide-title">Forgot / Reset Password</div>
     <div class="slide-subtitle">ตั้งรหัสผ่านใหม่ผ่าน Email Link พร้อม Token Validation</div>
@@ -556,8 +566,12 @@ body {
         <div class="decision-node decision-diamond">Email มีในระบบ?</div>
         <div class="decision-branches" style="margin-top: 10px;">
           <div class="branch">
-            <div class="branch-label branch-yes">มี</div>
+            <div class="branch-label branch-yes">มี (มี password)</div>
             <div class="branch-box">สร้าง Reset Token (15 นาที)<br>ส่ง Email พร้อม Reset Link</div>
+          </div>
+          <div class="branch">
+            <div class="branch-label branch-yes">มี (social-only)</div>
+            <div class="branch-box">"บัญชีนี้ใช้ Social Login"<br>แนะนำ Google/FB/Apple/LINE</div>
           </div>
           <div class="branch">
             <div class="branch-label branch-no">ไม่มี</div>
@@ -582,7 +596,7 @@ body {
           <div class="mini-card-title">⚠️ Edge Cases</div>
           <ul>
             <li>Token หมดอายุ → "ลิงก์หมดอายุ" + CTA reset ใหม่</li>
-            <li>Social-only user (ไม่เคยตั้ง password) → ไม่อนุญาต forgot password</li>
+            <li>Social-only user (ไม่มี password) → แจ้งให้ใช้ Social Login แทน</li>
             <li>Reset link ใช้ได้ครั้งเดียว</li>
           </ul>
         </div>
@@ -602,7 +616,7 @@ body {
   <div class="slide" data-slide="5">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-96 / Legal</div>
-      <div class="slide-number">06 / 18</div>
+      <div class="slide-number">06 / 19</div>
     </div>
     <div class="slide-title">Consent: Terms & Privacy (PDPA)</div>
     <div class="slide-subtitle">ข้อตกลงและเงื่อนไขก่อนใช้งานแอป — Blocking screen ทั้งตอน Register และ Policy Update</div>
@@ -658,7 +672,7 @@ body {
   <div class="slide" data-slide="6">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-31 / Onboarding</div>
-      <div class="slide-number">07 / 18</div>
+      <div class="slide-number">07 / 19</div>
     </div>
     <div class="slide-title">App Onboarding (First-time)</div>
     <div class="slide-subtitle">แนะนำแอปสำหรับผู้ใช้ใหม่ → นำไปสู่ Birth Profile Setup</div>
@@ -718,7 +732,7 @@ body {
   <div class="slide" data-slide="7">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-23 / Profile Setup</div>
-      <div class="slide-number">08 / 18</div>
+      <div class="slide-number">08 / 19</div>
     </div>
     <div class="slide-title">Birth Profile Setup</div>
     <div class="slide-subtitle">สร้างโปรไฟล์ดวงแรก — Step Form เพื่อผูกข้อมูลดวง</div>
@@ -744,7 +758,7 @@ body {
         <div class="card">
           <div class="card-icon">🔮</div>
           <div class="card-title">Step 2: ข้อมูลดวง</div>
-          <div class="card-desc">วันเกิด (Date picker), เวลาเกิด (Optional), ระบบดวง (ไทย/จีน/สากล)</div>
+          <div class="card-desc">วันเกิด (Date picker), เวลาเกิด (Optional), ระบบดวงไทย (มหาหมอดู)</div>
           <div class="card-tag tag-purple">Required + Optional</div>
         </div>
         <div class="card">
@@ -779,7 +793,7 @@ body {
   <div class="slide" data-slide="8">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-32 / Profile</div>
-      <div class="slide-number">09 / 18</div>
+      <div class="slide-number">09 / 19</div>
     </div>
     <div class="slide-title">Multi Profile (Add / Switch)</div>
     <div class="slide-subtitle">เพิ่มและสลับโปรไฟล์ดวงสำหรับคนใกล้ชิด — สูงสุด 5 โปรไฟล์</div>
@@ -835,7 +849,7 @@ body {
   <div class="slide" data-slide="9">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-33 / Core Feature</div>
-      <div class="slide-number">10 / 18</div>
+      <div class="slide-number">10 / 19</div>
     </div>
     <div class="slide-title">หน้า Today — Core Feature</div>
     <div class="slide-subtitle">หน้าหลักของแอป ประกอบด้วย 3 Sections: Daily Summary, Calendar, ทำนายดวง</div>
@@ -889,7 +903,7 @@ body {
   <div class="slide" data-slide="10">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-74 / Fortune</div>
-      <div class="slide-number">11 / 18</div>
+      <div class="slide-number">11 / 19</div>
     </div>
     <div class="slide-title">ทำนายดวงวันนี้ — Shortcut Cards + Engines</div>
     <div class="slide-subtitle">Shortcut cards ในหน้า Today → Redirect ไป Tab ทำนาย พร้อม 3 Engines: เซียมซี, ไพ่ทำนาย, ทำนายฝัน</div>
@@ -951,7 +965,7 @@ body {
   <div class="slide" data-slide="11">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-99 / Calendar</div>
-      <div class="slide-number">12 / 18</div>
+      <div class="slide-number">12 / 19</div>
     </div>
     <div class="slide-title">Calendar — Monthly View</div>
     <div class="slide-subtitle">ปฏิทินรายเดือน แสดงภาพรวมดวงทั้งเดือน เพื่อวางแผนล่วงหน้าว่าวันไหนดวงดี/ควรระวัง</div>
@@ -1016,7 +1030,7 @@ body {
   <div class="slide" data-slide="12">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-100 / Calendar</div>
-      <div class="slide-number">13 / 18</div>
+      <div class="slide-number">13 / 19</div>
     </div>
     <div class="slide-title">Calendar — Day Detail</div>
     <div class="slide-subtitle">รายละเอียดดวงรายวัน พร้อมคำแนะนำที่นำไปใช้ในชีวิตจริงได้</div>
@@ -1081,11 +1095,90 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 13: WEEKLY VIEW (DAIL-101) -->
+  <!-- SLIDE 13: SHARE CARD -->
   <div class="slide" data-slide="13">
     <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-80 / Share</div>
+      <div class="slide-number">14 / 19</div>
+    </div>
+    <div class="slide-title">Share Card — แชร์ดวงให้คนใกล้ชิด</div>
+    <div class="slide-subtitle">แชร์ดวงรายวันเป็นการ์ดสวยๆ ผ่าน LINE, Facebook, IG โดยไม่เปิดเผยข้อมูลส่วนตัวผู้ใช้</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">SHARE FLOW</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">📋</span> ดู Day Detail</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📤</span> กดปุ่ม "แชร์ดวงวันนี้"</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🎨</span> ระบบสร้างการ์ดอัตโนมัติ</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">📲</span> เลือกช่องทางแชร์</div>
+        </div>
+      </div>
+      <div class="cards-grid cols-2 anim-item" style="margin-top: 16px;">
+        <div class="card">
+          <div class="card-icon">🎴</div>
+          <div class="card-title">สิ่งที่แสดงในการ์ด</div>
+          <div class="card-desc">วันที่ + สถานะดวง (ดี/กลาง/ระวัง) + สีมงคลประจำวัน + คำแนะนำสั้นๆ + โลโก้ DailyMu</div>
+          <div class="card-tag tag-blue">Public Info</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <div class="card-title">สิ่งที่ไม่แสดง (ปกป้องความเป็นส่วนตัว)</div>
+          <div class="card-desc">ชื่อผู้ใช้, วันเกิด, เวลาเกิด, ข้อมูลส่วนตัวทั้งหมด — การ์ดปลอดภัยแชร์ได้ทุกที่</div>
+          <div class="card-tag tag-red">PII Protected</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">ช่องทางการแชร์</div>
+      <div class="cards-grid cols-4 anim-item" style="margin-top: 4px;">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">💬</div>
+          <div class="card-title">LINE</div>
+          <div class="card-desc">ส่งรูปการ์ดให้เพื่อน/กลุ่ม</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">📘</div>
+          <div class="card-title">Facebook</div>
+          <div class="card-desc">โพสต์ลง Feed หรือ Story</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">📸</div>
+          <div class="card-title">Instagram</div>
+          <div class="card-desc">แชร์เป็น Story</div>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">📋</div>
+          <div class="card-title">Copy Link</div>
+          <div class="card-desc">คัดลอกลิงก์ไปวางที่อื่น</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">💡 จุดเด่น</div>
+          <ul>
+            <li>การ์ดสวยพร้อมแชร์ ไม่ต้องแคปหน้าจอ</li>
+            <li>ปลอดภัย ไม่เปิดเผยข้อมูลส่วนตัว</li>
+            <li>ช่วยให้เพื่อนรู้จักแอป (Organic Growth)</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Edge Cases</div>
+          <ul>
+            <li>ไม่มีแอปรองรับ → แสดง "Copy Link" แทน</li>
+            <li>แชร์ล้มเหลว → แจ้ง error + ลองใหม่</li>
+            <li>แชร์ได้จาก Day Detail และ Fortune ผลทำนาย</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14: WEEKLY VIEW (DAIL-101) -->
+  <div class="slide" data-slide="14">
+    <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-101 / Calendar</div>
-      <div class="slide-number">14 / 18</div>
+      <div class="slide-number">15 / 19</div>
     </div>
     <div class="slide-title">Weekly View — ดวงรายสัปดาห์</div>
     <div class="slide-subtitle">ภาพรวมดวงรายสัปดาห์ (อาทิตย์–เสาร์) พร้อม AI สรุปและไฮไลท์วันสำคัญ เพื่อวางแผนสัปดาห์</div>
@@ -1148,11 +1241,11 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 14: NOTIFICATION -->
-  <div class="slide" data-slide="14">
+  <!-- SLIDE 15: NOTIFICATION -->
+  <div class="slide" data-slide="15">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-93 / Engagement</div>
-      <div class="slide-number">15 / 18</div>
+      <div class="slide-number">16 / 19</div>
     </div>
     <div class="slide-title">Notification Center</div>
     <div class="slide-subtitle">ระบบแจ้งเตือน 2 Tabs + Push Notification + Settings ที่ปรับได้</div>
@@ -1209,11 +1302,11 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 15: PROFILE -->
-  <div class="slide" data-slide="15">
+  <!-- SLIDE 16: PROFILE -->
+  <div class="slide" data-slide="16">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>DAIL-75 / Profile</div>
-      <div class="slide-number">16 / 18</div>
+      <div class="slide-number">17 / 19</div>
     </div>
     <div class="slide-title">Profile Management</div>
     <div class="slide-subtitle">แก้ไขโปรไฟล์, จัดการโปรไฟล์ดวง, Settings (PDPA), About/Contact, Logout</div>
@@ -1253,9 +1346,19 @@ body {
           <div class="flow-arrow">→</div>
           <div class="flow-step highlight-red"><span class="icon">⌨️</span> พิมพ์ "ลบบัญชี"</div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-red"><span class="icon">💀</span> ลบข้อมูลทั้งหมด</div>
+          <div class="flow-step highlight-amber"><span class="icon">⏳</span> Grace Period 30 วัน</div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Redirect → Login</div>
+          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Logout → Login</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 10px;">
+        <div class="mini-card">
+          <div class="mini-card-title">⏳ Grace Period (30 วัน)</div>
+          <ul>
+            <li>สถานะเปลี่ยนเป็น "รอลบ" ยังไม่ลบทันที</li>
+            <li>Login กลับภายใน 30 วัน → บัญชีกลับมาใช้ได้ปกติ</li>
+            <li>ครบ 30 วัน ไม่กลับมา → ลบข้อมูลถาวร</li>
+          </ul>
         </div>
       </div>
       <div class="section-label anim-item" style="margin-top: 12px;">LOGOUT FLOW (DAIL-79)</div>
@@ -1273,11 +1376,11 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 16: SUMMARY JOURNEY -->
-  <div class="slide" data-slide="16">
+  <!-- SLIDE 17: SUMMARY JOURNEY -->
+  <div class="slide" data-slide="17">
     <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>Summary</div>
-      <div class="slide-number">17 / 18</div>
+      <div class="slide-number">18 / 19</div>
     </div>
     <div class="slide-title">User Journey (End-to-End)</div>
     <div class="slide-subtitle">ภาพรวม journey ตั้งแต่เปิดแอปครั้งแรก จนถึงใช้งานประจำวัน</div>
@@ -1320,7 +1423,7 @@ body {
         <div class="mini-card">
           <div class="mini-card-title">📊 สรุปจำนวน Flows</div>
           <ul>
-            <li>10 Main Flows (Parent Tasks)</li>
+            <li>11 Main Flows (Parent Tasks)</li>
             <li>15 Sub-tasks (รวม Calendar Views)</li>
   
           </ul>
@@ -1329,7 +1432,7 @@ body {
           <div class="mini-card-title">🎯 Key Design Decisions</div>
           <ul>
             <li>Email เป็น Primary Identity</li>
-            <li>Social Login ต้องตั้ง Password ด้วย</li>
+            <li>Social Login ไม่ต้องตั้ง Password</li>
             <li>Consent (PDPA) เป็น Blocking screen</li>
             <li>Multi Profile สูงสุด 5 โปรไฟล์</li>
           </ul>
@@ -1338,8 +1441,8 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 17: THANK YOU -->
-  <div class="slide" data-slide="17">
+  <!-- SLIDE 18: THANK YOU -->
+  <div class="slide" data-slide="18">
     <div class="slide-content end-content">
       <div style="font-size: clamp(60px,8vw,100px);" class="anim-item">🔮</div>
       <div class="end-title anim-item">Thank You</div>
@@ -1361,7 +1464,7 @@ body {
   <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
   <div class="nav-progress" id="navProgress"></div>
   <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
-  <div class="nav-counter" id="navCounter">1 / 18</div>
+  <div class="nav-counter" id="navCounter">1 / 19</div>
   <button class="nav-btn" id="menuBtn" title="Slide Menu">☰</button>
 </div>
 
@@ -1387,6 +1490,7 @@ body {
     'ทำนายดวง Shortcuts',
     'Calendar Monthly View',
     'Day Detail',
+    'Share Card',
     'Weekly View',
     'Notification Center',
     'Profile Management',
