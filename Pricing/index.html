@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DailyMu Calendar — Pricing Strategy Proposal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    :root {
+      --primary: #7B1FA2; --primary-dark: #5C1780; --primary-light: #9C27B0;
+      --secondary: #C2185B; --secondary-dark: #9A1248; --secondary-light: #E91E78;
+      --accent-orange: #E6A855; --accent-red: #D32F2F; --accent-purple: #7B1FA2;
+      --accent-pink: #E91E63; --accent-amber: #F9A825;
+      --bg-dark: #FDF2F7; --bg-card: rgba(123,31,162,0.05); --bg-card-hover: rgba(123,31,162,0.1);
+      --text-primary: #2E1520; --text-secondary: #5E3548; --text-muted: #9A7085;
+      --grid-color: rgba(123,31,162,0.06); --border-color: rgba(123,31,162,0.12);
+      --transition-fast: 200ms; --transition-normal: 350ms; --transition-slow: 500ms;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+      background: var(--bg-dark); color: var(--text-primary);
+      overflow: hidden; width: 100vw; height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+      background-size: 40px 40px; z-index: 0; pointer-events: none;
+    }
+    .grid-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, var(--bg-card-hover) 0%, transparent 60%);
+    }
+
+    .presentation {
+      position: relative; width: 100vw; height: 56.25vw;
+      max-height: 100vh; max-width: 177.78vh;
+      margin: 0 auto; overflow: hidden; z-index: 1;
+    }
+
+    .slide {
+      position: absolute; inset: 0; display: flex; flex-direction: column;
+      padding: clamp(28px, 3.5vw, 56px);
+      opacity: 0; visibility: hidden; transform: translateX(60px);
+      transition: opacity var(--transition-slow) ease, transform var(--transition-slow) cubic-bezier(0.34,1.56,0.64,1), visibility 0s var(--transition-slow);
+    }
+    .slide.active { opacity: 1; visibility: visible; transform: translateX(0); transition-delay: 0s; }
+    .slide.prev { transform: translateX(-60px); }
+
+    .slide-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: clamp(16px, 2vw, 28px); flex-shrink: 0;
+    }
+    .slide-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 20px;
+      font-size: clamp(10px, 1vw, 13px); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.05em;
+      background: var(--bg-card); color: var(--primary); border: 1px solid var(--border-color);
+    }
+    .slide-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
+    .slide-number {
+      font-size: clamp(11px, 1vw, 14px); font-weight: 500;
+      color: var(--text-muted); font-family: 'Inter', monospace;
+    }
+
+    .slide-title {
+      font-size: clamp(22px, 3vw, 48px); font-weight: 800; line-height: 1.15;
+      margin-bottom: clamp(6px, 0.8vw, 12px); letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .slide-subtitle {
+      font-size: clamp(12px, 1.2vw, 18px); color: var(--text-secondary);
+      font-weight: 400; line-height: 1.6; max-width: 700px;
+    }
+    .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; overflow-x: hidden; }
+
+    /* Cover */
+    .cover-content {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; gap: clamp(14px, 1.8vw, 24px);
+    }
+    .cover-title {
+      font-size: clamp(32px, 5vw, 72px); font-weight: 900; letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, var(--secondary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 4s ease infinite; background-size: 200% 200%;
+    }
+    .cover-subtitle {
+      font-size: clamp(13px, 1.6vw, 22px); color: var(--text-secondary);
+      font-weight: 400; max-width: 600px; line-height: 1.6;
+    }
+    .cover-roles {
+      display: flex; gap: clamp(10px, 1.2vw, 20px);
+      margin-top: clamp(6px, 0.8vw, 12px); flex-wrap: wrap; justify-content: center;
+    }
+    .role-chip {
+      padding: clamp(7px, 0.7vw, 10px) clamp(14px, 1.4vw, 24px);
+      border-radius: 50px; font-size: clamp(11px, 1vw, 14px); font-weight: 600;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+      color: var(--text-secondary); transition: all var(--transition-fast) ease;
+    }
+    .role-chip:hover { transform: translateY(-2px) scale(1.05); }
+
+    .end-content {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; gap: 24px;
+    }
+    .end-title {
+      font-size: clamp(36px, 5.5vw, 80px); font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      animation: shimmer 3s ease infinite; background-size: 200% 200%;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: flex; justify-content: center; gap: clamp(16px, 2.5vw, 40px);
+      flex-wrap: wrap; max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+    .stat-item {
+      text-align: center; padding: clamp(14px, 1.8vw, 26px);
+      min-width: clamp(110px, 11vw, 160px);
+      background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border-color);
+    }
+    .stat-number {
+      font-size: clamp(28px, 3.5vw, 52px); font-weight: 900; line-height: 1;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: clamp(4px, 0.4vw, 8px);
+    }
+    .stat-label { font-size: clamp(10px, 1vw, 14px); font-weight: 600; color: var(--text-secondary); }
+    .stat-desc { font-size: clamp(9px, 0.85vw, 12px); color: var(--text-muted); margin-top: 3px; }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid; gap: clamp(10px, 1.2vw, 16px);
+      max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .card {
+      padding: clamp(14px, 1.5vw, 22px); border-radius: 14px;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+      transition: all var(--transition-fast) ease;
+    }
+    .card:hover { transform: translateY(-3px); background: var(--bg-card-hover); }
+    .card-icon { font-size: clamp(20px, 2.2vw, 34px); margin-bottom: clamp(6px, 0.8vw, 10px); }
+    .card-title { font-size: clamp(12px, 1.2vw, 16px); font-weight: 700; margin-bottom: clamp(3px, 0.4vw, 6px); }
+    .card-desc { font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary); line-height: 1.5; }
+    .card-tag {
+      display: inline-block; padding: 2px 8px; border-radius: 12px;
+      font-size: clamp(9px, 0.75vw, 11px); font-weight: 600; margin-top: 6px;
+    }
+    .tag-purple { background: rgba(123,31,162,0.12); color: var(--primary); }
+    .tag-pink { background: rgba(233,30,99,0.12); color: var(--secondary); }
+    .tag-amber { background: rgba(249,168,37,0.12); color: var(--accent-amber); }
+    .tag-green { background: rgba(16,185,129,0.12); color: #059669; }
+    .tag-red { background: rgba(211,47,47,0.12); color: var(--accent-red); }
+
+    /* Pricing Cards */
+    .pricing-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: clamp(10px, 1.2vw, 18px); max-width: 1100px; margin: 0 auto; width: 100%;
+    }
+    .pricing-card {
+      padding: clamp(14px, 1.5vw, 24px); border-radius: 16px;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+      transition: all var(--transition-fast) ease; position: relative; overflow: hidden;
+    }
+    .pricing-card:hover { transform: translateY(-3px); }
+    .pricing-card.featured {
+      border-color: var(--primary); background: rgba(123,31,162,0.08);
+      box-shadow: 0 4px 20px rgba(123,31,162,0.15);
+    }
+    .pricing-card.featured::before {
+      content: 'แนะนำ'; position: absolute; top: 12px; right: -28px;
+      background: var(--primary); color: white; font-size: 10px; font-weight: 700;
+      padding: 3px 32px; transform: rotate(45deg);
+    }
+    .pricing-tier { font-size: clamp(14px, 1.4vw, 20px); font-weight: 800; margin-bottom: 4px; }
+    .pricing-price { font-size: clamp(22px, 2.5vw, 38px); font-weight: 900; color: var(--primary); }
+    .pricing-price small { font-size: 0.45em; font-weight: 500; color: var(--text-muted); }
+    .pricing-annual { font-size: clamp(9px, 0.85vw, 12px); color: var(--accent-amber); font-weight: 600; margin-bottom: 10px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .pricing-features li {
+      font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pricing-features li .check { color: var(--primary); font-weight: 700; }
+    .pricing-features li .x-mark { color: var(--text-muted); }
+    .pricing-features li.coming { opacity: 0.6; font-style: italic; }
+
+    /* Two Column */
+    .two-col {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 28px); max-width: 1200px; margin: 0 auto; width: 100%;
+    }
+    .col-section { display: flex; flex-direction: column; gap: clamp(8px, 1vw, 14px); }
+
+    /* Section Label */
+    .section-label {
+      font-size: clamp(10px, 0.85vw, 12px); font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted); margin-bottom: clamp(6px, 0.8vw, 10px);
+      padding-bottom: 6px; border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Bullet List */
+    .bullet-list { list-style: none; display: flex; flex-direction: column; gap: clamp(6px, 0.6vw, 10px); }
+    .bullet-list li {
+      display: flex; align-items: flex-start; gap: clamp(6px, 0.6vw, 10px);
+      font-size: clamp(10px, 1vw, 14px); color: var(--text-secondary); line-height: 1.5;
+    }
+    .bullet-list li .bullet {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); flex-shrink: 0; margin-top: 7px;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative; padding-left: clamp(24px, 3vw, 38px);
+      max-width: 900px; margin: 0 auto; width: 100%;
+    }
+    .timeline::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; border-radius: 2px;
+      background: linear-gradient(180deg, var(--primary), var(--secondary), var(--accent-amber));
+    }
+    .timeline-item {
+      position: relative; padding: clamp(10px, 1.2vw, 16px) 0;
+      padding-left: clamp(14px, 1.8vw, 24px);
+    }
+    .timeline-item::before {
+      content: ''; position: absolute; left: calc(-1 * clamp(24px, 3vw, 38px) - 1px);
+      top: clamp(14px, 1.8vw, 22px);
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--primary); border: 3px solid var(--bg-dark);
+      box-shadow: 0 0 0 3px var(--bg-card-hover);
+    }
+    .timeline-item:nth-child(2)::before { background: var(--secondary); }
+    .timeline-item:nth-child(3)::before { background: var(--accent-amber); }
+    .timeline-item:nth-child(4)::before { background: var(--accent-pink); }
+    .timeline-date {
+      font-size: clamp(10px, 0.85vw, 12px); font-weight: 700;
+      color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;
+    }
+    .timeline-title { font-size: clamp(12px, 1.2vw, 16px); font-weight: 700; margin-bottom: 3px; }
+    .timeline-desc { font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary); line-height: 1.5; }
+
+    /* Data Table */
+    .data-table {
+      width: 100%; border-collapse: separate; border-spacing: 0;
+      font-size: clamp(10px, 0.9vw, 13px); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .data-table th {
+      background: var(--bg-card-hover); color: var(--text-primary);
+      font-weight: 700; padding: clamp(8px, 0.8vw, 12px) clamp(10px, 1vw, 14px);
+      text-align: left; border-bottom: 1px solid var(--border-color);
+      font-size: clamp(9px, 0.85vw, 12px); text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    .data-table td {
+      padding: clamp(7px, 0.7vw, 10px) clamp(10px, 1vw, 14px);
+      border-bottom: 1px solid var(--border-color); color: var(--text-secondary);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--bg-card); }
+    .data-table .highlight-row td { background: rgba(123,31,162,0.06); font-weight: 600; color: var(--primary); }
+    .data-table .total-row td { background: var(--bg-card-hover); font-weight: 700; color: var(--text-primary); }
+
+    /* Insight Box */
+    .insight-box {
+      margin-top: clamp(10px, 1.2vw, 16px);
+      padding: clamp(10px, 1vw, 16px) clamp(14px, 1.4vw, 20px);
+      border-radius: 10px; border-left: 3px solid var(--accent-amber);
+      background: rgba(249,168,37,0.06);
+      font-size: clamp(10px, 0.95vw, 13px); color: var(--text-secondary); line-height: 1.6;
+    }
+    .insight-box strong { color: var(--text-primary); }
+
+    /* Source */
+    .source-text {
+      font-size: clamp(8px, 0.7vw, 10px); color: var(--text-muted);
+      font-style: italic; margin-top: auto; padding-top: 8px;
+    }
+
+    /* Split Row */
+    .split-row {
+      display: flex; gap: clamp(10px, 1.2vw, 16px);
+      justify-content: center; flex-wrap: wrap;
+    }
+    .mini-card {
+      flex: 1; min-width: 180px; max-width: 320px;
+      padding: clamp(12px, 1.2vw, 18px); border-radius: 12px;
+      border: 1px solid var(--border-color); background: var(--bg-card);
+    }
+    .mini-card-title {
+      font-size: clamp(11px, 1.1vw, 15px); font-weight: 700;
+      margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .mini-card ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+    .mini-card ul li {
+      font-size: clamp(9px, 0.85vw, 12px); color: var(--text-secondary);
+      padding-left: 12px; position: relative;
+    }
+    .mini-card ul li::before {
+      content: '\203A'; position: absolute; left: 0;
+      color: var(--primary); font-weight: 700;
+    }
+
+    /* Agenda */
+    .agenda-list {
+      display: flex; flex-direction: column; gap: clamp(8px, 1vw, 14px);
+      max-width: 700px; margin: 0 auto; width: 100%;
+    }
+    .agenda-item {
+      display: flex; align-items: center; gap: clamp(12px, 1.4vw, 18px);
+      padding: clamp(12px, 1.2vw, 18px) clamp(14px, 1.4vw, 22px);
+      border-radius: 12px; border: 1px solid var(--border-color);
+      background: var(--bg-card); transition: all var(--transition-fast) ease;
+    }
+    .agenda-item:hover { transform: translateX(4px); background: var(--bg-card-hover); }
+    .agenda-num {
+      width: clamp(32px, 3vw, 42px); height: clamp(32px, 3vw, 42px);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: clamp(13px, 1.3vw, 18px); font-weight: 800; flex-shrink: 0; color: white;
+    }
+    .agenda-text { font-size: clamp(12px, 1.2vw, 16px); font-weight: 600; }
+    .agenda-sub { font-size: clamp(9px, 0.85vw, 12px); color: var(--text-secondary); margin-top: 2px; }
+
+    /* Highlight */
+    .hl { font-weight: 700; }
+    .hl-purple { color: var(--primary); }
+    .hl-pink { color: var(--secondary); }
+    .hl-amber { color: var(--accent-amber); }
+    .hl-red { color: var(--accent-red); }
+
+    /* Nav */
+    .nav-bar {
+      position: fixed; bottom: clamp(16px, 2vw, 28px);
+      left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 16px; border-radius: 16px;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08); z-index: 100;
+    }
+    .nav-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      border: 1px solid var(--border-color); background: transparent;
+      color: var(--text-secondary); font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast) ease;
+    }
+    .nav-btn:hover { background: var(--bg-card-hover); color: var(--primary); }
+    .nav-btn:active { transform: scale(0.92); }
+    .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .nav-progress { display: flex; align-items: center; gap: 4px; }
+    .nav-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--text-muted); opacity: 0.3;
+      transition: all var(--transition-fast) ease; cursor: pointer;
+    }
+    .nav-dot.active { background: var(--primary); opacity: 1; width: 22px; border-radius: 4px; }
+    .nav-dot:hover { opacity: 0.7; }
+    .nav-counter {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      font-family: 'Inter', monospace; font-variant-numeric: tabular-nums;
+      min-width: 50px; text-align: center;
+    }
+
+    .page-dropdown {
+      position: fixed; bottom: clamp(72px, 8vw, 96px);
+      left: 50%; transform: translateX(-50%) translateY(10px);
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(16px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+      border: 1px solid var(--border-color); border-radius: 14px;
+      padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto;
+      min-width: 280px; opacity: 0; visibility: hidden;
+      transition: all var(--transition-fast) ease;
+    }
+    .page-dropdown.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+    .page-dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; border-radius: 8px; cursor: pointer;
+      font-size: 13px; color: var(--text-secondary);
+      transition: all var(--transition-fast) ease;
+    }
+    .page-dropdown-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+    .page-dropdown-item.active { background: var(--bg-card-hover); color: var(--primary); font-weight: 600; }
+    .page-dropdown-item .item-num {
+      font-weight: 700; font-family: 'Inter', monospace; font-size: 11px;
+      min-width: 24px; text-align: center; padding: 2px 6px; border-radius: 6px; background: var(--bg-card);
+    }
+
+    .fullscreen-btn {
+      position: fixed; top: 16px; right: 16px; z-index: 100;
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: rgba(255,255,255,0.8); backdrop-filter: blur(8px);
+      color: var(--text-muted); font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast) ease;
+    }
+    .fullscreen-btn:hover { color: var(--primary); }
+
+    /* Detail Modal */
+    .detail-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease;
+      padding: 20px;
+    }
+    .detail-overlay.open { opacity: 1; visibility: visible; }
+    .detail-modal {
+      background: var(--bg-dark); border-radius: 20px; max-width: 560px; width: 100%;
+      max-height: 85vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border: 1px solid var(--border-color); position: relative;
+    }
+    .detail-modal-header {
+      display: flex; align-items: center; gap: 14px; padding: 20px 24px 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .detail-modal-img {
+      width: 60px; height: 60px; border-radius: 14px; object-fit: cover;
+      border: 1px solid var(--border-color); cursor: pointer;
+    }
+    .detail-modal-info { flex: 1; }
+    .detail-modal-name { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+    .detail-modal-dev { font-size: 12px; color: var(--text-muted); }
+    .detail-modal-rating { font-size: 13px; color: var(--accent-amber); font-weight: 600; margin-top: 2px; }
+    .detail-modal-close {
+      position: absolute; top: 14px; right: 14px; width: 32px; height: 32px;
+      border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-card);
+      color: var(--text-muted); font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition-fast) ease;
+    }
+    .detail-modal-close:hover { background: var(--bg-card-hover); color: var(--accent-red); }
+    .detail-modal-body { padding: 18px 24px 24px; }
+    .detail-section { margin-bottom: 16px; }
+    .detail-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 8px; padding-bottom: 4px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .detail-price-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 8px; margin-bottom: 4px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+    }
+    .detail-price-label { font-size: 13px; color: var(--text-secondary); }
+    .detail-price-value { font-size: 14px; font-weight: 700; color: var(--primary); }
+    .detail-note {
+      font-size: 12px; color: var(--text-secondary); line-height: 1.6;
+      padding: 10px 12px; border-radius: 8px; background: var(--bg-card);
+    }
+    .detail-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 10px;
+      font-size: 11px; font-weight: 600; margin-right: 4px;
+    }
+    .detail-badge-sub { background: rgba(123,31,162,0.1); color: var(--primary); }
+    .detail-badge-iap { background: rgba(249,168,37,0.12); color: var(--accent-amber); }
+    .detail-badge-coin { background: rgba(194,24,91,0.1); color: var(--secondary); }
+
+    /* Lightbox */
+    .lightbox-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease; cursor: zoom-out;
+    }
+    .lightbox-overlay.open { opacity: 1; visibility: visible; }
+    .lightbox-overlay img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 12px; }
+
+    @keyframes shimmer { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .slide.active .anim-item { animation: fadeInUp 0.5s ease forwards; opacity: 0; }
+    .slide.active .anim-item:nth-child(1){animation-delay:0.1s}
+    .slide.active .anim-item:nth-child(2){animation-delay:0.2s}
+    .slide.active .anim-item:nth-child(3){animation-delay:0.3s}
+    .slide.active .anim-item:nth-child(4){animation-delay:0.4s}
+    .slide.active .anim-item:nth-child(5){animation-delay:0.5s}
+    .slide.active .anim-item:nth-child(6){animation-delay:0.6s}
+    .slide.active .anim-item:nth-child(7){animation-delay:0.7s}
+    .slide.active .anim-item:nth-child(8){animation-delay:0.8s}
+
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { animation-duration:0.01ms!important; animation-iteration-count:1!important; transition-duration:0.01ms!important; }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
+
+    /* ===== Mobile Responsive ===== */
+    @media (max-width: 768px) {
+      body { overflow-y: auto; overflow-x: hidden; }
+      .presentation { width: 100vw; height: 100vh; height: 100dvh; max-height: none; max-width: none; }
+      .slide {
+        padding: clamp(16px, 4vw, 28px); padding-bottom: clamp(72px, 14vw, 100px);
+        overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
+      }
+      .slide-content { overflow: visible; min-height: 0; }
+      .slide-header { margin-bottom: 10px; }
+      .slide-title { font-size: clamp(20px, 5.5vw, 30px); }
+      .slide-subtitle { font-size: clamp(12px, 3.2vw, 15px); max-width: 100%; }
+      .cover-title { font-size: clamp(26px, 7.5vw, 40px); }
+      .cover-subtitle { font-size: clamp(12px, 3.2vw, 16px); max-width: 100%; }
+      .cover-roles { gap: 8px; }
+      .role-chip { font-size: clamp(10px, 2.6vw, 13px); padding: 5px 12px; }
+      .end-title { font-size: clamp(28px, 9vw, 48px); }
+      .cards-grid.cols-2, .cards-grid.cols-3, .cards-grid.cols-4 { grid-template-columns: 1fr; }
+      .card { padding: 12px; }
+      .pricing-row { grid-template-columns: 1fr; }
+      .pricing-card { padding: 14px; }
+      .two-col { grid-template-columns: 1fr; gap: 14px; }
+      .split-row { flex-direction: column; }
+      .mini-card { min-width: 100%; max-width: 100%; }
+      .stats-row { gap: 10px; }
+      .stat-item { min-width: 42%; padding: 12px 8px; }
+      .stat-number { font-size: clamp(24px, 7vw, 36px); }
+      .timeline { padding-left: 18px; }
+      .timeline-item { padding-left: 12px; }
+      .timeline-item::before { left: -19px; width: 9px; height: 9px; }
+      .data-table { font-size: clamp(9px, 2.5vw, 12px); }
+      .data-table th, .data-table td { padding: 6px 8px; }
+      .agenda-item { padding: 10px 12px; gap: 10px; }
+      .agenda-num { width: 30px; height: 30px; font-size: 13px; }
+      .nav-bar { gap: 6px; padding: 6px 10px; bottom: 10px; border-radius: 12px; }
+      .nav-btn { width: 34px; height: 34px; font-size: 14px; }
+      .nav-progress { display: none; }
+      .nav-counter { font-size: 12px; min-width: 40px; }
+      .page-dropdown { min-width: 240px; bottom: 60px; }
+      .fullscreen-btn { display: none; }
+      .detail-overlay { padding: 10px; }
+      .detail-modal { max-height: 90vh; }
+      .detail-modal-header { padding: 14px 16px 10px; gap: 10px; }
+      .detail-modal-img { width: 48px; height: 48px; }
+      .detail-modal-name { font-size: 15px; }
+      .detail-modal-body { padding: 14px 16px 18px; }
+      .detail-price-row { padding: 6px 10px; }
+      .detail-price-label { font-size: 12px; }
+      .detail-price-value { font-size: 13px; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .cards-grid.cols-4 { grid-template-columns: repeat(2, 1fr); }
+      .pricing-row { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { gap: 14px; }
+      .stat-item { min-width: 28%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="presentation" id="presentation">
+
+  <!-- SLIDE 0: COVER -->
+  <div class="slide active" data-slide="0">
+    <div class="slide-content cover-content">
+      <div class="cover-title anim-item">DailyMu Calendar</div>
+      <div class="cover-subtitle anim-item" style="font-size:clamp(16px,2vw,28px);font-weight:700;color:var(--text-primary);">
+        Pricing Strategy Proposal
+      </div>
+      <div class="cover-subtitle anim-item">
+        แอปดูดวงรายวัน Personalized ผสม Thai Astrology + AI
+      </div>
+      <div class="cover-roles">
+        <div class="role-chip anim-item">เอกสารนำเสนอผู้บริหาร</div>
+        <div class="role-chip anim-item">เมษายน 2569</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: Competitors with Pricing -->
+  <div class="slide" data-slide="1">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Competitive Analysis</div>
+      <div class="slide-number">02</div>
+    </div>
+    <div class="slide-title anim-item">คู่แข่งที่มีราคา &mdash; 9 แอป</div>
+    <div class="slide-subtitle anim-item">จากการสำรวจ 16+ แอป พบว่ามี 9 แอปที่เก็บเงิน &mdash; รวม <span class="hl hl-pink">3 คู่แข่งตรง!</span> (Sesheta, Ai-Ming, Num Eiang)</div>
+    <div class="slide-content">
+      <table class="data-table anim-item" style="font-size:clamp(9px,0.85vw,12px);">
+        <thead>
+          <tr><th>แอป</th><th>รูปแบบ</th><th>ราคา</th><th>จุดเด่น</th></tr>
+        </thead>
+        <tbody>
+          <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Sesheta</strong></td><td>Sub + Ink credit</td><td><span class="hl hl-pink">฿69 / ฿199 / ฿499 /mo</span></td><td><strong>BaZi + Tong Shu + AI &mdash; คู่แข่งตรง!</strong></td></tr>
+          <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Ai-Ming</strong></td><td>Subscription (ปี)</td><td><span class="hl hl-pink">฿2,990/ปี (~฿249/mo)</span></td><td><strong>AI Chat หมอดู + Calendar &mdash; คู่แข่งตรง!</strong></td></tr>
+          <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Num Eiang</strong></td><td>Subscription</td><td><span class="hl hl-pink">฿59/mo &bull; ฿599/yr</span></td><td><strong>ดวงรายวัน + เลขมงคล + ธาตุ &mdash; คู่แข่งตรง!</strong></td></tr>
+          <tr><td><strong>ไพ่ทาโร่ ดูดวงฯ</strong></td><td>Subscription</td><td><span class="hl hl-purple">฿275/เดือน</span></td><td>Tarot Premium + Energy</td></tr>
+          <tr><td><strong>การอ่านไพ่ทาโรต์</strong></td><td>Subscription</td><td><span class="hl hl-purple">~฿420/เดือน</span></td><td>DOSA Apps (ต่างประเทศ)</td></tr>
+          <tr><td><strong>ดวง Live</strong></td><td>เหรียญ (1฿=1 coin)</td><td><span class="hl hl-pink">฿69-399/ครั้ง</span></td><td>Marketplace หมอดู 2,000+</td></tr>
+          <tr><td><strong>Horoworld</strong></td><td>เหรียญ (นาที)</td><td>฿15/นาที</td><td>Marketplace หมอดูจริง 200+</td></tr>
+          <tr><td><strong>ไพ่ทาโรต์ ไพ่ยิปซี</strong></td><td>Subscription</td><td><span class="hl hl-amber">฿35/mo</span></td><td>ลบโฆษณาเท่านั้น</td></tr>
+          <tr><td><strong>ทาโร่แห่งโอจึ</strong></td><td>Subscription</td><td>Weekly/Monthly</td><td>App เกาหลี + AI</td></tr>
+          <tr><td><strong>แมวเหมียว</strong></td><td>IAP ซื้อขาด</td><td><span class="hl hl-amber">฿69-99</span></td><td>ซื้อสำรับไพ่</td></tr>
+        </tbody>
+      </table>
+      <div class="insight-box anim-item">
+        <strong>&#9888; Sesheta = คู่แข่งตรงของ DailyMu</strong> &mdash; ทำ BaZi (ปาจื่อ) + AI advisor เหมือนกัน<br>
+        Sesheta คิด <span class="hl hl-pink">฿69-499/เดือน</span> (Basic→Pro) แต่ <strong>มีแค่ Chinese metaphysics</strong> &mdash; DailyMu มีทั้งโหราศาสตร์ไทย + ปาจื่อ
+      </div>
+      <div class="source-text anim-item">Source: App Store, Google Play, sesheta.app/pricing, screenshot จากแอปจริง — สำรวจ เม.ย. 2569</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: App Gallery with prices -->
+  <div class="slide" data-slide="2">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Competitor Gallery</div>
+      <div class="slide-number">03</div>
+    </div>
+    <div class="slide-title anim-item">หน้าตาแอปคู่แข่งที่มีราคา</div>
+    <div class="slide-content" style="justify-content:flex-start;">
+      <!-- Row 1: คู่แข่งตรง -->
+      <div class="cards-grid cols-3" style="gap:clamp(8px,1vw,14px);align-items:start;">
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;border:2px solid var(--secondary);box-shadow:0 0 12px rgba(194,24,91,0.15);" onclick="openDetail('sesheta')">
+          <img src="img_app_compare/sesheta.jpg" alt="Sesheta - Destiny Soln" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:#fff;pointer-events:none;">
+          <div class="card-title" style="color:var(--secondary);">&#9733; Sesheta (Destiny Soln)</div>
+          <div class="card-desc">BaZi + Tong Shu + AI Advisor</div>
+          <div class="card-tag tag-pink" style="margin-top:4px;">฿69 / ฿199 / ฿499 /mo &bull; คู่แข่งตรง!</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;border:2px solid var(--secondary);box-shadow:0 0 12px rgba(194,24,91,0.15);" onclick="openDetail('aiming')">
+          <img src="img_app_compare/ai_ming.jpg" alt="Ai-Ming" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:#111;pointer-events:none;">
+          <div class="card-title" style="color:var(--secondary);">&#9733; Ai-Ming</div>
+          <div class="card-desc">AI Chat หมอดู + Calendar</div>
+          <div class="card-tag tag-pink" style="margin-top:4px;">฿2,990/ปี (~฿249/mo) &bull; คู่แข่งตรง!</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;border:2px solid var(--secondary);box-shadow:0 0 12px rgba(194,24,91,0.15);" onclick="openDetail('numeiang')">
+          <img src="img_app_compare/num_eiang.jpg" alt="Num Eiang" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:#fff0f0;pointer-events:none;">
+          <div class="card-title" style="color:var(--secondary);">&#9733; Num Eiang (หนุ่มเอี่ยง)</div>
+          <div class="card-desc">ดวงรายวัน + เลขมงคล + ธาตุ</div>
+          <div class="card-tag tag-pink" style="margin-top:4px;">฿59/mo &bull; ฿599/yr &bull; คู่แข่งตรง!</div>
+        </div>
+      </div>
+      <!-- Row 2: Subscription apps -->
+      <div class="cards-grid cols-3" style="gap:clamp(8px,1vw,14px);margin-top:clamp(8px,1vw,14px);align-items:start;">
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('hive5')">
+          <img src="img_app_compare/hive5_tarot.jpg" alt="ไพ่ทาโร่" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ไพ่ทาโร่ ดูดวงฯ</div>
+          <div class="card-desc">Hive 5 Studio &mdash; 4.6&#9733;</div>
+          <div class="card-tag tag-purple" style="margin-top:4px;">฿275/เดือน (Premium Sub)</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('pallop')">
+          <img src="img_app_compare/pallop_tarot.jpg" alt="ดูดวง ไพ่ทาโรต์" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ไพ่ทาโรต์ ไพ่ยิปซี</div>
+          <div class="card-desc">Pallop Srisil &mdash; 4.8&#9733;</div>
+          <div class="card-tag tag-amber" style="margin-top:4px;">฿35/mo &bull; ฿349/yr &bull; ฿1,200 lifetime</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('oji')">
+          <img src="img_app_compare/tarot_of_oji.jpg" alt="ทาโร่แห่งโอจึ" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ทาโร่แห่งโอจึ</div>
+          <div class="card-desc">JEE Innovation (KR) &mdash; 4.8&#9733;</div>
+          <div class="card-tag tag-purple" style="margin-top:4px;">Subscription weekly/monthly</div>
+        </div>
+      </div>
+      <!-- Row 3: IAP / Marketplace -->
+      <div class="cards-grid cols-3" style="gap:clamp(8px,1vw,14px);margin-top:clamp(8px,1vw,14px);align-items:start;">
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('duanglive')">
+          <img src="img_app_compare/duang_live.jpg" alt="ดวง Live" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ดวง Live</div>
+          <div class="card-desc">Fugang Co., Ltd. &mdash; 4.8&#9733; (16K)</div>
+          <div class="card-tag tag-pink" style="margin-top:4px;">1฿=1coin &bull; ฿69-399/ครั้ง</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('horoworld')">
+          <img src="img_app_compare/horoworld.jpg" alt="Horoworld" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">Horoworld &mdash; ดูดวง</div>
+          <div class="card-desc">Samart Digital &mdash; 4.1&#9733;</div>
+          <div class="card-tag tag-pink" style="margin-top:4px;">฿15/นาที &bull; หมอดู 200+ คน</div>
+        </div>
+        <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('meoww')">
+          <img src="img_app_compare/tarot_meoww.jpg" alt="แมวเหมียว" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ไพ่ยิปซีแมวเหมียว</div>
+          <div class="card-desc">Celestial Insights &mdash; 4.7&#9733;</div>
+          <div class="card-tag tag-amber" style="margin-top:4px;">฿69 (22 ใบ) &bull; ฿99 (78 ใบ)</div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:clamp(4px,0.5vw,8px);font-size:clamp(9px,0.85vw,12px);color:var(--text-muted);">
+        &#128197; คลิกที่ card เพื่อดูรายละเอียดราคา &mdash; คลิกที่รูปใน popup เพื่อซูม
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Key Insight from Research -->
+  <div class="slide" data-slide="3">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Key Insight</div>
+      <div class="slide-number">04</div>
+    </div>
+    <div class="slide-title anim-item">สิ่งที่เราพบจากการสำรวจ</div>
+    <div class="slide-content">
+      <div class="cards-grid cols-3">
+        <div class="card anim-item" style="border-left:3px solid var(--accent-amber);">
+          <div class="card-icon">&#128176;</div>
+          <div class="card-title">"ลบโฆษณา" = ฿35/เดือน</div>
+          <div class="card-desc">แอปไทยที่ถูกสุด (Pallop) คิดแค่ค่าลบ ad ไม่มีฟีเจอร์ premium เพิ่ม</div>
+          <div class="card-tag tag-amber">Baseline ต่ำสุด</div>
+        </div>
+        <div class="card anim-item" style="border-left:3px solid var(--secondary);">
+          <div class="card-icon">&#128101;</div>
+          <div class="card-title">หมอดูจริง = ฿69-399/ครั้ง</div>
+          <div class="card-desc">ดวง Live + Horoworld คิดต่อครั้ง/ต่อนาที &mdash; ดูดวง 1 ครั้งแพงกว่า DailyMu ทั้งเดือน</div>
+          <div class="card-tag tag-pink">คู่เทียบหลัก</div>
+        </div>
+        <div class="card anim-item" style="border-left:3px solid var(--primary);">
+          <div class="card-icon">&#129302;</div>
+          <div class="card-title">BaZi + AI = ฿69-499/เดือน</div>
+          <div class="card-desc"><strong>Sesheta (คู่แข่งตรง)</strong> คิด ฿69-499/mo &mdash; แต่มีแค่ Chinese metaphysics DailyMu มีทั้ง 2 ศาสตร์</div>
+          <div class="card-tag tag-purple">คู่แข่งตรง!</div>
+        </div>
+      </div>
+      <div class="insight-box anim-item" style="margin-top:clamp(14px,1.6vw,22px);">
+        <strong>DailyMu อยู่ตรงไหน?</strong> เราเป็น <span class="hl hl-purple">"โหราศาสตร์ไทย + ปาจื่อ + AI"</span> &mdash; ครบ 2 ศาสตร์ในแอปเดียว (Sesheta มีแค่ Chinese)<br>
+        &#x2192; <strong>Pricing range:</strong> Sesheta Basic ฿69 &rarr; Pro ฿499 &mdash; DailyMu ควรอยู่ในช่วง <span class="hl hl-pink">฿99-349/เดือน</span> (Option A: ฿99/฿299, Option B: ฿149/฿349)
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: 2 Pricing Options -->
+  <div class="slide" data-slide="4">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Pricing Options</div>
+      <div class="slide-number">05</div>
+    </div>
+    <div class="slide-title anim-item">2 ทางเลือกราคา</div>
+    <div class="slide-subtitle anim-item">Option A = <strong>"เลือกศาสตร์ โควต้าเยอะ"</strong> vs Option B = <strong>"ครบ 2 ศาสตร์ จำกัดโควต้า"</strong></div>
+    <div class="slide-content" style="justify-content:flex-start;">
+      <!-- Single comparison table -->
+      <style>
+        .opt-table { border-collapse:separate; border-spacing:0; width:100%; max-width:1100px; margin:0 auto; font-size:clamp(10px,1vw,14px); border-radius:12px; overflow:hidden; border:1px solid var(--border-color); }
+        .opt-table th, .opt-table td { padding:clamp(6px,0.7vw,10px) clamp(8px,0.8vw,12px); border-bottom:1px solid var(--border-color); }
+        .opt-table th { background:var(--bg-card); font-weight:700; text-transform:uppercase; font-size:0.85em; letter-spacing:0.5px; }
+        .opt-table .col-a { background:rgba(123,31,162,0.05); }
+        .opt-table .col-b { background:rgba(194,24,91,0.04); }
+        .opt-table .div-a { border-left:3px solid var(--primary); }
+        .opt-table .div-b { border-left:3px solid var(--secondary); }
+        .opt-table .th-a { background:rgba(123,31,162,0.12); color:var(--primary); }
+        .opt-table .th-b { background:rgba(194,24,91,0.10); color:var(--secondary); }
+        .opt-table tbody tr:last-child td { border-bottom:none; }
+        .opt-table .row-price td { border-top:2px solid var(--border-color); font-weight:700; }
+      </style>
+      <table class="opt-table anim-item">
+        <thead>
+          <tr>
+            <th style="width:13%;"></th>
+            <th style="width:11%;text-align:center;">Free<br><span style="font-weight:400;font-size:0.9em;">฿0</span></th>
+            <th class="th-a div-a" style="width:18%;text-align:center;">Option A<br>Plus <strong>฿99</strong>/mo</th>
+            <th class="th-a" style="width:18%;text-align:center;">Option A<br>Premium <strong>฿299</strong>/mo</th>
+            <th class="th-b div-b" style="width:18%;text-align:center;">Option B<br>Plus <strong>฿149</strong>/mo</th>
+            <th class="th-b" style="width:18%;text-align:center;">Option B<br>Premium <strong>฿349</strong>/mo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ศาสตร์</strong></td>
+            <td style="text-align:center;">ไทย (จำกัด)</td>
+            <td class="col-a div-a" style="text-align:center;"><strong style="color:var(--primary);">เลือก 1</strong></td>
+            <td class="col-a" style="text-align:center;"><strong>ทั้ง 2</strong></td>
+            <td class="col-b div-b" style="text-align:center;"><strong style="color:var(--secondary);">ทั้ง 2 &#9733;</strong></td>
+            <td class="col-b" style="text-align:center;"><strong>ทั้ง 2</strong></td>
+          </tr>
+          <tr>
+            <td>โปรไฟล์</td>
+            <td style="text-align:center;">1</td>
+            <td class="col-a div-a" style="text-align:center;">3</td>
+            <td class="col-a" style="text-align:center;">5</td>
+            <td class="col-b div-b" style="text-align:center;">2</td>
+            <td class="col-b" style="text-align:center;">5</td>
+          </tr>
+          <tr>
+            <td>ปฏิทิน</td>
+            <td style="text-align:center;">7 วัน</td>
+            <td class="col-a div-a" style="text-align:center;">30 วัน</td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;">14 วัน</td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>เซียมซี</td>
+            <td style="text-align:center;">1/วัน</td>
+            <td class="col-a div-a" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>ไพ่ทาโรต์</td>
+            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a div-a" style="text-align:center;"><strong>1/วัน</strong></td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;"><strong>2/วัน</strong></td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>ทำนายฝัน</td>
+            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a div-a" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;"><strong>5/วัน</strong></td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>AI สรุปดวง</td>
+            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a div-a" style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>AI Chat</td>
+            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a div-a" style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-b div-b" style="text-align:center;color:var(--text-muted);">&#10007;</td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+          </tr>
+          <tr>
+            <td>แชร์การ์ด</td>
+            <td style="text-align:center;">2/วัน</td>
+            <td class="col-a div-a" style="text-align:center;">3/วัน</td>
+            <td class="col-a" style="text-align:center;">ไม่จำกัด + ธีม</td>
+            <td class="col-b div-b" style="text-align:center;">5/วัน</td>
+            <td class="col-b" style="text-align:center;">ไม่จำกัด + ธีม</td>
+          </tr>
+          <tr>
+            <td>โฆษณา</td>
+            <td style="text-align:center;">มี</td>
+            <td class="col-a div-a" style="text-align:center;color:var(--primary);font-weight:600;">ไม่มี</td>
+            <td class="col-a" style="text-align:center;color:var(--primary);font-weight:600;">ไม่มี</td>
+            <td class="col-b div-b" style="text-align:center;color:var(--secondary);font-weight:600;">ไม่มี</td>
+            <td class="col-b" style="text-align:center;color:var(--secondary);font-weight:600;">ไม่มี</td>
+          </tr>
+          <tr class="row-price">
+            <td><strong>รายปี</strong></td>
+            <td style="text-align:center;">-</td>
+            <td class="col-a div-a" style="text-align:center;"><strong>฿899</strong></td>
+            <td class="col-a" style="text-align:center;"><strong>฿2,790</strong></td>
+            <td class="col-b div-b" style="text-align:center;"><strong>฿1,390</strong></td>
+            <td class="col-b" style="text-align:center;"><strong>฿3,290</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="insight-box anim-item" style="margin-top:clamp(10px,1.2vw,16px);max-width:1100px;margin-left:auto;margin-right:auto;">
+        <strong>Option A</strong> = <span class="hl hl-purple">1 ศาสตร์ โควต้าพอใช้ ราคาเข้าถึงง่าย</span> &mdash; <strong>Option B</strong> = <span class="hl hl-pink">2 ศาสตร์ตั้งแต่ Plus แต่โควต้าน้อยกว่า</span><br>
+        <strong>คำแนะนำ:</strong> เริ่มด้วย Option A &mdash; ราคาแข่งขันได้ เข้าถึงง่าย แล้ว <span class="hl hl-amber">A/B test</span> กับ Option B ใน R1.1
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Detailed Tier Features (Option A) -->
+  <div class="slide" data-slide="5">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Tier Detail — A vs B</div>
+      <div class="slide-number">06</div>
+    </div>
+    <div class="slide-title anim-item">ฟีเจอร์แต่ละ Tier &mdash; Option A vs B</div>
+    <div class="slide-content" style="justify-content:flex-start;">
+      <!-- Option A: เลือกศาสตร์ โควต้าเยอะ -->
+      <div class="section-label anim-item" style="color:var(--primary);border-color:var(--primary);margin-bottom:clamp(6px,0.6vw,10px);font-size:clamp(11px,1.1vw,15px);">Option A: เลือกศาสตร์ โควต้าเยอะ &mdash; ฿99 / ฿299 (แนะนำ)</div>
+      <div class="pricing-row" style="margin-bottom:clamp(12px,1.2vw,18px);">
+        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
+          <div class="pricing-tier">Free</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿0</div>
+          <div class="pricing-annual" style="color:var(--text-muted);">โหราศาสตร์ไทย (จำกัด)</div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li><span class="check">&#10003;</span> 1 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 7 วัน</li>
+            <li><span class="check">&#10003;</span> เซียมซี 1 ครั้ง/วัน</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด 2 ครั้ง/วัน</li>
+            <li><span class="x-mark">&#10007;</span> AI / ไพ่ / ทำนายฝัน</li>
+            <li><span class="x-mark">&#10007;</span> ปาจื่อ</li>
+            <li style="color:var(--text-muted);font-style:italic;">มีโฆษณา</li>
+          </ul>
+        </div>
+        <div class="pricing-card featured anim-item" style="padding:clamp(10px,1vw,16px);">
+          <div class="pricing-tier" style="color:var(--primary);">Plus &#9733;</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿99<small>/เดือน</small></div>
+          <div class="pricing-annual">฿899/ปี &mdash; เลือก 1 ศาสตร์</div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li style="color:var(--primary);font-weight:700;">&#9733; เลือก: ไทย หรือ ปาจื่อ</li>
+            <li><span class="check">&#10003;</span> 3 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 30 วัน</li>
+            <li><span class="check">&#10003;</span> เซียมซี <strong>3 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ <strong>1 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> ทำนายฝัน <strong>3 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด 3 ครั้ง/วัน</li>
+            <li><span class="x-mark">&#10007;</span> AI สรุป / AI Chat</li>
+            <li><span class="x-mark">&#10007;</span> ปาจื่อ (ต้อง Premium)</li>
+            <li style="color:var(--primary);font-weight:600;">ไม่มีโฆษณา</li>
+          </ul>
+        </div>
+        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
+          <div class="pricing-tier" style="color:var(--secondary);">Premium</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">฿299<small style="-webkit-text-fill-color:var(--text-muted);">/เดือน</small></div>
+          <div class="pricing-annual">฿2,790/ปี &mdash; ทั้ง 2 ศาสตร์</div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li style="color:var(--secondary);font-weight:700;">&#9733; โหราศาสตร์ไทย + ปาจื่อ</li>
+            <li><span class="check">&#10003;</span> 5 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI สรุป ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> เซียมซี / ไพ่ / ฝัน ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI Chat ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด + ธีมพิเศษ</li>
+            <li><span class="check">&#10003;</span> รายงานสัปดาห์/เดือน</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Option B: ครบ 2 ศาสตร์ จำกัดโควต้า -->
+      <div class="section-label anim-item" style="color:var(--secondary);border-color:var(--secondary);margin-bottom:clamp(6px,0.6vw,10px);font-size:clamp(11px,1.1vw,15px);">Option B: ครบ 2 ศาสตร์ตั้งแต่ Plus จำกัดโควต้า &mdash; ฿149 / ฿349</div>
+      <div class="pricing-row">
+        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
+          <div class="pricing-tier">Free</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿0</div>
+          <div class="pricing-annual" style="color:var(--text-muted);">โหราศาสตร์ไทย (จำกัด)</div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li><span class="check">&#10003;</span> 1 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 7 วัน</li>
+            <li><span class="check">&#10003;</span> เซียมซี 1 ครั้ง/วัน</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด 2 ครั้ง/วัน</li>
+            <li><span class="x-mark">&#10007;</span> AI / ไพ่ / ทำนายฝัน</li>
+            <li><span class="x-mark">&#10007;</span> ปาจื่อ</li>
+            <li style="color:var(--text-muted);font-style:italic;">มีโฆษณา</li>
+          </ul>
+        </div>
+        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);border:2px solid var(--border-color);">
+          <div class="pricing-tier" style="color:var(--primary);">Plus</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿149<small>/เดือน</small></div>
+          <div class="pricing-annual">฿1,390/ปี &mdash; <strong style="color:var(--secondary);">ครบ 2 ศาสตร์!</strong></div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li style="color:var(--secondary);font-weight:700;">&#9733; ไทย + ปาจื่อ ครบทั้งคู่</li>
+            <li><span class="check">&#10003;</span> 2 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 14 วัน</li>
+            <li><span class="check">&#10003;</span> เซียมซี <strong>3 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ <strong>2 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> ทำนายฝัน <strong>5 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด 5 ครั้ง/วัน</li>
+            <li><span class="x-mark">&#10007;</span> AI สรุป / AI Chat</li>
+            <li style="color:var(--primary);font-weight:600;">ไม่มีโฆษณา</li>
+          </ul>
+        </div>
+        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);border:2px solid var(--border-color);">
+          <div class="pricing-tier" style="color:var(--secondary);">Premium</div>
+          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">฿349<small style="-webkit-text-fill-color:var(--text-muted);">/เดือน</small></div>
+          <div class="pricing-annual">฿3,290/ปี &mdash; ทั้ง 2 ศาสตร์ ไม่จำกัด</div>
+          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+            <li style="color:var(--secondary);font-weight:700;">&#9733; โหราศาสตร์ไทย + ปาจื่อ</li>
+            <li><span class="check">&#10003;</span> 5 โปรไฟล์</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI สรุป ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> เซียมซี / ไพ่ / ฝัน ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI Chat ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด + ธีมพิเศษ</li>
+            <li><span class="check">&#10003;</span> รายงานสัปดาห์/เดือน</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE: Revenue Calculator -->
+  <div class="slide" data-slide="6">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Revenue Calculator</div>
+      <div class="slide-number">07</div>
+    </div>
+    <div class="slide-title anim-item">ลองคำนวณรายได้</div>
+    <div class="slide-subtitle anim-item">กรอกราคาและจำนวน user เพื่อดูประมาณการรายได้ &mdash; <span style="color:var(--accent-amber);">* ยังไม่หักค่า Store fee (Apple 15-30% / Google 15%)</span></div>
+    <div class="slide-content" style="justify-content:center;align-items:center;">
+      <div style="max-width:900px;width:100%;margin:0 auto;">
+        <!-- Input Section -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,28px);margin-bottom:clamp(16px,2vw,24px);">
+          <!-- Plus Tier -->
+          <div class="mini-card anim-item" style="max-width:100%;border:2px solid var(--primary);background:rgba(123,31,162,0.04);padding:clamp(14px,1.5vw,22px);">
+            <div style="font-weight:700;color:var(--primary);font-size:clamp(13px,1.3vw,18px);margin-bottom:12px;">Plus Tier</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <label style="font-size:clamp(10px,0.95vw,13px);color:var(--text-secondary);display:flex;flex-direction:column;gap:4px;">
+                ราคา (บาท/เดือน)
+                <input type="number" id="calcPlusPrice" value="149" min="0" style="padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:clamp(14px,1.4vw,20px);font-weight:700;color:var(--primary);background:var(--bg-dark);width:100%;box-sizing:border-box;">
+              </label>
+              <label style="font-size:clamp(10px,0.95vw,13px);color:var(--text-secondary);display:flex;flex-direction:column;gap:4px;">
+                จำนวน user (คน)
+                <input type="number" id="calcPlusUsers" value="10000" min="0" style="padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:clamp(14px,1.4vw,20px);font-weight:700;color:var(--text-primary);background:var(--bg-dark);width:100%;box-sizing:border-box;">
+              </label>
+            </div>
+          </div>
+          <!-- Premium Tier -->
+          <div class="mini-card anim-item" style="max-width:100%;border:2px solid var(--secondary);background:rgba(194,24,91,0.04);padding:clamp(14px,1.5vw,22px);">
+            <div style="font-weight:700;color:var(--secondary);font-size:clamp(13px,1.3vw,18px);margin-bottom:12px;">Premium Tier</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <label style="font-size:clamp(10px,0.95vw,13px);color:var(--text-secondary);display:flex;flex-direction:column;gap:4px;">
+                ราคา (บาท/เดือน)
+                <input type="number" id="calcPremPrice" value="349" min="0" style="padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:clamp(14px,1.4vw,20px);font-weight:700;color:var(--secondary);background:var(--bg-dark);width:100%;box-sizing:border-box;">
+              </label>
+              <label style="font-size:clamp(10px,0.95vw,13px);color:var(--text-secondary);display:flex;flex-direction:column;gap:4px;">
+                จำนวน user (คน)
+                <input type="number" id="calcPremUsers" value="5000" min="0" style="padding:8px 12px;border:1px solid var(--border-color);border-radius:8px;font-size:clamp(14px,1.4vw,20px);font-weight:700;color:var(--text-primary);background:var(--bg-dark);width:100%;box-sizing:border-box;">
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- Results Section -->
+        <div class="anim-item" style="background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:clamp(16px,1.8vw,26px);overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;font-size:clamp(11px,1.1vw,15px);">
+            <thead>
+              <tr style="border-bottom:2px solid var(--border-color);">
+                <th style="text-align:left;padding:8px 12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;font-size:0.85em;"></th>
+                <th style="text-align:right;padding:8px 12px;font-weight:700;color:var(--primary);">Plus</th>
+                <th style="text-align:right;padding:8px 12px;font-weight:700;color:var(--secondary);">Premium</th>
+                <th style="text-align:right;padding:8px 12px;font-weight:700;background:rgba(123,31,162,0.06);border-radius:0 8px 0 0;">รวม</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid var(--border-color);">
+                <td style="padding:10px 12px;font-weight:600;">รายได้ / เดือน</td>
+                <td id="calcPlusMo" style="text-align:right;padding:10px 12px;font-weight:700;color:var(--primary);font-size:clamp(13px,1.3vw,18px);">฿1,490,000</td>
+                <td id="calcPremMo" style="text-align:right;padding:10px 12px;font-weight:700;color:var(--secondary);font-size:clamp(13px,1.3vw,18px);">฿1,745,000</td>
+                <td id="calcTotalMo" style="text-align:right;padding:10px 12px;font-weight:700;font-size:clamp(14px,1.5vw,20px);background:rgba(123,31,162,0.06);">฿3,235,000</td>
+              </tr>
+              <tr>
+                <td style="padding:10px 12px;font-weight:600;">รายได้ / ปี</td>
+                <td id="calcPlusYr" style="text-align:right;padding:10px 12px;font-weight:700;color:var(--primary);font-size:clamp(13px,1.3vw,18px);">฿17,880,000</td>
+                <td id="calcPremYr" style="text-align:right;padding:10px 12px;font-weight:700;color:var(--secondary);font-size:clamp(13px,1.3vw,18px);">฿20,940,000</td>
+                <td id="calcTotalYr" style="text-align:right;padding:10px 12px;font-weight:700;font-size:clamp(14px,1.5vw,20px);background:rgba(123,31,162,0.06);">฿38,820,000</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="text-align:center;margin-top:clamp(8px,1vw,14px);font-size:clamp(9px,0.85vw,12px);color:var(--accent-amber);">
+          * ตัวเลขข้างต้น<strong>ยังไม่หัก</strong>ค่า Store commission &mdash; Apple 15-30% (Small Business 15%) / Google Play 15% สำหรับ subscription
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE: Legal -->
+  <div class="slide" data-slide="7">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Legal & Registration</div>
+      <div class="slide-number">08</div>
+    </div>
+    <div class="slide-title anim-item">กฎหมายและการจดทะเบียน</div>
+    <div class="slide-content">
+      <div class="split-row" style="align-items:flex-start;">
+        <div class="mini-card anim-item" style="max-width:360px;">
+          <div class="mini-card-title">&#128221; สิ่งที่ต้องทำ</div>
+          <ul>
+            <li>จดทะเบียนบริษัทจำกัด (ทุน ฿100K-500K)</li>
+            <li>จดพาณิชย์อิเล็กทรอนิกส์ (DBD) ภายใน 30 วัน</li>
+            <li>จด VAT เมื่อรายได้เกิน ฿1.8M/ปี</li>
+            <li>Apple Developer ($99/ปี)</li>
+            <li>Google Play Console ($25 ครั้งเดียว)</li>
+          </ul>
+        </div>
+        <div class="mini-card anim-item" style="max-width:360px;">
+          <div class="mini-card-title">&#128176; Subscription ผ่าน App Store</div>
+          <ul>
+            <li>ใช้ระบบ In-App Subscription ของ Apple / Google</li>
+            <li>ไม่ต้องจัดการ payment เอง</li>
+            <li>ไม่ต้องขอใบอนุญาต e-money จาก ธปท.</li>
+            <li>Apple / Google จัดการ refund, billing</li>
+            <li>Auto-renew + cancel ได้ตลอด</li>
+          </ul>
+          <div style="margin-top:8px;font-size:clamp(9px,0.85vw,12px);color:var(--primary);font-weight:600;">
+            &rarr; โมเดลเรียบง่าย ไม่มี virtual currency<br>
+            <span style="color:var(--text-muted);font-weight:400;">ลดความซับซ้อนทางกฎหมายและ operations</span>
+          </div>
+        </div>
+        <div class="mini-card anim-item" style="max-width:360px;">
+          <div class="mini-card-title">&#128274; PDPA Compliance</div>
+          <ul>
+            <li>ขอ consent ก่อนเก็บวันเกิด/เวลาเกิด</li>
+            <li>ไม่ส่ง PII ไปยัง AI engine</li>
+            <li>Grace period 30 วันลบบัญชี</li>
+            <li>DSAR workflow สำหรับขอข้อมูล</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE: Why This Price -->
+  <div class="slide" data-slide="8">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Pricing Rationale</div>
+      <div class="slide-number">09</div>
+    </div>
+    <div class="slide-title anim-item">ทำไมราคานี้? &mdash; อ้างอิงคู่แข่งจริง</div>
+    <div class="slide-content">
+      <div class="two-col">
+        <div class="col-section anim-item">
+          <div class="section-label" style="color:var(--primary);">Plus ฿99/เดือน &mdash; Option A (เลือก 1 ศาสตร์)</div>
+          <ul class="bullet-list">
+            <li><span class="bullet"></span><strong>เท่า Netflix Mobile (฿99)</strong> &mdash; จุดราคาที่คนไทยคุ้นเคยจ่ายอยู่แล้ว</li>
+            <li><span class="bullet"></span><strong>ถูกกว่าดวง Live 1 ครั้ง</strong> &mdash; ดวง Live ฿69-399/ครั้ง &mdash; DailyMu ฿99 ได้ทั้งเดือน</li>
+            <li><span class="bullet"></span><strong>สูงกว่า Sesheta Basic (฿69)</strong> &mdash; แต่ DailyMu มี 2 ศาสตร์ให้เลือก</li>
+            <li><span class="bullet"></span><strong>ถูกกว่า Num Eiang (฿59) เล็กน้อย</strong> &mdash; แต่ DailyMu มีไพ่ทาโรต์ + ทำนายฝัน</li>
+            <li><span class="bullet"></span><strong>สูงกว่า "ลบ ad" (฿35) อย่างชัดเจน</strong> &mdash; สื่อว่าเราให้มากกว่าแค่ลบโฆษณา</li>
+          </ul>
+        </div>
+        <div class="col-section anim-item">
+          <div class="section-label" style="color:var(--secondary);">Premium ฿299/เดือน &mdash; Option A (ทั้ง 2 ศาสตร์)</div>
+          <ul class="bullet-list">
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>฿299 &cong; Ai-Ming (฿249/mo)</strong> &mdash; ราคาใกล้กัน แต่ DailyMu มี 2 ศาสตร์ + ไม่จำกัด</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>฿299 &gt; Hive 5 (฿275) เล็กน้อย</strong> &mdash; แต่ได้ AI + 2 ศาสตร์ ครบกว่า</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>ถูกกว่า Sesheta Pro (฿499) มาก</strong> &mdash; DailyMu ได้ 2 ศาสตร์ + ไม่จำกัด (ไม่มี Ink)</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>AI สรุป + AI Chat = premium exclusive</strong> &mdash; คุยกับ AI หมอดูได้ไม่จำกัด</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>Gap ฿99 &rarr; ฿299 = 3x</strong> &mdash; upgrade path ชัด "จ่ายเพิ่ม ได้ศาสตร์ที่ 2 + AI ครบ"</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE: Decisions -->
+  <div class="slide" data-slide="9">
+    <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span> Action Required</div>
+      <div class="slide-number">10</div>
+    </div>
+    <div class="slide-title anim-item">ต้องการอนุมัติจากผู้บริหาร</div>
+    <div class="slide-content">
+      <div class="agenda-list">
+        <div class="agenda-item anim-item">
+          <div class="agenda-num" style="background:var(--primary);">1</div>
+          <div>
+            <div class="agenda-text">เลือก Option ราคาไหน?</div>
+            <div class="agenda-sub">Option A: ฿99/฿299 (เลือกศาสตร์ โควต้าเยอะ) หรือ Option B: ฿149/฿349 (ครบ 2 ศาสตร์ จำกัดโควต้า)?</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num" style="background:var(--secondary);">2</div>
+          <div>
+            <div class="agenda-text">อนุมัติโครงสร้าง Tier?</div>
+            <div class="agenda-sub">A: Plus เลือก 1 ศาสตร์ โควต้าเยอะ / B: Plus ครบ 2 ศาสตร์ จำกัดโควต้า / Premium ไม่จำกัดทั้งคู่</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num" style="background:var(--accent-amber);">3</div>
+          <div>
+            <div class="agenda-text">อนุมัติ Roadmap?</div>
+            <div class="agenda-sub">ฟรีก่อน (R1.0) &rarr; เปิดขาย (R1.1) &rarr; Coin (R1.1.5) &rarr; Full (R1.2)</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num" style="background:var(--accent-pink);">4</div>
+          <div>
+            <div class="agenda-text">อนุมัติงบจดทะเบียน?</div>
+            <div class="agenda-sub">บริษัทจำกัด + DBD + Developer Accounts</div>
+          </div>
+        </div>
+        <div class="agenda-item anim-item">
+          <div class="agenda-num" style="background:var(--accent-red);">5</div>
+          <div>
+            <div class="agenda-text">AI สรุป + AI Chat เป็น Premium-only?</div>
+            <div class="agenda-sub">ทั้ง 2 Option &mdash; AI เป็น Premium exclusive หรือเปิดให้ซื้อด้วย MuCoin?</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight-box anim-item" style="margin-top:clamp(12px,1.4vw,20px);border-left-color:var(--primary);">
+        <strong>Next Steps ถ้าอนุมัติ:</strong> จดทะเบียนบริษัท &rarr; Setup Developer Accounts &rarr; Implement Feature Flags (R1.0) &rarr; A/B test pricing (R1.1) &rarr; พัฒนาปาจื่อ engine (R1.2)
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE: Thank You -->
+  <div class="slide" data-slide="10">
+    <div class="slide-content end-content">
+      <div class="end-title anim-item">Thank You</div>
+      <div class="slide-subtitle anim-item" style="max-width:500px;text-align:center;">
+        DailyMu Calendar &mdash; Pricing Strategy Proposal<br>
+        <span style="color:var(--text-muted);font-size:clamp(11px,1vw,14px);">พร้อมรับฟังความคิดเห็นและข้อเสนอแนะ</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="detail-overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-modal" id="detailModal"></div>
+</div>
+
+<div class="lightbox-overlay" id="lightbox" onclick="this.classList.remove('open')">
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen (F)">&#x26F6;</button>
+<div class="page-dropdown" id="pageDropdown"></div>
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="homeBtn" title="Home (H)" style="font-size:18px;">&#x2302;</button>
+  <button class="nav-btn" id="prevBtn" title="Previous">&#x2039;</button>
+  <div class="nav-progress" id="navProgress"></div>
+  <button class="nav-btn" id="nextBtn" title="Next">&#x203A;</button>
+  <div class="nav-counter" id="navCounter">1 / 11</div>
+  <button class="nav-btn" id="menuBtn" title="Slide Menu">&#x2630;</button>
+</div>
+
+<script>
+var appDetails = {
+  sesheta: {
+    name: 'Sesheta \u2014 Destiny Soln (BaZi + AI)',
+    dev: 'Sesheta / sesheta.app',
+    rating: '\u2605 คู่แข่งตรง!',
+    img: 'img_app_compare/sesheta.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription + Ink Credit',
+    prices: [
+      ['Basic', '\u0E3F69/เดือน (50 Ink)'],
+      ['Plus', '\u0E3F199/เดือน (300 Ink) \u2014 โปร \u0E3F99 เดือนแรก'],
+      ['Pro', '\u0E3F499/เดือน (1,500 Ink) \u2014 โปร \u0E3F249 เดือนแรก'],
+      ['Pro รายปี', '\u0E3F2,988/ปี (เฉลี่ย \u0E3F249/เดือน)']
+    ],
+    features: '<strong>ทุก Tier ได้:</strong> BaZi 4 Pillars วิเคราะห์ชีวิต, Tong Shu ปฏิทินจีนรายวัน (ฝาก-ห้าม), Qi Men Dun Jia, AI Advisor ถาม-ตอบเรื่องดวง (ใช้ Ink credit)<br><br><strong>Plus เพิ่ม:</strong> Early access ฟีเจอร์ใหม่, Ink เดือนละ 300 + ฟรี 25/วัน<br><strong>Pro เพิ่ม:</strong> Premium AI "Deep Oracle" (โมเดล AI ขั้นสูง), Ink ไม่จำกัด (1,500/เดือน + 25/วัน)<br><br><strong>ระบบ Ink (Credit):</strong> ใช้ Ink เป็นเครดิตถาม AI ทุกครั้ง &mdash; Basic 50 Ink/เดือน + ฟรี 5/วัน (cap 150/mo), Plus 300 + 25/วัน, Pro 1,500 + 25/วัน &mdash; หมดแล้วต้อง Top-up ซื้อเพิ่ม',
+    note: '<strong>คู่แข่งตรงของ DailyMu!</strong> &mdash; ทำ BaZi + AI advisor เหมือนกัน แต่มีแค่ Chinese metaphysics อย่างเดียว &mdash; DailyMu มีทั้งโหราศาสตร์ไทย + ปาจื่อ<br><em>(Source: sesheta.app/pricing \u2014 เม.ย. 2569)</em>'
+  },
+  aiming: {
+    name: 'Ai-Ming \u2014 AI หมอดู + Calendar',
+    dev: 'Master Ravi Aunyakan / fengshuix.com',
+    rating: '\u2605 คู่แข่งตรง!',
+    img: 'img_app_compare/ai_ming.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription (รายปีเท่านั้น)',
+    prices: [
+      ['รายปี', '\u0E3F2,990/ปี (~\u0E3F249/เดือน หรือ ~\u0E3F8/วัน)']
+    ],
+    features: '<strong>ไม่มีแพลนฟรี</strong> &mdash; ต้องจ่ายเท่านั้น<br><br><strong>สิ่งที่ได้ (\u0E3F2,990/ปี):</strong> AI Chat หมอดู (ถาม-ตอบเรื่องดวงกับ AI), ปฏิทินฮวงจุ้ย/ฤกษ์มงคลรายวัน, วิเคราะห์ดวงชะตาส่วนตัว, คำแนะนำรายวัน',
+    note: '<strong>คู่แข่งตรงของ DailyMu!</strong> &mdash; ทำ AI หมอดู + Calendar เหมือนกัน ราคาสูงกว่า (~\u0E3F249/เดือน) และไม่มีแพลนฟรีให้ทดลอง<br>โดย Master Ravi Aunyakan (fengshuix.com)<br><em>(Source: screenshot จริง เม.ย. 2569)</em>'
+  },
+  numeiang: {
+    name: 'Num Eiang (หนุ่มเอี่ยง)',
+    dev: 'Num Eiang',
+    rating: '\u2605 คู่แข่งตรง!',
+    img: 'img_app_compare/num_eiang.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription (Free Trial 7 วัน)',
+    prices: [
+      ['รายเดือน', '\u0E3F59/เดือน (ทดลองฟรี 7 วัน)'],
+      ['รายปี (ถูกกว่า 15%)', '\u0E3F599/ปี (เฉลี่ย \u0E3F50/เดือน)']
+    ],
+    features: '<strong>ฟรี (ทดลอง 7 วัน):</strong> ใช้ฟีเจอร์ทั้งหมดได้ครบ 7 วัน จากนั้น auto-renew<br><br><strong>เสียเงิน (\u0E3F59/mo):</strong> ดูข้อมูลดวงประจำวันล่วงหน้าได้ 30 วัน, รู้ดวงรายวันเฉพาะตัวคุณ (personalized), อ่านดวงรายเดือนตามวันเกิด, ค้นหาเลขมงคลประจำตัว, เช็กวันมงคล/กาลกิณี, สำรวจดวงชะตาและธาตุประจำตัว',
+    note: '<strong>คู่แข่งตรงของ DailyMu!</strong> &mdash; ทำดวงรายวัน personalized + ปฏิทินมงคล เหมือนกัน ราคาถูก (\u0E3F59/เดือน) มี free trial 7 วัน<br><em>(Source: screenshot แอปจริง เม.ย. 2569)</em>'
+  },
+  pallop: {
+    name: 'ดูดวง ไพ่ทาโรต์ ไพ่ยิปซี',
+    dev: 'Pallop Srisil',
+    rating: '4.8\u2605 (1,636 ratings)',
+    img: 'img_app_compare/pallop_tarot.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription (ลบโฆษณาเท่านั้น)',
+    prices: [
+      ['รายเดือน', '\u0E3F35/เดือน'],
+      ['รายปี', '\u0E3F349/ปี (~\u0E3F29/เดือน)'],
+      ['ตลอดชีพ', '\u0E3F1,200 ครั้งเดียว']
+    ],
+    features: '<strong>ฟรี (มีโฆษณา):</strong> ไพ่ Rider-Waite ครบ 78 ใบ, ดูดวงรายวัน (เปิด 1 ใบ), รายสัปดาห์ (10 ใบ), บันทึกผลทำนาย, Dark mode, Apple Watch &mdash; <em>ใช้ฟีเจอร์ทั้งหมดได้ฟรี!</em><br><br><strong>เสียเงิน (\u0E3F35+/mo):</strong> ลบโฆษณาอย่างเดียว &mdash; <em>ไม่มีฟีเจอร์ premium เพิ่มเติม</em> ไม่มี paywall กั้นฟีเจอร์ใดๆ',
+    note: 'แอปนี้ใช้ฟรีได้ครบทุกฟีเจอร์ &mdash; Subscription แค่ลบโฆษณาอย่างเดียว ไม่มี paywall กั้นฟีเจอร์ใดๆ<br><em>(ข้อมูลจาก App Store + screenshot แอปจริง เม.ย. 2569)</em>'
+  },
+  horoworld: {
+    name: 'Horoworld \u2014 ดูดวง',
+    dev: 'Samart Digital Media Co., Ltd.',
+    rating: '4.1\u2605',
+    img: 'img_app_compare/horoworld.jpg',
+    type: 'coin',
+    typeLabel: 'Pay-per-use (เหรียญ/นาที)',
+    prices: [
+      ['ดูดวงสดทางโทรศัพท์', '\u0E3F15/นาที'],
+      ['เติมเงินขั้นต่ำ', '\u0E3F100 (+ bonus \u0E3F50 ใช้ code MYHORA)'],
+      ['แพ็คเกจฮวงจุ้ย A (คอนโด)', '\u0E3F4,999 (30 นาที)'],
+      ['แพ็คเกจฮวงจุ้ย B (บ้าน)', '\u0E3F6,999 (60 นาที)'],
+      ['ดูดวงฟรีรายวัน', 'ฟรี']
+    ],
+    features: '<strong>ฟรี:</strong> ดูดวงรายวัน (โหราศาสตร์ไทย), เลือกหมอดูเรียกดูข้อมูล+รีวิว<br><br><strong>เสียเงิน (\u0E3F15/นาที):</strong> ดูดวงสด 24 ชม. กับหมอดูจริง 200+ คน (รับรองสมาคมโหราศาสตร์), เลือกศาสตร์: โหราศาสตร์ไทย / ไพ่ยิปซี / ไพ่ออราเคิล / ฮวงจุ้ย / โหราศาสตร์จีน, วิดีโอคอล + เสียง, ประมูลดูดวงกับหมอดูดัง',
+    note: 'เป็น Marketplace เชื่อมต่อกับหมอดูจริง &mdash; ราคาขึ้นกับหมอดูแต่ละท่าน ค่าเฉลี่ยต่อครั้ง ~\u0E3F150-500+<br><em>(ข้อมูลจาก App Store + horoworld.com เม.ย. 2569)</em>'
+  },
+  hive5: {
+    name: 'ไพ่ทาโร่ ดูดวงและโหราศาสตร์',
+    dev: 'Hive 5 Studio / Touchzing Media',
+    rating: '4.6\u2605 (Google Play) / 4.7\u2605 (iOS, 476 ratings)',
+    img: 'img_app_compare/hive5_tarot.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription (Monthly)',
+    prices: [
+      ['Tarot Premium (รายเดือน)', '\u0E3F275/เดือน'],
+      ['ฟรี (มีโฆษณา + จำกัดฟีเจอร์)', '\u0E3F0']
+    ],
+    features: '<strong>ฟรี (มีโฆษณา):</strong> ไพ่ 78 ใบ, Celtic Cross spread, อ่านไพ่ 1/3/4/5 ใบ, ดูดวงรายวัน, Party mode (เล่นกับเพื่อน), อ่านกาแฟ + ลูกแก้ว<br><br><strong>Premium \u0E3F275/เดือน:</strong> Daily Free Energy +10 ต่อวัน (ถามไพ่ได้มากขึ้น), Tarot Lessons บทเรียนอ่านไพ่, Card Meanings ครบทุกใบ, Full Daily Horoscope (ดูดวงรายวันละเอียด), Save Reading (บันทึกผล), ลบโฆษณา',
+    note: 'Subscription \u0E3F275/เดือน &mdash; auto-renew, ยกเลิกได้ตลอด ไม่มี trial period<br>ฟรีใช้ได้ค่อนข้างครบแต่จำกัดจำนวนครั้ง (Energy system) + มีโฆษณา<br><em>(ข้อมูลจาก screenshot แอปจริง เม.ย. 2569)</em>'
+  },
+  oji: {
+    name: 'ทาโร่แห่งโอจึ (Tarot of Oz)',
+    dev: '(주)제이이이노베이션 (JEE Innovation, Korea)',
+    rating: '4.8\u2605',
+    img: 'img_app_compare/tarot_of_oji.jpg',
+    type: 'sub',
+    typeLabel: 'Subscription',
+    prices: [
+      ['รายสัปดาห์', 'ราคาแสดงในแอป'],
+      ['รายเดือน', 'ราคาแสดงในแอป'],
+      ['ฟรี (พื้นฐาน)', 'ใช้ได้บางส่วน']
+    ],
+    features: '<strong>ฟรี:</strong> ใช้ได้บางส่วน เปิดไพ่รายวัน ดูคำทำนายพื้นฐาน<br><br><strong>เสียเงิน (Sub weekly/monthly):</strong> ไพ่ยิปซีสไตล์เกาหลี ดีไซน์สวย, AI-based interpretation วิเคราะห์ละเอียด, ปลดล็อคสำรับไพ่ + ฟีเจอร์ premium, UI/UX ระดับสูง',
+    note: 'App จากเกาหลี &mdash; subscription auto-renew weekly หรือ monthly (ราคาจริงแสดงเฉพาะในแอป ไม่เปิดเผยบนเว็บ) ยกเลิกได้ตลอด<br><em>(Source: Google Play, oji.ai เม.ย. 2569)</em>'
+  },
+  meoww: {
+    name: 'ดูดวงไพ่ยิปซีแมวเหมียว (Tarot Meoww)',
+    dev: 'Celestial Insights',
+    rating: '4.7\u2605',
+    img: 'img_app_compare/tarot_meoww.jpg',
+    type: 'iap',
+    typeLabel: 'In-App Purchase (ซื้อขาดสำรับไพ่)',
+    prices: [
+      ['มิกิ แมวหัวร้อน (Major 22 ใบ)', '\u0E3F69'],
+      ['มิกิ แมวหัวร้อน Premium (ครบ 78 ใบ)', '\u0E3F99'],
+      ['สำรับฟรี (พื้นฐาน)', 'ฟรี (มีโฆษณา)']
+    ],
+    features: '<strong>ฟรี (มีโฆษณา):</strong> สำรับพื้นฐาน, เปิดไพ่ดูดวงรายวัน, คำทำนายพื้นฐาน<br><br><strong>\u0E3F69 (Major 22 ใบ):</strong> สำรับ "มิกิ แมวหัวร้อน" Major Arcana 22 ใบ + ปิดโฆษณาทั้งหมด + คำทำนายแบบไม่ถนอมน้ำใจจากมิกิ<br><br><strong>\u0E3F99 (ครบ 78 ใบ):</strong> สำรับ Premium ครบ Major 22 + Minor 56 ใบ + ปิดโฆษณา + คำทำนายลึกซึ้งกว่า',
+    note: 'ซื้อขาดครั้งเดียว (one-time purchase) &mdash; จ่ายแล้วได้สำรับไพ่ถาวร + ปิดโฆษณาทั้งหมด ไม่มีค่ารายเดือน มีหลายสำรับให้เลือกซื้อ<br><em>(ข้อมูลจาก screenshot แอปจริง เม.ย. 2569)</em>'
+  },
+  duanglive: {
+    name: 'ดวง Live \u2014 ดูดวง สด ผ่านแอพ',
+    dev: 'Fugang Co., Ltd.',
+    rating: '4.9\u2605 (16,714 ratings) \u2014 Rating สูงสุด!',
+    img: 'img_app_compare/duang_live.jpg',
+    type: 'coin',
+    typeLabel: 'Pay-per-use (เหรียญ)',
+    prices: [
+      ['อัตราแลกเหรียญ', '1 บาท = 1 เหรียญ'],
+      ['ค่าดูดวง (ขึ้นกับหมอดู)', '\u0E3F69 - \u0E3F399+ /ครั้ง'],
+      ['หมอดูฟรี', 'มีให้เลือก'],
+      ['วิดีโอคอลส่วนตัว', 'ราคาตามหมอดู'],
+      ['โทรศัพท์ส่วนตัว', 'ราคาตามหมอดู'],
+      ['แชทถาม (ข้อความ/เสียง/รูป)', 'ราคาตามหมอดู']
+    ],
+    features: '<strong>ฟรี:</strong> ดูดวงรายวัน, เลือกดูโปรไฟล์หมอดู 2,000+ คน, ดูดวงฟรีจากหมอดูบางท่าน<br><br><strong>เสียเงิน (\u0E3F69-399/ครั้ง):</strong> ดูดวงสด 24 ชม. กับหมอดูจริง, เลือกช่องทาง: วิดีโอคอล / โทรศัพท์ / แชท (ข้อความ+เสียง+รูป), หลากหลายศาสตร์: โหราศาสตร์ไทย / ไพ่ยิปซี / จีน / เลขนำโชค / ฤกษ์มงคล',
+    note: 'Marketplace ที่ใหญ่ที่สุด &mdash; เหรียญใช้จ่ายตามจริง ไม่มี subscription ผูกมัด คืนเหรียญได้ถ้าหมอดูตอบช้าเกินกำหนด<br><em>(ข้อมูลจาก App Store + duanglive.com เม.ย. 2569)</em>'
+  }
+};
+
+function openDetail(key) {
+  var d = appDetails[key];
+  if (!d) return;
+  var badge = d.type === 'sub' ? 'detail-badge-sub' : d.type === 'coin' ? 'detail-badge-coin' : 'detail-badge-iap';
+  var h = '<button class="detail-modal-close" onclick="closeDetail()">&times;</button>';
+  h += '<div class="detail-modal-header">';
+  h += '<img class="detail-modal-img" src="' + d.img + '" alt="' + d.name + '" onclick="event.stopPropagation();openLightbox(this.src)">';
+  h += '<div class="detail-modal-info"><div class="detail-modal-name">' + d.name + '</div>';
+  h += '<div class="detail-modal-dev">' + d.dev + '</div>';
+  h += '<div class="detail-modal-rating">' + d.rating + '</div></div></div>';
+  h += '<div class="detail-modal-body">';
+  h += '<div class="detail-section"><div class="detail-section-title"><span class="detail-badge ' + badge + '">' + d.typeLabel + '</span></div>';
+  for (var i = 0; i < d.prices.length; i++) {
+    h += '<div class="detail-price-row"><span class="detail-price-label">' + d.prices[i][0] + '</span><span class="detail-price-value">' + d.prices[i][1] + '</span></div>';
+  }
+  h += '</div>';
+  h += '<div class="detail-section"><div class="detail-section-title">Features</div>';
+  h += '<div class="detail-note">' + d.features + '</div></div>';
+  h += '<div class="detail-section"><div class="detail-section-title">Note</div>';
+  h += '<div class="detail-note" style="border-left:3px solid var(--accent-amber);background:rgba(249,168,37,0.06);">' + d.note + '</div></div>';
+  h += '</div>';
+  document.getElementById('detailModal').innerHTML = h;
+  document.getElementById('detailOverlay').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+}
+
+function openLightbox(src) {
+  var lb = document.getElementById('lightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('open');
+}
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0, animTimer = null, dropdownOpen = false;
+
+  const slideTitles = [
+    'Cover',
+    'คู่แข่งที่มีราคา — 9 แอป',
+    'หน้าตาแอปคู่แข่งที่มีราคา',
+    'สิ่งที่เราพบจากการสำรวจ',
+    '2 ทางเลือกราคา',
+    'ฟีเจอร์แต่ละ Tier — A vs B',
+    'ลองคำนวณรายได้',
+    'กฎหมายและการจดทะเบียน',
+    'ทำไมราคานี้? — อ้างอิงคู่แข่งจริง',
+    'ต้องการอนุมัติ',
+    'Thank You',
+  ];
+
+  const navProgress = document.getElementById('navProgress');
+  if (totalSlides <= 15) {
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+      dot.addEventListener('click', () => goToSlide(i));
+      navProgress.appendChild(dot);
+    }
+  }
+
+  const dropdown = document.getElementById('pageDropdown');
+  slideTitles.forEach((title, i) => {
+    const item = document.createElement('div');
+    item.className = 'page-dropdown-item' + (i === 0 ? ' active' : '');
+    item.innerHTML = '<span class="item-num">' + String(i).padStart(2, '0') + '</span> ' + title;
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown(false);
+      requestAnimationFrame(() => goToSlide(i));
+    });
+    dropdown.appendChild(item);
+  });
+
+  function goToSlide(index) {
+    if (index === currentSlide || index < 0 || index >= totalSlides) return;
+    if (animTimer) {
+      clearTimeout(animTimer);
+      slides.forEach(s => { s.classList.remove('active', 'prev'); s.style.transform = ''; });
+    }
+    const prev = slides[currentSlide], next = slides[index];
+    const goingForward = index > currentSlide;
+    prev.classList.remove('active');
+    if (goingForward) prev.classList.add('prev');
+    next.style.transition = 'none';
+    next.style.transform = goingForward ? 'translateX(60px)' : 'translateX(-60px)';
+    next.style.opacity = '0';
+    next.offsetHeight;
+    next.style.transition = next.style.transform = next.style.opacity = '';
+    next.classList.add('active');
+    currentSlide = index;
+    updateUI();
+    animTimer = setTimeout(() => {
+      prev.classList.remove('prev'); prev.style.transform = ''; animTimer = null;
+    }, 500);
+  }
+
+  function updateUI() {
+    document.getElementById('navCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    navProgress.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    document.getElementById('prevBtn').disabled = currentSlide === 0;
+    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+    document.getElementById('homeBtn').disabled = currentSlide === 0;
+    dropdown.querySelectorAll('.page-dropdown-item').forEach((item, i) => item.classList.toggle('active', i === currentSlide));
+  }
+
+  function toggleDropdown(state) {
+    dropdownOpen = state !== undefined ? state : !dropdownOpen;
+    dropdown.classList.toggle('open', dropdownOpen);
+  }
+
+  document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
+  document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
+  document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
+  document.getElementById('menuBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
+  document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
+    else if (e.key === 'Home' || e.key === 'h' || e.key === 'H') { e.preventDefault(); goToSlide(0); }
+    else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+    else if (e.key === 'f' || e.key === 'F') { document.getElementById('fullscreenBtn').click(); }
+    else if (e.key === 'Escape') { toggleDropdown(false); closeDetail(); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false);
+  });
+
+  updateUI();
+
+  // Revenue Calculator
+  function calcRevenue() {
+    var pp = parseFloat(document.getElementById('calcPlusPrice').value) || 0;
+    var pu = parseFloat(document.getElementById('calcPlusUsers').value) || 0;
+    var rp = parseFloat(document.getElementById('calcPremPrice').value) || 0;
+    var ru = parseFloat(document.getElementById('calcPremUsers').value) || 0;
+    var plusMo = pp * pu;
+    var premMo = rp * ru;
+    var totalMo = plusMo + premMo;
+    var fmt = function(n) { return '\u0E3F' + n.toLocaleString('en-US'); };
+    document.getElementById('calcPlusMo').textContent = fmt(plusMo);
+    document.getElementById('calcPremMo').textContent = fmt(premMo);
+    document.getElementById('calcTotalMo').textContent = fmt(totalMo);
+    document.getElementById('calcPlusYr').textContent = fmt(plusMo * 12);
+    document.getElementById('calcPremYr').textContent = fmt(premMo * 12);
+    document.getElementById('calcTotalYr').textContent = fmt(totalMo * 12);
+  }
+  ['calcPlusPrice','calcPlusUsers','calcPremPrice','calcPremUsers'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', calcRevenue);
+  });
+})();
+</script>
+</body>
+</html>
