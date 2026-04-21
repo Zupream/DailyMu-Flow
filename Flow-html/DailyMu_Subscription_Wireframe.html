@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyMu — Subscription Wireframe Prototype</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap');
+
+:root {
+  --primary: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-light: #A78BFA;
+  --primary-bg: #F5F3FF;
+  --premium: #D4AF37;
+  --premium-bg: #FFFBEB;
+  --plus: #6366F1;
+  --plus-bg: #EEF2FF;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --bg: #F3F4F6;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #1F2937;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --phone-w: 375px;
+  --phone-h: 812px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'IBM Plex Sans Thai', -apple-system, sans-serif;
+  background: #1a1a2e;
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top Bar */
+.top-bar {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.top-bar h1 {
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+.top-bar-sub {
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+}
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+}
+.breadcrumb .current {
+  color: var(--primary-light);
+  font-weight: 500;
+}
+.breadcrumb .sep { opacity: 0.3; }
+
+/* Layout */
+.main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 260px;
+  background: rgba(255,255,255,0.03);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  padding: 16px 0;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.sidebar-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+.sidebar-title {
+  color: rgba(255,255,255,0.3);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 12px 6px;
+}
+.screen-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 12px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s;
+  text-align: left;
+}
+.screen-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: white;
+}
+.screen-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+}
+.screen-btn .icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.screen-btn.active .icon { background: rgba(255,255,255,0.15); }
+.screen-btn .icon { background: rgba(255,255,255,0.06); }
+.screen-label { line-height: 1.3; }
+.screen-label small { display: block; font-size: 10px; opacity: 0.6; margin-top: 1px; }
+
+/* Phone Area */
+.phone-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow: auto;
+}
+
+/* Phone Frame */
+.phone-frame {
+  width: var(--phone-w);
+  height: var(--phone-h);
+  background: var(--card);
+  border-radius: 44px;
+  box-shadow: 0 0 0 3px #333, 0 0 0 6px #1a1a1a, 0 25px 50px rgba(0,0,0,0.5);
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Status Bar */
+.status-bar {
+  height: 54px;
+  background: white;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  position: relative;
+}
+.status-bar::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 28px;
+  background: #1a1a1a;
+  border-radius: 20px;
+}
+.status-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* App Nav Bar */
+.app-nav {
+  height: 44px;
+  background: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid #F3F4F6;
+}
+.app-nav-back {
+  font-size: 20px;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 4px 8px 4px 0;
+  background: none;
+  border: none;
+  font-family: inherit;
+}
+.app-nav-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  margin-right: 24px;
+}
+
+/* Browser Bar */
+.browser-bar {
+  height: 44px;
+  background: #F9FAFB;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.browser-url {
+  flex: 1;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text-sec);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.browser-url .lock { color: var(--success); font-size: 10px; }
+.browser-close {
+  font-size: 18px;
+  color: var(--primary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+/* Screen Content */
+.screen-content {
+  height: calc(var(--phone-h) - 54px - 44px - 80px);
+  overflow-y: auto;
+  background: #F9FAFB;
+  -webkit-overflow-scrolling: touch;
+}
+.screen-content::-webkit-scrollbar { width: 0; }
+.screen-content.no-bottom { height: calc(var(--phone-h) - 54px - 44px); }
+.screen-content.browser-content { height: calc(var(--phone-h) - 54px - 44px); background: white; }
+
+/* Bottom Tab Bar */
+.bottom-tabs {
+  height: 80px;
+  background: white;
+  border-top: 1px solid #F3F4F6;
+  display: flex;
+  align-items: flex-start;
+  padding-top: 8px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+  color: var(--text-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 4px;
+}
+.tab-item.active { color: var(--primary); }
+.tab-icon { font-size: 20px; }
+
+/* Components */
+.card {
+  background: white;
+  border-radius: 12px;
+  margin: 8px 16px;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.upgrade-banner {
+  background: linear-gradient(135deg, #7C3AED, #A78BFA);
+  margin: 12px 16px;
+  border-radius: 14px;
+  padding: 16px;
+  color: white;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.upgrade-banner::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+.upgrade-banner h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.upgrade-banner p { font-size: 12px; opacity: 0.85; }
+.upgrade-banner .dismiss {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  background: white;
+  cursor: pointer;
+  border-bottom: 1px solid #F3F4F6;
+}
+.setting-row:first-child { border-radius: 12px 12px 0 0; }
+.setting-row:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+.setting-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 16px;
+}
+.setting-label { flex: 1; font-size: 14px; }
+.setting-arrow { color: var(--text-muted); font-size: 14px; }
+.setting-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+/* Plan Cards */
+.plan-cards {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.plan-card {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.plan-card:hover { border-color: var(--primary-light); }
+.plan-card.current { border-color: var(--primary); background: var(--primary-bg); }
+.plan-card.recommended { border-color: var(--premium); }
+.plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.plan-name.free-color { color: var(--text-sec); }
+.plan-name.plus-color { color: var(--plus); }
+.plan-name.premium-color { color: #B8860B; }
+.plan-badge {
+  position: absolute;
+  top: -10px;
+  right: 16px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.plan-badge.current-badge { background: var(--primary); color: white; }
+.plan-badge.recommend-badge { background: var(--premium); color: white; }
+.plan-subtitle {
+  font-size: 12px;
+  color: var(--text-sec);
+  margin-bottom: 10px;
+}
+.plan-features {
+  list-style: none;
+  font-size: 12px;
+  color: var(--text-sec);
+}
+.plan-features li {
+  padding: 3px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.plan-features .check { color: var(--success); font-size: 14px; }
+.plan-features .cross { color: var(--error); font-size: 14px; opacity: 0.4; }
+.plan-btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+.plan-btn.primary-btn { background: var(--primary); color: white; }
+.plan-btn.primary-btn:hover { background: var(--primary-dark); }
+.plan-btn.premium-btn { background: linear-gradient(135deg, #B8860B, #D4AF37); color: white; }
+.plan-btn.disabled-btn { background: #F3F4F6; color: var(--text-muted); cursor: default; }
+
+/* Bottom Sheet */
+.bottom-sheet-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  z-index: 50;
+}
+.bottom-sheet-overlay.show { display: block; }
+.bottom-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  padding: 20px 20px 32px;
+  z-index: 51;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+.bottom-sheet.show { transform: translateY(0); }
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #D1D5DB;
+  border-radius: 4px;
+  margin: 0 auto 16px;
+}
+.sheet-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.sheet-desc {
+  font-size: 13px;
+  color: var(--text-sec);
+  text-align: center;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.sheet-subdesc {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 20px;
+}
+.sheet-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.15s;
+}
+.sheet-btn.primary { background: var(--primary); color: white; }
+.sheet-btn.primary:hover { background: var(--primary-dark); }
+.sheet-btn.secondary { background: #F3F4F6; color: var(--text-sec); }
+.sheet-btn.secondary:hover { background: #E5E7EB; }
+.sheet-icon {
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* Success Screen */
+.success-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  height: 100%;
+}
+.success-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ECFDF5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+.success-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.success-plan {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.success-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 28px;
+  font-size: 14px;
+  color: var(--text-sec);
+}
+.success-features li {
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.success-features .check { color: var(--success); font-size: 16px; }
+
+/* Subscription Management */
+.sub-status-card {
+  background: white;
+  margin: 16px;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.sub-plan-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.sub-plan-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.sub-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #F3F4F6;
+}
+.sub-info-row:last-child { border-bottom: none; }
+.sub-info-label { color: var(--text-sec); }
+.sub-info-value { font-weight: 500; }
+
+/* Warning Banner */
+.warn-banner {
+  margin: 12px 16px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.warn-banner.grace { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+.warn-banner.cancelled { background: #F3E8FF; color: #6B21A8; border: 1px solid #DDD6FE; }
+.warn-banner.expired { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+.warn-banner .warn-icon { font-size: 18px; flex-shrink: 0; }
+.warn-banner .warn-btn {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: none;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Annotation Dot */
+.hotspot {
+  position: relative;
+}
+.hotspot::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  background: var(--primary);
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+/* Annotation Panel */
+.annotation-panel {
+  width: 300px;
+  background: rgba(255,255,255,0.04);
+  border-left: 1px solid rgba(255,255,255,0.06);
+  padding: 20px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.annotation-panel h3 {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.annotation-panel .ann-subtitle {
+  color: rgba(255,255,255,0.4);
+  font-size: 11px;
+  margin-bottom: 16px;
+}
+.ann-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+.ann-item h4 {
+  color: rgba(255,255,255,0.8);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ann-item p {
+  color: rgba(255,255,255,0.45);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.ann-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 600;
+}
+.ann-tag.tap { background: rgba(139,92,246,0.2); color: var(--primary-light); }
+.ann-tag.info { background: rgba(59,130,246,0.2); color: #93C5FD; }
+.ann-tag.warn { background: rgba(245,158,11,0.2); color: #FCD34D; }
+.ann-tag.rule { background: rgba(239,68,68,0.2); color: #FCA5A5; }
+
+/* Home Content */
+.home-greeting {
+  padding: 20px 16px 8px;
+  background: white;
+}
+.home-greeting h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+.home-greeting p {
+  font-size: 13px;
+  color: var(--text-sec);
+}
+.home-fortune-card {
+  margin: 8px 16px;
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.home-fortune-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.fortune-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+.fortune-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  background: #F9FAFB;
+  border-radius: 10px;
+  font-size: 11px;
+  color: var(--text-sec);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+}
+.fortune-item:hover { border-color: var(--primary-light); }
+.fortune-item .f-icon { font-size: 22px; margin-bottom: 4px; }
+.fortune-item.locked {
+  opacity: 0.5;
+  position: relative;
+}
+.fortune-item.locked::after {
+  content: '🔒';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 10px;
+}
+
+/* Web Page Styles */
+.web-page {
+  padding: 24px 20px;
+}
+.web-logo {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.web-tagline {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-sec);
+  margin-bottom: 24px;
+}
+
+.web-plan-option {
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.web-plan-option:hover { border-color: var(--primary-light); }
+.web-plan-option.selected { border-color: var(--primary); background: var(--primary-bg); }
+.web-plan-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.web-plan-name { font-size: 16px; font-weight: 700; }
+.web-plan-price { font-size: 18px; font-weight: 700; color: var(--primary); }
+.web-plan-cycle { font-size: 12px; color: var(--text-muted); }
+
+.web-cycle-toggle {
+  display: flex;
+  background: #F3F4F6;
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 20px;
+}
+.web-cycle-btn {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-sec);
+}
+.web-cycle-btn.active {
+  background: white;
+  color: var(--text);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  font-weight: 600;
+}
+
+/* Screen visibility */
+.screen { display: none; }
+.screen.active { display: flex; flex-direction: column; height: 100%; }
+
+@media (max-width: 1100px) {
+  .sidebar { width: 200px; }
+  .annotation-panel { width: 240px; }
+}
+@media (max-width: 900px) {
+  .annotation-panel { display: none; }
+}
+@media (max-width: 700px) {
+  .sidebar { display: none; }
+  .phone-area { padding: 16px 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div>
+    <h1>DailyMu — Subscription Wireframe</h1>
+    <span class="top-bar-sub">Interactive Prototype | กดที่หน้าจอเพื่อ navigate</span>
+  </div>
+  <div class="breadcrumb">
+    <span>Epic DAIL-729</span>
+    <span class="sep">|</span>
+    <span class="current" id="breadcrumbScreen">Home</span>
+  </div>
+</div>
+
+<div class="main-layout">
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-title">Flow 1: Entry Points</div>
+  <div class="sidebar-section">
+    <button class="screen-btn active" onclick="goTo('home')">
+      <div class="icon">🏠</div>
+      <div class="screen-label">Home<small>Upgrade Banner</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('settings')">
+      <div class="icon">⚙️</div>
+      <div class="screen-label">Settings<small>ปุ่มอัปเกรด</small></div>
+    </button>
+  </div>
+
+  <div class="sidebar-title">Flow 2: View Plans</div>
+  <div class="sidebar-section">
+    <button class="screen-btn" onclick="goTo('plans-free')">
+      <div class="icon">📋</div>
+      <div class="screen-label">Plan Comparison<small>มุมมอง Free User</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('plans-plus')">
+      <div class="icon">📋</div>
+      <div class="screen-label">Plan Comparison<small>มุมมอง Plus User</small></div>
+    </button>
+  </div>
+
+  <div class="sidebar-title">Flow 3: Subscribe</div>
+  <div class="sidebar-section">
+    <button class="screen-btn" onclick="goTo('confirm-sheet')">
+      <div class="icon">📄</div>
+      <div class="screen-label">Bottom Sheet<small>ยืนยันก่อนออกแอป</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('web-subscribe')">
+      <div class="icon">🌐</div>
+      <div class="screen-label">Web: สมัครสมาชิก<small>External Browser</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('web-success')">
+      <div class="icon">🌐</div>
+      <div class="screen-label">Web: สำเร็จ<small>ปุ่มกลับแอป</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('app-success')">
+      <div class="icon">✅</div>
+      <div class="screen-label">Success Screen<small>กลับเข้าแอป</small></div>
+    </button>
+  </div>
+
+  <div class="sidebar-title">Flow 4: Feature Gate</div>
+  <div class="sidebar-section">
+    <button class="screen-btn" onclick="goTo('gate-lock')">
+      <div class="icon">🔒</div>
+      <div class="screen-label">Gate: ฟีเจอร์ Lock<small>Variant A</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('gate-quota')">
+      <div class="icon">⏳</div>
+      <div class="screen-label">Gate: Quota หมด<small>Variant B</small></div>
+    </button>
+  </div>
+
+  <div class="sidebar-title">Flow 5: Manage</div>
+  <div class="sidebar-section">
+    <button class="screen-btn" onclick="goTo('manage-active')">
+      <div class="icon">💎</div>
+      <div class="screen-label">สมาชิกของฉัน<small>Active</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('manage-grace')">
+      <div class="icon">⚠️</div>
+      <div class="screen-label">สมาชิกของฉัน<small>Grace Period</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('manage-cancelled')">
+      <div class="icon">🚫</div>
+      <div class="screen-label">สมาชิกของฉัน<small>Cancelled</small></div>
+    </button>
+    <button class="screen-btn" onclick="goTo('manage-expired')">
+      <div class="icon">❌</div>
+      <div class="screen-label">สมาชิกของฉัน<small>Expired</small></div>
+    </button>
+  </div>
+</div>
+
+<!-- Phone -->
+<div class="phone-area">
+  <div class="phone-frame">
+
+    <!-- ========== HOME ========== -->
+    <div class="screen active" id="screen-home">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="screen-content" style="height: calc(var(--phone-h) - 54px - 80px);">
+        <div class="home-greeting">
+          <h2>สวัสดีค่ะ 🙏</h2>
+          <p>วันจันทร์ที่ 21 เมษายน 2569</p>
+        </div>
+
+        <div class="upgrade-banner hotspot" onclick="goTo('plans-free')">
+          <button class="dismiss" onclick="event.stopPropagation()">✕</button>
+          <h3>✨ ปลดล็อคดวงชะตาเต็มรูปแบบ</h3>
+          <p>ดูดวงปาจื่อ ไพ่ทาโรต์ AI Chat และอีกมากมาย</p>
+        </div>
+
+        <div class="home-fortune-card">
+          <h3>🔮 ดูดวงวันนี้</h3>
+          <div class="fortune-row">
+            <div class="fortune-item" onclick="goTo('gate-quota')">
+              <div class="f-icon">🎋</div>
+              เซียมซี<br><small>0/1 ครั้ง</small>
+            </div>
+            <div class="fortune-item locked" onclick="goTo('gate-lock')">
+              <div class="f-icon">🃏</div>
+              ไพ่ทาโรต์
+            </div>
+            <div class="fortune-item locked" onclick="goTo('gate-lock')">
+              <div class="f-icon">💭</div>
+              ทำนายฝัน
+            </div>
+          </div>
+        </div>
+
+        <div class="home-fortune-card">
+          <h3>📅 ปฏิทิน 7 วัน</h3>
+          <p style="font-size:12px;color:var(--text-sec);">ดูดวงล่วงหน้าได้ 7 วัน</p>
+          <div style="margin-top:8px;padding:8px;background:#F9FAFB;border-radius:8px;text-align:center;">
+            <small style="color:var(--text-muted);">อัปเกรดเพื่อดูล่วงหน้า 14 วัน หรือไม่จำกัด</small>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-tabs">
+        <button class="tab-item active"><div class="tab-icon">🏠</div>หน้าหลัก</button>
+        <button class="tab-item"><div class="tab-icon">📅</div>ปฏิทิน</button>
+        <button class="tab-item"><div class="tab-icon">🔮</div>ดูดวง</button>
+        <button class="tab-item"><div class="tab-icon">📤</div>แชร์</button>
+        <button class="tab-item" onclick="goTo('settings')"><div class="tab-icon">⚙️</div>ตั้งค่า</button>
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS ========== -->
+    <div class="screen" id="screen-settings">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('home')">‹</button>
+        <div class="app-nav-title">ตั้งค่า</div>
+      </div>
+      <div class="screen-content no-bottom" style="height: calc(var(--phone-h) - 54px - 44px);">
+        <div style="padding:16px 16px 8px;">
+          <div style="text-align:center;margin-bottom:12px;">
+            <div style="width:60px;height:60px;border-radius:50%;background:var(--primary-bg);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:28px;">👤</div>
+            <div style="font-weight:600;">สมหญิง</div>
+            <div style="font-size:12px;color:var(--text-sec);">somying@email.com</div>
+          </div>
+        </div>
+        <div style="padding:0 16px 8px;"><small style="color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">สมาชิก</small></div>
+        <div style="margin:0 16px;border-radius:12px;overflow:hidden;">
+          <div class="setting-row hotspot" onclick="goTo('plans-free')">
+            <div class="setting-icon" style="background:var(--primary-bg);">💎</div>
+            <div class="setting-label">อัปเกรดแพลน</div>
+            <span class="setting-badge">Free</span>
+            <span class="setting-arrow">›</span>
+          </div>
+        </div>
+        <div style="padding:16px 16px 8px;"><small style="color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">ทั่วไป</small></div>
+        <div style="margin:0 16px;border-radius:12px;overflow:hidden;">
+          <div class="setting-row">
+            <div class="setting-icon" style="background:#ECFDF5;">👤</div>
+            <div class="setting-label">โปรไฟล์ดวง</div>
+            <span style="font-size:12px;color:var(--text-muted);margin-right:8px;">1/1</span>
+            <span class="setting-arrow">›</span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon" style="background:#FEF3C7;">🔔</div>
+            <div class="setting-label">การแจ้งเตือน</div>
+            <span class="setting-arrow">›</span>
+          </div>
+          <div class="setting-row">
+            <div class="setting-icon" style="background:#FEE2E2;">🔒</div>
+            <div class="setting-label">ความเป็นส่วนตัว</div>
+            <span class="setting-arrow">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PLAN COMPARISON (FREE USER) ========== -->
+    <div class="screen" id="screen-plans-free">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('home')">‹</button>
+        <div class="app-nav-title">เลือกแพลน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div style="padding:16px 16px 0;text-align:center;">
+          <p style="font-size:13px;color:var(--text-sec);">เลือกแพลนที่เหมาะกับคุณ</p>
+        </div>
+        <div class="plan-cards">
+          <!-- Free -->
+          <div class="plan-card current">
+            <div class="plan-badge current-badge">แพลนปัจจุบัน</div>
+            <div class="plan-name free-color">Free</div>
+            <div class="plan-subtitle">โหราศาสตร์ไทย (จำกัด)</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 1 โปรไฟล์</li>
+              <li><span class="check">✓</span> ปฏิทิน 7 วัน</li>
+              <li><span class="check">✓</span> เซียมซี 1 ครั้ง/วัน</li>
+              <li><span class="cross">✗</span> ไม่มี AI / ไพ่ / ทำนายฝัน</li>
+              <li><span class="cross">✗</span> ไม่มีปาจื่อ</li>
+            </ul>
+            <button class="plan-btn disabled-btn">แพลนปัจจุบัน</button>
+          </div>
+          <!-- Plus -->
+          <div class="plan-card recommended" onclick="goTo('confirm-sheet')">
+            <div class="plan-badge recommend-badge">แนะนำ</div>
+            <div class="plan-name plus-color">Plus</div>
+            <div class="plan-subtitle">★ ไทย + ปาจื่อ ครบทั้งคู่</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 2 โปรไฟล์</li>
+              <li><span class="check">✓</span> ปฏิทิน 14 วัน</li>
+              <li><span class="check">✓</span> เซียมซี 3 ครั้ง/วัน</li>
+              <li><span class="check">✓</span> ไพ่ทาโรต์ 2 ครั้ง/วัน</li>
+              <li><span class="check">✓</span> ทำนายฝัน 5 ครั้ง/วัน</li>
+              <li><span class="check">✓</span> ไม่มีโฆษณา</li>
+            </ul>
+            <button class="plan-btn primary-btn">สมัคร Plus</button>
+          </div>
+          <!-- Premium -->
+          <div class="plan-card" onclick="goTo('confirm-sheet')">
+            <div class="plan-name premium-color">Premium</div>
+            <div class="plan-subtitle">★ ทุกอย่างไม่จำกัด</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 5 โปรไฟล์</li>
+              <li><span class="check">✓</span> ปฏิทิน ไม่จำกัด</li>
+              <li><span class="check">✓</span> AI สรุป + AI Chat ไม่จำกัด</li>
+              <li><span class="check">✓</span> เซียมซี / ไพ่ / ฝัน ไม่จำกัด</li>
+              <li><span class="check">✓</span> แชร์การ์ด ไม่จำกัด + ธีมพิเศษ</li>
+              <li><span class="check">✓</span> รายงานสัปดาห์/เดือน</li>
+            </ul>
+            <button class="plan-btn premium-btn">สมัคร Premium</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== PLAN COMPARISON (PLUS USER) ========== -->
+    <div class="screen" id="screen-plans-plus">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('home')">‹</button>
+        <div class="app-nav-title">เลือกแพลน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div style="padding:16px 16px 0;text-align:center;">
+          <p style="font-size:13px;color:var(--text-sec);">เลือกแพลนที่เหมาะกับคุณ</p>
+        </div>
+        <div class="plan-cards">
+          <div class="plan-card" style="opacity:0.5;">
+            <div class="plan-name free-color">Free</div>
+            <div class="plan-subtitle">โหราศาสตร์ไทย (จำกัด)</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 1 โปรไฟล์</li>
+              <li><span class="check">✓</span> ปฏิทิน 7 วัน</li>
+            </ul>
+          </div>
+          <div class="plan-card current">
+            <div class="plan-badge current-badge">แพลนปัจจุบัน</div>
+            <div class="plan-name plus-color">Plus</div>
+            <div class="plan-subtitle">★ ไทย + ปาจื่อ ครบทั้งคู่</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 2 โปรไฟล์</li>
+              <li><span class="check">✓</span> ปฏิทิน 14 วัน</li>
+              <li><span class="check">✓</span> เซียมซี 3 ครั้ง / ไพ่ 2 ครั้ง / ฝัน 5 ครั้ง</li>
+            </ul>
+            <button class="plan-btn disabled-btn">แพลนปัจจุบัน</button>
+          </div>
+          <div class="plan-card recommended" onclick="goTo('confirm-sheet')">
+            <div class="plan-badge recommend-badge">แนะนำ</div>
+            <div class="plan-name premium-color">Premium</div>
+            <div class="plan-subtitle">★ ทุกอย่างไม่จำกัด</div>
+            <ul class="plan-features">
+              <li><span class="check">✓</span> 5 โปรไฟล์ + ปฏิทินไม่จำกัด</li>
+              <li><span class="check">✓</span> AI สรุป + AI Chat ไม่จำกัด</li>
+              <li><span class="check">✓</span> ทุกฟีเจอร์ไม่จำกัด</li>
+              <li><span class="check">✓</span> รายงานสัปดาห์/เดือน</li>
+            </ul>
+            <button class="plan-btn premium-btn">อัปเกรด Premium</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== CONFIRM BOTTOM SHEET ========== -->
+    <div class="screen" id="screen-confirm-sheet">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('plans-free')">‹</button>
+        <div class="app-nav-title">เลือกแพลน</div>
+      </div>
+      <div class="screen-content no-bottom" style="position:relative;">
+        <div style="opacity:0.3;pointer-events:none;">
+          <div class="plan-cards">
+            <div class="plan-card"><div class="plan-name free-color">Free</div></div>
+            <div class="plan-card"><div class="plan-name plus-color">Plus</div></div>
+            <div class="plan-card"><div class="plan-name premium-color">Premium</div></div>
+          </div>
+        </div>
+        <div class="bottom-sheet-overlay show"></div>
+        <div class="bottom-sheet show">
+          <div class="sheet-handle"></div>
+          <div class="sheet-icon">🌐</div>
+          <div class="sheet-title">ไปเว็บไซต์ DailyMu</div>
+          <div class="sheet-desc">จะพาคุณไปเว็บไซต์ DailyMu<br>เพื่อดูรายละเอียดและสมัครสมาชิก</div>
+          <div class="sheet-subdesc">คุณจะสามารถดูราคาและเลือก<br>รอบการชำระเงินได้บนเว็บไซต์</div>
+          <button class="sheet-btn primary" onclick="goTo('web-subscribe')">ไปเว็บไซต์</button>
+          <button class="sheet-btn secondary" onclick="goTo('plans-free')">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== WEB: SUBSCRIBE ========== -->
+    <div class="screen" id="screen-web-subscribe">
+      <div class="status-bar" style="background:#F9FAFB;"><span class="status-time">9:41</span></div>
+      <div class="browser-bar">
+        <button class="browser-close" onclick="goTo('plans-free')">✕</button>
+        <div class="browser-url">
+          <span class="lock">🔒</span> dailymu.com/subscribe
+        </div>
+      </div>
+      <div class="screen-content browser-content">
+        <div class="web-page">
+          <div class="web-logo">DailyMu</div>
+          <div class="web-tagline">สมัครสมาชิก</div>
+
+          <div class="web-cycle-toggle">
+            <button class="web-cycle-btn active">รายเดือน</button>
+            <button class="web-cycle-btn">รายปี <span style="color:var(--success);font-size:11px;font-weight:600;">ประหยัด 22%</span></button>
+          </div>
+
+          <div class="web-plan-option selected">
+            <div class="web-plan-header">
+              <span class="web-plan-name" style="color:var(--plus);">Plus</span>
+              <span class="web-plan-price">฿149</span>
+            </div>
+            <div class="web-plan-cycle">ต่อเดือน (฿1,390/ปี)</div>
+          </div>
+
+          <div class="web-plan-option">
+            <div class="web-plan-header">
+              <span class="web-plan-name" style="color:#B8860B;">Premium</span>
+              <span class="web-plan-price">฿349</span>
+            </div>
+            <div class="web-plan-cycle">ต่อเดือน (฿3,290/ปี)</div>
+          </div>
+
+          <div style="margin-top:20px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;">วิธีชำระเงิน</div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;font-size:13px;">
+              <span>💳</span> บัตรเครดิต / เดบิต
+            </div>
+            <div style="border:1px solid var(--border);border-radius:10px;padding:12px;display:flex;align-items:center;gap:8px;font-size:13px;">
+              <span>📱</span> PromptPay
+            </div>
+          </div>
+
+          <button class="plan-btn primary-btn" style="margin-top:20px;" onclick="goTo('web-success')">ชำระเงิน ฿149</button>
+          <p style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:8px;">ต่ออายุอัตโนมัติ ยกเลิกได้ตลอดเวลา</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== WEB: SUCCESS ========== -->
+    <div class="screen" id="screen-web-success">
+      <div class="status-bar" style="background:#F9FAFB;"><span class="status-time">9:41</span></div>
+      <div class="browser-bar">
+        <button class="browser-close" onclick="goTo('home')">✕</button>
+        <div class="browser-url">
+          <span class="lock">🔒</span> dailymu.com/success
+        </div>
+      </div>
+      <div class="screen-content browser-content">
+        <div class="success-screen">
+          <div class="success-icon">✅</div>
+          <div class="success-title">สมัครสำเร็จ!</div>
+          <div class="success-plan" style="background:var(--plus-bg);color:var(--plus);">Plus</div>
+          <p style="font-size:13px;color:var(--text-sec);margin-bottom:24px;">ขอบคุณที่สมัครสมาชิก DailyMu Plus</p>
+          <button class="plan-btn primary-btn" style="max-width:260px;" onclick="goTo('app-success')">เปิดแอป DailyMu</button>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:8px;">กดปุ่มเพื่อกลับไปใช้งานแอป</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== APP: SUCCESS SCREEN ========== -->
+    <div class="screen" id="screen-app-success">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="screen-content no-bottom">
+        <div class="success-screen">
+          <div class="success-icon">🎉</div>
+          <div class="success-title">ยินดีต้อนรับ!</div>
+          <div class="success-plan" style="background:var(--plus-bg);color:var(--plus);">Plus Member</div>
+          <p style="font-size:14px;color:var(--text-sec);margin-bottom:20px;">คุณปลดล็อคฟีเจอร์เหล่านี้แล้ว</p>
+          <ul class="success-features">
+            <li><span class="check">✓</span> โหราศาสตร์ไทย + ปาจื่อ ครบ</li>
+            <li><span class="check">✓</span> 2 โปรไฟล์ดวง</li>
+            <li><span class="check">✓</span> ปฏิทิน 14 วัน</li>
+            <li><span class="check">✓</span> เซียมซี 3 ครั้ง/วัน</li>
+            <li><span class="check">✓</span> ไพ่ทาโรต์ 2 ครั้ง/วัน</li>
+            <li><span class="check">✓</span> ทำนายฝัน 5 ครั้ง/วัน</li>
+            <li><span class="check">✓</span> ไม่มีโฆษณา</li>
+          </ul>
+          <button class="plan-btn primary-btn" style="max-width:280px;" onclick="goTo('home')">เริ่มใช้งาน</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== FEATURE GATE: LOCK ========== -->
+    <div class="screen" id="screen-gate-lock">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('home')">‹</button>
+        <div class="app-nav-title">ดูดวง</div>
+      </div>
+      <div class="screen-content no-bottom" style="position:relative;">
+        <div style="opacity:0.3;padding:40px;text-align:center;">
+          <div style="font-size:60px;margin-bottom:16px;">🃏</div>
+          <p>ไพ่ทาโรต์</p>
+        </div>
+        <div class="bottom-sheet-overlay show"></div>
+        <div class="bottom-sheet show">
+          <div class="sheet-handle"></div>
+          <div class="sheet-icon">🔒</div>
+          <div class="sheet-title">ไพ่ทาโรต์</div>
+          <div class="sheet-desc">ฟีเจอร์นี้สำหรับสมาชิก<br><strong style="color:var(--plus);">Plus</strong> ขึ้นไป</div>
+          <div class="sheet-subdesc">เปิดไพ่ทาโรต์เพื่อดูดวงความรัก การงาน<br>การเงิน และสุขภาพ</div>
+          <button class="sheet-btn primary" onclick="goTo('plans-free')">ดูแพลนทั้งหมด</button>
+          <button class="sheet-btn secondary" onclick="goTo('home')">ปิด</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== FEATURE GATE: QUOTA ========== -->
+    <div class="screen" id="screen-gate-quota">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('home')">‹</button>
+        <div class="app-nav-title">เซียมซี</div>
+      </div>
+      <div class="screen-content no-bottom" style="position:relative;">
+        <div style="opacity:0.3;padding:40px;text-align:center;">
+          <div style="font-size:60px;margin-bottom:16px;">🎋</div>
+          <p>เซียมซี</p>
+        </div>
+        <div class="bottom-sheet-overlay show"></div>
+        <div class="bottom-sheet show">
+          <div class="sheet-handle"></div>
+          <div class="sheet-icon">⏳</div>
+          <div class="sheet-title">ใช้ครบแล้ววันนี้</div>
+          <div class="sheet-desc">คุณใช้เซียมซีครบ <strong>1 ครั้ง</strong> แล้ววันนี้</div>
+          <div class="sheet-subdesc">อัปเกรดเพื่อใช้งานเพิ่ม<br>หรือกลับมาใหม่พรุ่งนี้</div>
+          <button class="sheet-btn primary" onclick="goTo('plans-free')">ดูแพลนทั้งหมด</button>
+          <button class="sheet-btn secondary" onclick="goTo('home')">ปิด</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MANAGE: ACTIVE ========== -->
+    <div class="screen" id="screen-manage-active">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('settings')">‹</button>
+        <div class="app-nav-title">สมาชิกของฉัน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div class="sub-status-card">
+          <div class="sub-plan-label">แพลนปัจจุบัน</div>
+          <div class="sub-plan-name" style="color:var(--plus);">Plus</div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">สถานะ</span>
+            <span class="sub-info-value" style="color:var(--success);">● Active</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">ต่ออายุถัดไป</span>
+            <span class="sub-info-value">21 พ.ค. 2569</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">รอบการชำระ</span>
+            <span class="sub-info-value">รายเดือน</span>
+          </div>
+          <button class="plan-btn primary-btn" style="margin-top:16px;">จัดการสมาชิกบนเว็บไซต์</button>
+        </div>
+        <div style="padding:16px;">
+          <div style="font-size:12px;color:var(--text-muted);text-align:center;">เปลี่ยนแพลน, อัปเดตบัตร, หรือยกเลิก<br>ได้ที่เว็บไซต์ DailyMu</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MANAGE: GRACE PERIOD ========== -->
+    <div class="screen" id="screen-manage-grace">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('settings')">‹</button>
+        <div class="app-nav-title">สมาชิกของฉัน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div class="warn-banner grace">
+          <span class="warn-icon">⚠️</span>
+          <span>กรุณาต่ออายุสมาชิก<br><small>เหลืออีก 5 วัน</small></span>
+          <button class="warn-btn" style="background:#F59E0B;color:white;">ต่ออายุ</button>
+        </div>
+        <div class="sub-status-card">
+          <div class="sub-plan-label">แพลนปัจจุบัน</div>
+          <div class="sub-plan-name" style="color:var(--plus);">Plus</div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">สถานะ</span>
+            <span class="sub-info-value" style="color:var(--warning);">● Grace Period</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">หมดอายุเมื่อ</span>
+            <span class="sub-info-value">16 เม.ย. 2569</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">จะถูก downgrade</span>
+            <span class="sub-info-value" style="color:var(--error);">26 เม.ย. 2569</span>
+          </div>
+          <button class="plan-btn primary-btn" style="margin-top:16px;background:var(--warning);">ต่ออายุสมาชิก</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MANAGE: CANCELLED ========== -->
+    <div class="screen" id="screen-manage-cancelled">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('settings')">‹</button>
+        <div class="app-nav-title">สมาชิกของฉัน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div class="warn-banner cancelled">
+          <span class="warn-icon">📌</span>
+          <span>สมาชิกจะหมดอายุ<br><small>21 พ.ค. 2569</small></span>
+          <button class="warn-btn" style="background:var(--primary);color:white;">สมัครใหม่</button>
+        </div>
+        <div class="sub-status-card">
+          <div class="sub-plan-label">แพลนปัจจุบัน</div>
+          <div class="sub-plan-name" style="color:var(--plus);">Plus</div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">สถานะ</span>
+            <span class="sub-info-value" style="color:#7C3AED;">● ยกเลิกแล้ว</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">ใช้ได้จนถึง</span>
+            <span class="sub-info-value">21 พ.ค. 2569</span>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:#F5F3FF;border-radius:8px;">
+            <p style="font-size:12px;color:#6B21A8;">ยังใช้ฟีเจอร์ Plus ได้ปกติจนถึงวันหมดอายุ</p>
+          </div>
+          <button class="plan-btn primary-btn" style="margin-top:16px;" onclick="goTo('confirm-sheet')">สมัครใหม่</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== MANAGE: EXPIRED ========== -->
+    <div class="screen" id="screen-manage-expired">
+      <div class="status-bar"><span class="status-time">9:41</span></div>
+      <div class="app-nav">
+        <button class="app-nav-back" onclick="goTo('settings')">‹</button>
+        <div class="app-nav-title">สมาชิกของฉัน</div>
+      </div>
+      <div class="screen-content no-bottom">
+        <div class="warn-banner expired">
+          <span class="warn-icon">❌</span>
+          <span>สมาชิก Plus หมดอายุแล้ว</span>
+        </div>
+        <div class="sub-status-card">
+          <div class="sub-plan-label">แพลนปัจจุบัน</div>
+          <div class="sub-plan-name" style="color:var(--text-sec);">Free</div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">สถานะ</span>
+            <span class="sub-info-value" style="color:var(--error);">● หมดอายุ</span>
+          </div>
+          <div class="sub-info-row">
+            <span class="sub-info-label">แพลนก่อนหน้า</span>
+            <span class="sub-info-value">Plus</span>
+          </div>
+          <div style="margin-top:12px;padding:12px;background:#FEF2F2;border-radius:8px;">
+            <p style="font-size:12px;color:#991B1B;">ข้อมูลของคุณยังอยู่ครบ สมัครใหม่เพื่อเข้าถึงอีกครั้ง</p>
+          </div>
+          <button class="plan-btn primary-btn" style="margin-top:16px;" onclick="goTo('plans-free')">ดูแพลนทั้งหมด</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- phone-frame -->
+</div><!-- phone-area -->
+
+<!-- Annotation Panel -->
+<div class="annotation-panel" id="annPanel">
+  <h3 id="annTitle">Home</h3>
+  <div class="ann-subtitle" id="annSubtitle">Entry Point — Upgrade Banner</div>
+  <div id="annContent"></div>
+</div>
+
+</div><!-- main-layout -->
+
+<script>
+const annotations = {
+  'home': {
+    title: 'Home — หน้าหลัก',
+    subtitle: 'Entry Point E-2: Upgrade Banner',
+    items: [
+      { tag: 'tap', tagClass: 'tap', title: 'Upgrade Banner', desc: 'กดเพื่อไปหน้า Plan Comparison แสดงเฉพาะ Free user dismiss ได้ กลับมาแสดงใหม่วันถัดไป' },
+      { tag: 'tap', tagClass: 'tap', title: 'ฟีเจอร์ที่ Lock', desc: 'กดไพ่ทาโรต์ / ทำนายฝัน → แสดง Feature Gate (Variant A)' },
+      { tag: 'tap', tagClass: 'tap', title: 'ฟีเจอร์ Quota', desc: 'กดเซียมซี (ใช้ครบแล้ว) → แสดง Feature Gate (Variant B)' },
+      { tag: 'info', tagClass: 'info', title: 'Free User View', desc: 'แสดงโฆษณา, โปรไฟล์ 1 ตัว, ปฏิทิน 7 วัน' },
+    ]
+  },
+  'settings': {
+    title: 'Settings — ตั้งค่า',
+    subtitle: 'Entry Point E-1: ปุ่มอัปเกรด',
+    items: [
+      { tag: 'tap', tagClass: 'tap', title: 'อัปเกรดแพลน', desc: 'กดเพื่อไปหน้า Plan Comparison\n\nFree user → แสดง "อัปเกรดแพลน"\nSubscriber → แสดง "จัดการสมาชิก"' },
+      { tag: 'info', tagClass: 'info', title: 'Badge แพลน', desc: 'แสดง badge แพลนปัจจุบัน (Free/Plus/Premium) ข้างปุ่ม' },
+    ]
+  },
+  'plans-free': {
+    title: 'Plan Comparison',
+    subtitle: 'มุมมอง Free User | DAIL-730',
+    items: [
+      { tag: 'rule', tagClass: 'rule', title: 'ห้ามแสดงราคา', desc: 'Apple Guideline — แสดงได้แค่ชื่อแพลน + ฟีเจอร์ ไม่มี ฿149 ฿349' },
+      { tag: 'tap', tagClass: 'tap', title: 'สมัคร Plus', desc: 'กดเพื่อแสดง Bottom Sheet ยืนยันก่อนออกแอป' },
+      { tag: 'tap', tagClass: 'tap', title: 'สมัคร Premium', desc: 'กดเพื่อแสดง Bottom Sheet ยืนยันก่อนออกแอป' },
+      { tag: 'info', tagClass: 'info', title: 'Badge', desc: '"แพลนปัจจุบัน" ที่ Free\n"แนะนำ" ที่แพลนที่ push' },
+    ]
+  },
+  'plans-plus': {
+    title: 'Plan Comparison',
+    subtitle: 'มุมมอง Plus User',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'Plus User View', desc: 'Free = disabled/จาง\nPlus = "แพลนปัจจุบัน"\nPremium = ปุ่ม "อัปเกรด"' },
+      { tag: 'tap', tagClass: 'tap', title: 'อัปเกรด Premium', desc: 'กดเพื่อไป Bottom Sheet → External Web' },
+    ]
+  },
+  'confirm-sheet': {
+    title: 'Bottom Sheet ยืนยัน',
+    subtitle: 'ก่อนออกจากแอป | DAIL-747',
+    items: [
+      { tag: 'rule', tagClass: 'rule', title: 'BR-7: Confirm ก่อนออก', desc: 'ต้องแสดง confirmation ให้ user รู้ว่าจะออกจากแอปไปเว็บ' },
+      { tag: 'tap', tagClass: 'tap', title: 'ไปเว็บไซต์', desc: 'เปิด External Browser (Safari/Chrome) ไม่ใช่ In-App WebView' },
+      { tag: 'tap', tagClass: 'tap', title: 'ยกเลิก', desc: 'ปิด Bottom Sheet กลับหน้า Plan Comparison' },
+      { tag: 'warn', tagClass: 'warn', title: 'UX Decision', desc: 'Tone of voice: ใช้แบบ friendly\nReference: Spotify' },
+    ]
+  },
+  'web-subscribe': {
+    title: 'External Web: สมัครสมาชิก',
+    subtitle: 'Browser — แสดงราคาได้',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'External Browser', desc: 'เปิดใน Safari (iOS) หรือ Chrome (Android) ไม่ใช่ WebView ในแอป' },
+      { tag: 'info', tagClass: 'info', title: 'แสดงราคาได้', desc: 'บนเว็บแสดงราคาได้\nPlus: ฿149/เดือน (฿1,390/ปี)\nPremium: ฿349/เดือน (฿3,290/ปี)' },
+      { tag: 'tap', tagClass: 'tap', title: 'ชำระเงิน', desc: 'กดเพื่อชำระ → ไปหน้า Success' },
+      { tag: 'warn', tagClass: 'warn', title: 'Out of Scope', desc: 'หน้าเว็บนี้ทีม Web สร้าง ไม่ใช่ scope Mobile' },
+    ]
+  },
+  'web-success': {
+    title: 'External Web: สำเร็จ',
+    subtitle: 'ปุ่มกลับเข้าแอป',
+    items: [
+      { tag: 'tap', tagClass: 'tap', title: 'เปิดแอป DailyMu', desc: 'กดเพื่อ trigger Deep Link กลับเข้าแอป\n\ndailymu://subscription/callback?status=success' },
+      { tag: 'warn', tagClass: 'warn', title: 'กรณีไม่กด', desc: 'ถ้า user ไม่กดกลับ → เปิดแอปเอง → sync สถานะอัตโนมัติ' },
+    ]
+  },
+  'app-success': {
+    title: 'Success Screen',
+    subtitle: 'กลับเข้าแอป | DAIL-748',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'แสดงฟีเจอร์ที่ปลดล็อค', desc: 'รายการฟีเจอร์ทั้งหมดที่ได้จากแพลนใหม่' },
+      { tag: 'tap', tagClass: 'tap', title: 'เริ่มใช้งาน', desc: 'กดเพื่อกลับหน้า Home ที่อัปเดต UI แล้ว (ซ่อน ads, ปลดล็อคฟีเจอร์)' },
+      { tag: 'warn', tagClass: 'warn', title: 'UX Decision', desc: 'มี celebration animation (confetti) ไหม?' },
+    ]
+  },
+  'gate-lock': {
+    title: 'Feature Gate — Lock',
+    subtitle: 'Variant A | DAIL-749',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'ฟีเจอร์ถูก Lock', desc: 'แสดงเมื่อ Free user กดใช้ฟีเจอร์ Plus/Premium\n\nตัวอย่าง: ไพ่ทาโรต์ (Plus), AI Chat (Premium)' },
+      { tag: 'tap', tagClass: 'tap', title: 'ดูแพลนทั้งหมด', desc: 'ไปหน้า Plan Comparison' },
+      { tag: 'tap', tagClass: 'tap', title: 'ปิด', desc: 'กลับหน้าเดิม' },
+      { tag: 'warn', tagClass: 'warn', title: 'UX Decision', desc: 'Icon: ใช้ icon ฟีเจอร์ หรือ icon กุญแจ?\nรูปแบบ: Bottom Sheet หรือ Full-screen Modal?' },
+    ]
+  },
+  'gate-quota': {
+    title: 'Feature Gate — Quota หมด',
+    subtitle: 'Variant B | DAIL-749',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'Quota หมด', desc: 'แสดงเมื่อใช้ฟีเจอร์ครบจำนวนครั้ง/วัน\n\nFree: เซียมซี 1 ครั้ง\nPlus: เซียมซี 3, ไพ่ 2, ฝัน 5' },
+      { tag: 'tap', tagClass: 'tap', title: 'ดูแพลนทั้งหมด', desc: 'ไปหน้า Plan Comparison' },
+      { tag: 'warn', tagClass: 'warn', title: 'UX Decision', desc: 'แสดง quota ที่เหลือตลอดเวลา (เช่น 0/1) หรือ gate ตอนหมดเท่านั้น?' },
+    ]
+  },
+  'manage-active': {
+    title: 'สมาชิกของฉัน — Active',
+    subtitle: 'DAIL-750',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'แสดงข้อมูล', desc: 'ชื่อแพลน + สถานะ Active + วันต่ออายุ + รอบชำระ' },
+      { tag: 'tap', tagClass: 'tap', title: 'จัดการบนเว็บ', desc: 'เปิด External Browser → เปลี่ยนแพลน / billing / บัตร / ยกเลิก' },
+    ]
+  },
+  'manage-grace': {
+    title: 'สมาชิกของฉัน — Grace Period',
+    subtitle: 'DAIL-751',
+    items: [
+      { tag: 'warn', tagClass: 'warn', title: 'Banner เตือน', desc: 'แสดง warning banner สีเหลือง\n"กรุณาต่ออายุสมาชิก เหลือ X วัน"' },
+      { tag: 'info', tagClass: 'info', title: 'ยังใช้ฟีเจอร์ได้', desc: 'ระหว่าง Grace Period ยังใช้ฟีเจอร์ได้ปกติ' },
+      { tag: 'tap', tagClass: 'tap', title: 'ต่ออายุ', desc: 'ไป External Web เพื่อชำระเงินต่ออายุ' },
+      { tag: 'warn', tagClass: 'warn', title: 'UX Decision', desc: 'แสดง countdown หรือแค่วันที่?\nBanner อยู่หน้า Home ด้วยไหม?' },
+    ]
+  },
+  'manage-cancelled': {
+    title: 'สมาชิกของฉัน — Cancelled',
+    subtitle: 'DAIL-751',
+    items: [
+      { tag: 'info', tagClass: 'info', title: 'ยกเลิกแล้ว', desc: 'User cancel แล้ว แต่ยังใช้ฟีเจอร์ได้จนจบ billing cycle' },
+      { tag: 'info', tagClass: 'info', title: 'Banner ม่วง', desc: 'แสดงวันที่จะหมดอายุ + ปุ่มสมัครใหม่' },
+      { tag: 'tap', tagClass: 'tap', title: 'สมัครใหม่', desc: 'ไป Bottom Sheet → External Web สมัครใหม่' },
+    ]
+  },
+  'manage-expired': {
+    title: 'สมาชิกของฉัน — Expired',
+    subtitle: 'DAIL-751',
+    items: [
+      { tag: 'rule', tagClass: 'rule', title: 'BR-5: Downgrade', desc: 'ข้อมูลไม่ถูกลบ แต่ถูกจำกัดสิทธิ์\nเช่น มี 2 โปรไฟล์ → เข้าถึงได้แค่ 1' },
+      { tag: 'info', tagClass: 'info', title: 'Downgrade เป็น Free', desc: 'กลับเป็น Free + แสดงโฆษณา + จำกัดฟีเจอร์' },
+      { tag: 'tap', tagClass: 'tap', title: 'ดูแพลนทั้งหมด', desc: 'ไปหน้า Plan Comparison เพื่อสมัครใหม่' },
+    ]
+  },
+};
+
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screenId).classList.add('active');
+
+  document.querySelectorAll('.screen-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.screen-btn').forEach(b => {
+    if (b.onclick && b.onclick.toString().includes("'" + screenId + "'")) {
+      b.classList.add('active');
+    }
+  });
+
+  const ann = annotations[screenId];
+  if (ann) {
+    document.getElementById('annTitle').textContent = ann.title;
+    document.getElementById('annSubtitle').textContent = ann.subtitle;
+    document.getElementById('breadcrumbScreen').textContent = ann.title;
+    let html = '';
+    ann.items.forEach(item => {
+      html += `<div class="ann-item">
+        <h4><span class="ann-tag ${item.tagClass}">${item.tag}</span> ${item.title}</h4>
+        <p>${item.desc.replace(/\n/g, '<br>')}</p>
+      </div>`;
+    });
+    document.getElementById('annContent').innerHTML = html;
+  }
+}
+
+goTo('home');
+</script>
+
+<!-- Document Hub Button -->
+<a href="../index.html" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:50px;font-size:13px;font-weight:600;color:#fff;background:linear-gradient(135deg,#8B5CF6,#6366F1);text-decoration:none;cursor:pointer;border:none;box-shadow:0 2px 12px rgba(139,92,246,0.35);transition:all 0.25s ease;font-family:'IBM Plex Sans Thai',sans-serif;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 16px rgba(139,92,246,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(139,92,246,0.35)'">&#x2190; Document Hub</a>
+</body>
+</html>

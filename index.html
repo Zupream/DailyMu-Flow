@@ -1,1582 +1,227 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DailyMu Calendar — BA Flow Documentation</title>
-  <style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyMu Calendar — Document Hub</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #9333EA;
-  --primary-dark: #7E22CE;
-  --primary-light: #A855F7;
-  --secondary: #F9A8D4;
-  --secondary-dark: #EC4899;
-  --secondary-light: #FBCFE8;
-  --accent-orange: #FB923C;
-  --accent-red: #F43F5E;
-  --accent-purple: #A78BFA;
-  --accent-pink: #D4688E;
-  --accent-amber: #FBBF24;
-  --bg-dark: #FFF5F9;
-  --bg-card: rgba(180, 130, 200, 0.08);
-  --bg-card-hover: rgba(180, 130, 200, 0.16);
-  --text-primary: #4A3B5C;
-  --text-secondary: #6B5B7B;
-  --text-muted: #9B8BAB;
-  --grid-color: rgba(180, 130, 200, 0.06);
-  --border-color: rgba(180, 130, 200, 0.12);
-  --transition-fast: 200ms;
-  --transition-normal: 350ms;
-  --transition-slow: 500ms;
+  --primary: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-deeper: #6D28D9;
+  --primary-light: #A78BFA;
+  --primary-bg: #F5F3FF;
+  --bg: #FAFAFE;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #1F2937;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
-  background: var(--bg-dark);
-  color: var(--text-primary);
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
-  cursor: default;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
-.grid-bg {
-  position: fixed; inset: 0;
+.bg-pattern {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
-    linear-gradient(135deg, #FFF5F9 0%, #FDF0F5 25%, #FBF0FA 50%, #F8EDF7 75%, #FFF5F9 100%),
-    linear-gradient(var(--grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
-  z-index: 0; pointer-events: none;
-}
-.grid-bg::after {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(180,130,200,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(180,130,200,0.05) 1px, transparent 1px);
-  background-size: 40px 40px;
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(139,92,246,0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(99,102,241,0.08), transparent);
 }
 
-.presentation { position: relative; width: 100vw; height: 100vh; overflow: hidden; z-index: 1; }
-
-.slide {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  padding: clamp(24px, 3vw, 48px);
-  opacity: 0; visibility: hidden; transform: translateX(60px);
-  transition: opacity var(--transition-slow) ease, transform var(--transition-slow) cubic-bezier(0.34,1.56,0.64,1), visibility 0s var(--transition-slow);
-  overflow-y: auto;
-}
-.slide.active { opacity: 1; visibility: visible; transform: translateX(0); transition-delay: 0s; }
-.slide.prev { transform: translateX(-60px); }
-
-.slide-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: clamp(12px, 1.5vw, 24px); flex-shrink: 0; }
-.slide-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 20px; font-size: clamp(10px,1vw,13px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; background: rgba(147,51,234,0.08); color: var(--primary); border: 1px solid rgba(147,51,234,0.2); }
-.slide-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); }
-.slide-number { font-size: clamp(11px,1vw,14px); font-weight: 500; color: var(--text-muted); font-family: 'Inter', monospace; }
-
-.slide-title { font-size: clamp(22px,3vw,48px); font-weight: 800; line-height: 1.15; margin-bottom: clamp(4px,0.6vw,10px); letter-spacing: -0.02em; background: linear-gradient(135deg, #C084FC 0%, #F9A8D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.slide-subtitle { font-size: clamp(12px,1.2vw,18px); color: var(--text-secondary); font-weight: 400; line-height: 1.5; max-width: 700px; }
-.slide-content { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; overflow-x: hidden; padding-bottom: 80px; }
-
-/* Cover */
-.cover-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: clamp(12px,1.5vw,24px); }
-.cover-logo { font-size: clamp(60px,8vw,120px); line-height: 1; }
-.cover-title { font-size: clamp(28px,4.5vw,64px); font-weight: 900; letter-spacing: -0.03em; background: linear-gradient(135deg, #C084FC 0%, #D4688E 50%, #F9A8D4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease infinite; background-size: 200% 200%; }
-.cover-subtitle { font-size: clamp(13px,1.6vw,22px); color: var(--text-secondary); font-weight: 400; max-width: 600px; }
-.cover-roles { display: flex; gap: clamp(10px,1.2vw,20px); margin-top: clamp(10px,1.2vw,20px); flex-wrap: wrap; justify-content: center; }
-.role-chip { padding: clamp(6px,0.7vw,10px) clamp(14px,1.4vw,24px); border-radius: 50px; font-size: clamp(10px,1vw,14px); font-weight: 600; border: 1px solid var(--border-color); background: var(--bg-card); transition: all var(--transition-fast) ease; }
-.role-chip:hover { transform: translateY(-2px) scale(1.05); }
-
-/* Flow */
-.flow-container { display: flex; flex-direction: column; gap: clamp(8px,1vw,14px); max-width: 1200px; margin: 0 auto; width: 100%; }
-.flow-row { display: flex; align-items: center; gap: clamp(5px,0.6vw,10px); flex-wrap: wrap; justify-content: center; }
-.flow-step { display: flex; align-items: center; gap: clamp(4px,0.5vw,8px); padding: clamp(6px,0.7vw,12px) clamp(10px,1vw,16px); border-radius: 10px; font-size: clamp(9px,1vw,14px); font-weight: 500; transition: all var(--transition-fast) ease; white-space: nowrap; border: 1px solid var(--border-color); background: var(--bg-card); backdrop-filter: blur(8px); }
-.flow-step:hover { transform: translateY(-2px); background: var(--bg-card-hover); }
-.flow-step .icon { font-size: clamp(12px,1.2vw,18px); }
-.flow-arrow { color: var(--text-muted); font-size: clamp(12px,1.3vw,20px); flex-shrink: 0; }
-
-.flow-step.highlight-blue { background: rgba(147,51,234,0.08); border-color: rgba(147,51,234,0.2); color: #7C3AED; }
-.flow-step.highlight-green { background: rgba(52,211,153,0.12); border-color: rgba(52,211,153,0.3); color: #059669; }
-.flow-step.highlight-orange { background: rgba(251,146,60,0.12); border-color: rgba(251,146,60,0.3); color: #C2410C; }
-.flow-step.highlight-red { background: rgba(244,63,94,0.1); border-color: rgba(244,63,94,0.25); color: #E11D48; }
-.flow-step.highlight-purple { background: rgba(167,139,250,0.12); border-color: rgba(167,139,250,0.25); color: #7C3AED; }
-.flow-step.highlight-amber { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.25); color: #B45309; }
-
-/* Cards Grid */
-.cards-grid { display: grid; gap: clamp(8px,1vw,14px); max-width: 1200px; margin: 0 auto; width: 100%; }
-.cards-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-.cards-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-.cards-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-.cards-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
-.card { padding: clamp(12px,1.2vw,20px); border-radius: 14px; border: 1px solid var(--border-color); background: var(--bg-card); backdrop-filter: blur(8px); transition: all var(--transition-fast) ease; }
-.card:hover { transform: translateY(-3px); background: var(--bg-card-hover); border-color: rgba(147,51,234,0.25); }
-.card-icon { font-size: clamp(20px,2.2vw,36px); margin-bottom: clamp(4px,0.6vw,10px); }
-.card-title { font-size: clamp(11px,1.1vw,16px); font-weight: 700; margin-bottom: clamp(3px,0.4vw,6px); color: var(--text-primary); }
-.card-desc { font-size: clamp(9px,0.9vw,13px); color: var(--text-secondary); line-height: 1.5; }
-.card-tag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: clamp(8px,0.7vw,11px); font-weight: 600; margin-top: 6px; }
-.tag-blue { background: rgba(147,51,234,0.1); color: #7C3AED; }
-.tag-green { background: rgba(52,211,153,0.12); color: #059669; }
-.tag-orange { background: rgba(251,146,60,0.12); color: #C2410C; }
-.tag-red { background: rgba(244,63,94,0.12); color: #E11D48; }
-.tag-purple { background: rgba(167,139,250,0.12); color: #7C3AED; }
-
-/* Decision Tree */
-.decision-tree { display: flex; flex-direction: column; align-items: center; gap: clamp(6px,0.8vw,12px); }
-.decision-node { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 12px; font-size: clamp(10px,1vw,14px); font-weight: 600; text-align: center; max-width: 500px; }
-.decision-diamond { background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.3); color: #C2410C; position: relative; }
-.decision-diamond::before { content: '\25C6'; margin-right: 8px; opacity: 0.6; }
-.decision-branches { display: flex; gap: clamp(16px,2vw,32px); justify-content: center; }
-.branch { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.branch-label { font-size: clamp(10px,0.9vw,13px); font-weight: 700; padding: 3px 12px; border-radius: 8px; }
-.branch-yes { background: rgba(52,211,153,0.12); color: #059669; }
-.branch-no { background: rgba(244,63,94,0.1); color: #E11D48; }
-.branch-box { padding: clamp(8px,0.8vw,14px) clamp(14px,1.4vw,24px); border-radius: 10px; font-size: clamp(9px,0.9vw,13px); background: var(--bg-card); border: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); max-width: 280px; }
-
-/* Split Row & Mini Cards */
-.split-row { display: flex; gap: clamp(8px,1vw,16px); justify-content: center; flex-wrap: wrap; }
-.mini-card { flex: 1; min-width: 180px; max-width: 350px; padding: clamp(10px,1vw,18px); border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); }
-.mini-card-title { font-size: clamp(11px,1.1vw,15px); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-.mini-card ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
-.mini-card ul li { font-size: clamp(9px,0.85vw,12px); color: var(--text-secondary); padding-left: 14px; position: relative; }
-.mini-card ul li::before { content: '\203A'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
-
-/* Two Column */
-.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px,1.5vw,28px); max-width: 1200px; margin: 0 auto; width: 100%; }
-.col-section { display: flex; flex-direction: column; gap: clamp(6px,0.8vw,12px); }
-
-.section-label { font-size: clamp(9px,0.8vw,12px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: clamp(6px,0.8vw,12px); padding-bottom: 6px; border-bottom: 1px solid var(--border-color); }
-.bullet-list { list-style: none; display: flex; flex-direction: column; gap: clamp(4px,0.5vw,8px); }
-.bullet-list li { display: flex; align-items: flex-start; gap: clamp(6px,0.6vw,10px); font-size: clamp(10px,1vw,14px); color: var(--text-secondary); line-height: 1.5; }
-.bullet-list li .bullet { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 7px; }
-
-/* Vertical Flow */
-.vertical-flow { display: flex; flex-direction: column; align-items: center; gap: clamp(4px,0.5vw,8px); }
-.v-arrow { color: var(--text-muted); font-size: clamp(14px,1.4vw,20px); }
-
-/* State Machine */
-.state-machine { display: flex; align-items: center; justify-content: center; gap: clamp(4px,0.6vw,10px); flex-wrap: wrap; margin: clamp(6px,0.8vw,12px) 0; }
-.state-node { padding: clamp(6px,0.6vw,12px) clamp(10px,1vw,20px); border-radius: 10px; font-size: clamp(9px,0.9vw,13px); font-weight: 600; text-align: center; border: 1px solid var(--border-color); background: var(--bg-card); min-width: clamp(70px,7vw,120px); }
-.state-arrow { color: var(--text-muted); font-size: clamp(14px,1.4vw,22px); }
-
-/* End Slide */
-.end-content { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; }
-.end-title { font-size: clamp(32px,4.5vw,72px); font-weight: 900; background: linear-gradient(135deg, #C084FC, #F9A8D4, #A78BFA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 3s ease infinite; background-size: 200% 200%; }
-
-/* Highlight tags */
-.hl { font-weight: 700; }
-.hl-blue { color: #7C3AED; }
-.hl-green { color: #059669; }
-.hl-orange { color: #C2410C; }
-.hl-red { color: #E11D48; }
-.hl-purple { color: #7C3AED; }
-
-/* Nav Bar */
-.nav-bar { position: fixed; bottom: clamp(16px,2vw,28px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 16px; background: rgba(255,245,249,0.92); backdrop-filter: blur(16px); border: 1px solid rgba(180,130,200,0.15); box-shadow: 0 4px 24px rgba(147,51,234,0.06); z-index: 100; }
-.nav-btn { width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border-color); background: transparent; color: var(--text-secondary); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; flex-shrink: 0; }
-.nav-btn:hover { background: rgba(147,51,234,0.08); color: var(--primary); border-color: rgba(147,51,234,0.25); }
-.nav-btn:active { transform: scale(0.92); }
-.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.nav-progress { display: flex; align-items: center; gap: 3px; }
-.nav-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-muted); opacity: 0.3; transition: all var(--transition-fast) ease; cursor: pointer; }
-.nav-dot.active { background: var(--primary); opacity: 1; width: 20px; border-radius: 4px; }
-.nav-dot:hover { opacity: 0.7; }
-.nav-counter { font-size: 12px; font-weight: 600; color: var(--text-muted); font-family: 'Inter', monospace; min-width: 50px; text-align: center; }
-
-/* Dropdown */
-.page-dropdown { position: fixed; bottom: clamp(72px,8vw,96px); left: 50%; transform: translateX(-50%) translateY(10px); background: rgba(255,245,249,0.96); backdrop-filter: blur(16px); box-shadow: 0 4px 24px rgba(147,51,234,0.08); border: 1px solid var(--border-color); border-radius: 14px; padding: 8px; z-index: 101; max-height: 60vh; overflow-y: auto; min-width: 300px; opacity: 0; visibility: hidden; transition: all var(--transition-fast) ease; }
-.page-dropdown.open { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
-.page-dropdown-item { display: flex; align-items: center; gap: 10px; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; color: var(--text-secondary); transition: all var(--transition-fast) ease; }
-.page-dropdown-item:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-.page-dropdown-item.active { background: rgba(147,51,234,0.1); color: var(--primary); font-weight: 600; }
-.page-dropdown-item .item-num { font-weight: 700; font-family: 'Inter', monospace; font-size: 10px; min-width: 24px; text-align: center; padding: 2px 6px; border-radius: 6px; background: rgba(147,51,234,0.06); }
-
-/* Fullscreen */
-.fullscreen-btn { position: fixed; top: 16px; right: 16px; z-index: 100; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(255,245,249,0.85); backdrop-filter: blur(8px); box-shadow: 0 2px 8px rgba(147,51,234,0.06); color: var(--text-muted); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast) ease; }
-.fullscreen-btn:hover { color: var(--primary); border-color: rgba(147,51,234,0.25); }
-
-@keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes fadeInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes popIn { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
-@keyframes gradientShift { 0% { background-position: 0% 50%; } 25% { background-position: 50% 100%; } 50% { background-position: 100% 50%; } 75% { background-position: 50% 0%; } 100% { background-position: 0% 50%; } }
-@keyframes floatUp { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-.slide.active .anim-item { animation: fadeInUp 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; }
-.slide.active .anim-item:nth-child(1) { animation-delay: 0.08s; }
-.slide.active .anim-item:nth-child(2) { animation-delay: 0.16s; }
-.slide.active .anim-item:nth-child(3) { animation-delay: 0.24s; }
-.slide.active .anim-item:nth-child(4) { animation-delay: 0.32s; }
-.slide.active .anim-item:nth-child(5) { animation-delay: 0.4s; }
-.slide.active .anim-item:nth-child(6) { animation-delay: 0.48s; }
-.slide.active .anim-item:nth-child(7) { animation-delay: 0.56s; }
-.slide.active .anim-item:nth-child(8) { animation-delay: 0.64s; }
-.slide.active .anim-item:nth-child(9) { animation-delay: 0.72s; }
-.slide.active .anim-item:nth-child(10) { animation-delay: 0.8s; }
-
-/* Enhanced card hover animation */
-.card { transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-.card:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 12px 32px rgba(147,51,234,0.12); }
-
-/* Flow step bounce */
-.flow-step { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.flow-step:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 8px 20px rgba(147,51,234,0.1); }
-
-/* Cover logo float */
-.slide.active .cover-logo { animation: floatUp 3s ease-in-out infinite; }
-
-/* State node pulse on hover */
-.state-node { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.state-node:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(147,51,234,0.1); }
-
-/* Mini card pop */
-.mini-card { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.mini-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(147,51,234,0.08); }
-
-/* Role chip bounce */
-.role-chip { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-
-/* Decision diamond pulse */
-.decision-diamond { transition: all 0.3s ease; }
-.decision-diamond:hover { transform: scale(1.05); box-shadow: 0 6px 16px rgba(251,146,60,0.15); }
-
-/* Slide title entrance */
-.slide.active .slide-title { animation: fadeInLeft 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards; }
-.slide.active .slide-subtitle { animation: fadeInLeft 0.7s 0.1s cubic-bezier(0.34,1.56,0.64,1) forwards; opacity: 0; animation-fill-mode: forwards; }
-.slide.active .slide-header { animation: fadeInRight 0.5s ease forwards; }
-
-/* Section label slide in */
-.slide.active .section-label { animation: fadeInLeft 0.5s ease forwards; }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 4px; }
-
-@media (max-width: 768px) {
-  .cards-grid.cols-4, .cards-grid.cols-5 { grid-template-columns: repeat(2, 1fr); }
-  .cards-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
-  .two-col { grid-template-columns: 1fr; }
-  .nav-progress { display: none; }
+.container {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 60px 24px 80px;
 }
 
-  </style>
+header {
+  text-align: center; margin-bottom: 48px;
+}
+
+header h1 {
+  font-size: 2rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+header p {
+  color: var(--text-sec); font-size: 0.95rem; font-weight: 400;
+}
+
+.badge {
+  display: inline-block; margin-top: 12px;
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 500;
+  background: var(--primary-bg); color: var(--primary);
+  border: 1px solid rgba(139,92,246,0.15);
+}
+
+.cards {
+  display: grid; gap: 16px;
+}
+
+.card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  text-decoration: none; color: inherit;
+  transition: all 0.25s ease;
+  position: relative; overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; border-radius: 4px 0 0 4px;
+  background: var(--accent);
+  opacity: 0; transition: opacity 0.25s ease;
+}
+
+.card:hover {
+  border-color: rgba(139,92,246,0.25);
+  box-shadow: 0 8px 30px rgba(139,92,246,0.1);
+  transform: translateY(-2px);
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; flex-shrink: 0;
+}
+
+.card-body { flex: 1; min-width: 0; }
+
+.card-title {
+  font-size: 1.05rem; font-weight: 600;
+  margin-bottom: 4px; color: var(--text);
+}
+
+.card-desc {
+  font-size: 0.85rem; color: var(--text-sec);
+  line-height: 1.5;
+}
+
+.card-tag {
+  font-size: 0.7rem; font-weight: 500;
+  padding: 3px 10px; border-radius: 12px;
+  white-space: nowrap;
+}
+
+.card-arrow {
+  font-size: 1.2rem; color: var(--text-muted);
+  transition: transform 0.25s ease, color 0.25s ease;
+  flex-shrink: 0;
+}
+
+.card:hover .card-arrow {
+  transform: translateX(4px);
+  color: var(--primary);
+}
+
+/* Card themes */
+.card--flow     { --accent: #8B5CF6; }
+.card--wireframe{ --accent: #6366F1; }
+.card--overview { --accent: #EC4899; }
+.card--pricing  { --accent: #D4AF37; }
+
+.card--flow .card-icon      { background: #F5F3FF; color: #8B5CF6; }
+.card--wireframe .card-icon { background: #EEF2FF; color: #6366F1; }
+.card--overview .card-icon  { background: #FDF2F8; color: #EC4899; }
+.card--pricing .card-icon   { background: #FFFBEB; color: #D4AF37; }
+
+.card--flow .card-tag      { background: #F5F3FF; color: #7C3AED; }
+.card--wireframe .card-tag { background: #EEF2FF; color: #4F46E5; }
+.card--overview .card-tag  { background: #FDF2F8; color: #DB2777; }
+.card--pricing .card-tag   { background: #FFFBEB; color: #B8860B; }
+
+footer {
+  text-align: center; margin-top: 48px;
+  color: var(--text-muted); font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .container { padding: 40px 16px 60px; }
+  header h1 { font-size: 1.6rem; }
+  .card { padding: 18px 20px; gap: 14px; }
+  .card-icon { width: 44px; height: 44px; font-size: 1.3rem; }
+  .card-tag { display: none; }
+}
+</style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
+<div class="bg-pattern"></div>
 
-<div class="presentation" id="presentation">
+<div class="container">
+  <header>
+    <h1>DailyMu Calendar</h1>
+    <p>Document Hub</p>
+    <span class="badge">v1.0 &middot; April 2026</span>
+  </header>
 
-  <!-- SLIDE 0: COVER -->
-  <div class="slide active" data-slide="0">
-    <a href="https://zupream.github.io/DailyMu-Flow/Pricing/" target="_blank" style="position: absolute; top: 20px; left: 24px; z-index: 10; display: inline-flex; align-items: center; gap: 6px; padding: 8px 20px; border-radius: 50px; font-size: 13px; font-weight: 600; color: #fff; background: linear-gradient(135deg, #9333EA, #EC4899); text-decoration: none; cursor: pointer; border: none; box-shadow: 0 2px 8px rgba(147,51,234,0.3); transition: all 0.2s ease;">💰 Pricing</a>
-    <div class="slide-content cover-content">
-      <div class="cover-logo">🔮</div>
-      <div class="cover-title">DailyMu Calendar</div>
-      <div class="cover-subtitle">BA Flow Documentation — ภาพรวม User Flow ทั้งหมด</div>
-      <div class="cover-roles">
-        <div class="role-chip anim-item" style="border-color: rgba(192,132,252,0.3); color: #9333EA;">📋 BA Team</div>
-        <div class="role-chip anim-item" style="border-color: rgba(249,168,212,0.3); color: #EC4899;">🎯 Project: DailyMu</div>
-        <div class="role-chip anim-item" style="border-color: rgba(167,139,250,0.3); color: #7C3AED;">🔮 Mahamodo Engine</div>
-        <div class="role-chip anim-item" style="border-color: rgba(249,168,212,0.3); color: #EC4899;">🎈 Phase 1</div>
-        <div class="role-chip anim-item" style="border-color: rgba(167,139,250,0.3); color: #7C3AED;">🏷️ Version 1.0</div>
-        <div class="role-chip anim-item" style="border-color: rgba(251,191,36,0.3); color: #D97706;">📅 2026-04-01</div>
+  <div class="cards">
+
+    <a href="Flow-html/Flow_Overview.html" class="card card--overview">
+      <div class="card-icon">&#128203;</div>
+      <div class="card-body">
+        <div class="card-title">BA Flow Documentation</div>
+        <div class="card-desc">ภาพรวม Flow ทั้งหมดของระบบ DailyMu Calendar แบบ BA Documentation</div>
       </div>
-    </div>
+      <span class="card-tag">BA Doc</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Pricing/Price.html" class="card card--pricing">
+      <div class="card-icon">&#128176;</div>
+      <div class="card-body">
+        <div class="card-title">Pricing Strategy Proposal</div>
+        <div class="card-desc">แผนราคาและ Strategy สำหรับแพ็กเกจ Free / Plus / Premium</div>
+      </div>
+      <span class="card-tag">Pricing</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Flow-html/DailyMu_Subscription_UserFlow.html" class="card card--flow">
+      <div class="card-icon">&#128260;</div>
+      <div class="card-body">
+        <div class="card-title">Subscription User Flows</div>
+        <div class="card-desc">User flow diagrams สำหรับระบบ Subscription ครบทุก journey ตั้งแต่สมัครจนถึงยกเลิก</div>
+      </div>
+      <span class="card-tag">User Flow</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="Flow-html/DailyMu_Subscription_Wireframe.html" class="card card--wireframe">
+      <div class="card-icon">&#128241;</div>
+      <div class="card-body">
+        <div class="card-title">Subscription Wireframe Prototype</div>
+        <div class="card-desc">Interactive wireframe prototype ของหน้าจอต่างๆ ในระบบ Subscription</div>
+      </div>
+      <span class="card-tag">Wireframe</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
   </div>
 
-  <!-- SLIDE 1: OVERVIEW -->
-  <div class="slide" data-slide="1">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>Overview</div>
-      <div class="slide-number">02 / 19</div>
-    </div>
-    <div class="slide-title">Flow ทั้งหมดของ DailyMu</div>
-    <div class="slide-subtitle">รวม 11 User Flows หลัก + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management รวมถึง Calendar Views และ Share Card</div>
-    <div class="slide-content">
-      <div class="cards-grid cols-5" style="margin-top: 16px;">
-        <div class="card anim-item">
-          <div class="card-icon">📝</div>
-          <div class="card-title">Register</div>
-          <div class="card-desc">สมัครด้วย Email หรือ Social Login</div>
-          <div class="card-tag tag-blue">DAIL-27</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">🔑</div>
-          <div class="card-title">Login</div>
-          <div class="card-desc">เข้าสู่ระบบด้วย Email/Password หรือ Social</div>
-          <div class="card-tag tag-blue">DAIL-22</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">🔒</div>
-          <div class="card-title">Forgot Password</div>
-          <div class="card-desc">Reset password ผ่าน Email link</div>
-          <div class="card-tag tag-blue">DAIL-30</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">📜</div>
-          <div class="card-title">Consent (PDPA)</div>
-          <div class="card-desc">ยอมรับ Terms & Privacy Policy</div>
-          <div class="card-tag tag-purple">DAIL-96</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">👋</div>
-          <div class="card-title">Onboarding</div>
-          <div class="card-desc">แนะนำแอป First-time user</div>
-          <div class="card-tag tag-green">DAIL-31</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">⭐</div>
-          <div class="card-title">Birth Profile</div>
-          <div class="card-desc">ตั้งค่าข้อมูลดวงครั้งแรก</div>
-          <div class="card-tag tag-green">DAIL-23</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">👥</div>
-          <div class="card-title">Multi Profile</div>
-          <div class="card-desc">เพิ่ม/สลับโปรไฟล์ดวง</div>
-          <div class="card-tag tag-orange">DAIL-32</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">🏠</div>
-          <div class="card-title">Today (Feature)</div>
-          <div class="card-desc">Daily Summary, Calendar, ทำนาย</div>
-          <div class="card-tag tag-orange">DAIL-33</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">🔔</div>
-          <div class="card-title">Notification</div>
-          <div class="card-desc">ศูนย์แจ้งเตือน + Push</div>
-          <div class="card-tag tag-red">DAIL-93</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">📤</div>
-          <div class="card-title">Share Card</div>
-          <div class="card-desc">แชร์ดวงให้เพื่อน โดยไม่เปิดเผยข้อมูลส่วนตัว</div>
-          <div class="card-tag tag-green">DAIL-80</div>
-        </div>
-        <div class="card anim-item">
-          <div class="card-icon">👤</div>
-          <div class="card-title">Profile</div>
-          <div class="card-desc">แก้ไขโปรไฟล์, Settings, Logout</div>
-          <div class="card-tag tag-purple">DAIL-75</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">FORTUNE ENGINES (MICROSERVICES)</div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 4px;">
-        <div class="card">
-          <div class="card-icon">🎋</div>
-          <div class="card-title">เซียมซีวันนี้</div>
-          <div class="card-desc">สุ่มเซียมซี ได้คำทำนายประจำวัน + AI Interpretation</div>
-          <div class="card-tag tag-orange">DAIL-74 / Engine A</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🃏</div>
-          <div class="card-title">เปิดไพ่ทำนาย</div>
-          <div class="card-desc">เลือกเรื่องที่อยากดู(สูงสุด 3 เรื่อง) + เลือกไพ่ 3 ใบ พลิกดูดวงวันนี้ + AI เชื่อมดวง</div>
-          <div class="card-tag tag-purple">DAIL-74 / Engine B</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">💭</div>
-          <div class="card-title">ทำนายฝัน</div>
-          <div class="card-desc">พิมพ์หรือเลือก keyword ฝัน แปลความหมาย + AI</div>
-          <div class="card-tag tag-green">DAIL-74 / Engine C</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 2: REGISTER -->
-  <div class="slide" data-slide="2">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-27 / Authentication</div>
-      <div class="slide-number">03 / 19</div>
-    </div>
-    <div class="slide-title">Register Flow</div>
-    <div class="slide-subtitle">สมัครสมาชิกด้วย Email + Password หรือ Social Login (Google / Apple / Facebook / LINE)</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">REGISTER — EMAIL + PASSWORD (DAIL-28)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📝</span> เปิดหน้า Register</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">✉️</span> กรอก Email + Password</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email ซ้ำ?</div>
-        </div>
-      </div>
-      <div class="decision-tree anim-item" style="margin-top: 10px;">
-        <div class="decision-node decision-diamond">Email มีอยู่ในระบบหรือไม่?</div>
-        <div class="decision-branches" style="margin-top: 10px;">
-          <div class="branch">
-            <div class="branch-label branch-no">ไม่มี (ใหม่)</div>
-            <div class="branch-box">สร้าง User → Login ทันที</div>
-          </div>
-          <div class="branch">
-            <div class="branch-label branch-yes">มีแล้ว (email user)</div>
-            <div class="branch-box">แสดง Error<br>"อีเมลนี้ถูกใช้งานแล้ว"</div>
-          </div>
-          <div class="branch">
-            <div class="branch-label branch-yes">มีแล้ว (social user)</div>
-            <div class="branch-box">แจ้ง "อีเมลนี้ลงทะเบียนแล้ว<br>กรุณาใช้ Social Login"</div>
-          </div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">REGISTER — SOCIAL LOGIN (DAIL-29)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-purple"><span class="icon">🔗</span> เลือก Social Login</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">🔄</span> Redirect → Provider</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📧</span> ได้ social_id + email</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email</div>
-        </div>
-        <div class="flow-row">
-          <div class="flow-step highlight-green"><span class="icon">🆕</span> ใหม่ → สร้าง User</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">✅</span> Login สำเร็จทันที (ไม่ต้องตั้ง Password)</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 12px;">
-        <div class="mini-card">
-          <div class="mini-card-title">🎯 Key Rule</div>
-          <ul>
-            <li>Email เป็น Primary Identity</li>
-            <li>Social ไม่ต้องตั้ง Password</li>
-            <li>ไม่มี User ซ้ำจาก email เดียวกัน</li>
-            <li>รองรับ 4 providers: Google / Facebook / Apple / LINE</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">📦 Data ที่สร้าง</div>
-          <ul>
-            <li>email, password (hashed) — เฉพาะ Email Register</li>
-            <li>email, social_id — เฉพาะ Social Register</li>
-            <li>user_identities ตาราง (provider: GOOGLE/FB/APPLE/LINE)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 3: LOGIN -->
-  <div class="slide" data-slide="3">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-22 / Authentication</div>
-      <div class="slide-number">04 / 19</div>
-    </div>
-    <div class="slide-title">Login Flow</div>
-    <div class="slide-subtitle">เข้าสู่ระบบด้วย Email + Password หรือ Social Login</div>
-    <div class="slide-content">
-      <div class="two-col" style="margin-top: 12px;">
-        <div class="col-section anim-item">
-          <div class="section-label">LOGIN — EMAIL + PASSWORD (DAIL-25)</div>
-          <div class="flow-container">
-            <div class="vertical-flow">
-              <div class="flow-step highlight-blue" style="width:100%;justify-content:center;"><span class="icon">✉️</span> กรอก Email + Password</div>
-              <div class="v-arrow">↓</div>
-              <div class="flow-step highlight-orange" style="width:100%;justify-content:center;"><span class="icon">🔍</span> ตรวจ Credential</div>
-              <div class="v-arrow">↓</div>
-              <div class="decision-tree" style="width:100%;">
-                <div class="decision-branches">
-                  <div class="branch">
-                    <div class="branch-label branch-yes">Valid</div>
-                    <div class="branch-box">✅ Login สำเร็จ</div>
-                  </div>
-                  <div class="branch">
-                    <div class="branch-label branch-no">Invalid</div>
-                    <div class="branch-box">❌ แสดง Error</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-section anim-item">
-          <div class="section-label">LOGIN — SOCIAL (DAIL-26)</div>
-          <div class="flow-container">
-            <div class="vertical-flow">
-              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">🔗</span> เลือก Social Provider</div>
-              <div class="v-arrow">↓</div>
-              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">🔄</span> Redirect + ส่งกลับ email</div>
-              <div class="v-arrow">↓</div>
-              <div class="decision-tree" style="width:100%;">
-                <div class="decision-branches">
-                  <div class="branch">
-                    <div class="branch-label branch-yes">มี Email</div>
-                    <div class="branch-box">Login + ผูก social_id</div>
-                  </div>
-                  <div class="branch">
-                    <div class="branch-label branch-no">ไม่มี</div>
-                    <div class="branch-box">→ Register Social<br>(DAIL-29)</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">💡 Precondition</div>
-          <ul>
-            <li>User มี account ในระบบแล้ว</li>
-            <li>Email Login: ต้องสมัครด้วย Email + Password</li>
-            <li>Social Login: ไม่ต้องมี password</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">✅ Acceptance Criteria</div>
-          <ul>
-            <li>Email user: Login ด้วย email + password</li>
-            <li>Social user: Login ด้วย Social Provider (Google/FB/Apple/LINE)</li>
-            <li>ไม่สร้าง user ซ้ำจาก email เดียวกัน</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 4: FORGOT PASSWORD -->
-  <div class="slide" data-slide="4">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-30 / Authentication</div>
-      <div class="slide-number">05 / 19</div>
-    </div>
-    <div class="slide-title">Forgot / Reset Password</div>
-    <div class="slide-subtitle">ตั้งรหัสผ่านใหม่ผ่าน Email Link พร้อม Token Validation</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">FLOW A: REQUEST RESET</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">🔑</span> กด "ลืมรหัสผ่าน"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">✉️</span> กรอก Email</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Email</div>
-        </div>
-      </div>
-      <div class="decision-tree anim-item" style="margin-top: 10px;">
-        <div class="decision-node decision-diamond">Email มีในระบบ?</div>
-        <div class="decision-branches" style="margin-top: 10px;">
-          <div class="branch">
-            <div class="branch-label branch-yes">มี (มี password)</div>
-            <div class="branch-box">สร้าง Reset Token (15 นาที)<br>ส่ง Email พร้อม Reset Link</div>
-          </div>
-          <div class="branch">
-            <div class="branch-label branch-yes">มี (social-only)</div>
-            <div class="branch-box">"บัญชีนี้ใช้ Social Login"<br>แนะนำ Google/FB/Apple/LINE</div>
-          </div>
-          <div class="branch">
-            <div class="branch-label branch-no">ไม่มี</div>
-            <div class="branch-box">"ไม่พบอีเมลนี้ในระบบ"<br>CTA → สมัครสมาชิก</div>
-          </div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">FLOW B: SET NEW PASSWORD</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-purple"><span class="icon">📧</span> เปิด Reset Link</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> ตรวจ Token</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">🔐</span> กรอก Password ใหม่</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">✅</span> สำเร็จ → Login</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Edge Cases</div>
-          <ul>
-            <li>Token หมดอายุ → "ลิงก์หมดอายุ" + CTA reset ใหม่</li>
-            <li>Social-only user (ไม่มี password) → แจ้งให้ใช้ Social Login แทน</li>
-            <li>Reset link ใช้ได้ครั้งเดียว</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">✅ Criteria</div>
-          <ul>
-            <li>ส่ง reset link ไปที่ email ที่มี</li>
-            <li>แจ้งชัดเจนเมื่อ email ไม่พบ</li>
-            <li>Password ใหม่ใช้ login ได้ทันที</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 5: CONSENT -->
-  <div class="slide" data-slide="5">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-96 / Legal</div>
-      <div class="slide-number">06 / 19</div>
-    </div>
-    <div class="slide-title">Consent: Terms & Privacy (PDPA)</div>
-    <div class="slide-subtitle">ข้อตกลงและเงื่อนไขก่อนใช้งานแอป — Blocking screen ทั้งตอน Register และ Policy Update</div>
-    <div class="slide-content">
-      <div class="two-col" style="margin-top: 10px;">
-        <div class="col-section anim-item">
-          <div class="section-label">FLOW 1: FIRST LOGIN / REGISTER</div>
-          <div class="flow-container">
-            <div class="vertical-flow">
-              <div class="flow-step highlight-blue" style="width:100%;justify-content:center;"><span class="icon">👤</span> Register / First Login สำเร็จ</div>
-              <div class="v-arrow">↓</div>
-              <div class="flow-step highlight-orange" style="width:100%;justify-content:center;"><span class="icon">📜</span> แสดงหน้า "ข้อตกลงและเงื่อนไข"</div>
-              <div class="v-arrow">↓</div>
-              <div class="flow-step highlight-purple" style="width:100%;justify-content:center;"><span class="icon">☑️</span> ติ๊ก Checkbox 2 อัน</div>
-              <div class="v-arrow">↓</div>
-              <div class="flow-step highlight-green" style="width:100%;justify-content:center;"><span class="icon">✅</span> กด "ยอมรับ" → เข้าหน้าหลัก</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-section anim-item">
-          <div class="section-label">UI COMPONENTS</div>
-          <div class="mini-card" style="max-width:100%;">
-            <div class="mini-card-title">📋 หน้า Consent ประกอบด้วย</div>
-            <ul>
-              <li>Header: "ข้อตกลงและเงื่อนไข"</li>
-              <li>☑️ Checkbox 1: ยอมรับข้อกำหนดการใช้งาน + ลิงก์อ่านเพิ่มเติม</li>
-              <li>☑️ Checkbox 2: ยอมรับนโยบายความเป็นส่วนตัว + ลิงก์อ่านเพิ่มเติม</li>
-              <li>ปุ่ม "ยอมรับ" — disabled จนกว่าติ๊กทั้ง 2</li>
-              <li>กรณี Policy Update: ข้อความแจ้งว่า "เราได้อัปเดตข้อกำหนด..."</li>
-            </ul>
-          </div>
-          <div class="mini-card" style="max-width:100%;margin-top:8px;">
-            <div class="mini-card-title">💾 Data ที่เก็บ</div>
-            <ul>
-              <li>consent_id, user_id, consent_version</li>
-              <li>terms_accepted, privacy_accepted</li>
-              <li>accepted_at (timestamp), ip_address</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="state-machine anim-item" style="margin-top: 12px;">
-        <div class="state-node highlight-blue">📡 /api/consent/check</div>
-        <div class="state-arrow">→</div>
-        <div class="state-node highlight-green">📝 /api/consent/accept</div>
-        <div class="state-arrow">→</div>
-        <div class="state-node highlight-purple">📄 /api/consent/latest-policy</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 6: ONBOARDING -->
-  <div class="slide" data-slide="6">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-31 / Onboarding</div>
-      <div class="slide-number">07 / 19</div>
-    </div>
-    <div class="slide-title">App Onboarding (First-time)</div>
-    <div class="slide-subtitle">แนะนำแอปสำหรับผู้ใช้ใหม่ → นำไปสู่ Birth Profile Setup</div>
-    <div class="slide-content">
-      <div class="flow-container anim-item" style="margin-top: 10px;">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">🎉</span> Register/Login สำเร็จ</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📜</span> Consent (PDPA)</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">👋</span> Onboarding Screens</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">⭐</span> Birth Profile Setup</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 20px;">
-        <div class="card">
-          <div class="card-icon">📱</div>
-          <div class="card-title">Screen 1: Welcome</div>
-          <div class="card-desc">แนะนำ DailyMu Calendar — ปฏิทินดูดวงส่วนตัว</div>
-          <div class="card-tag tag-blue">Swipe / Next</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔮</div>
-          <div class="card-title">Screen 2: Features</div>
-          <div class="card-desc">Daily Summary, Calendar ดูดวง, ทำนาย, ช่วยตัดสินใจ</div>
-          <div class="card-tag tag-purple">Swipe / Next</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">⭐</div>
-          <div class="card-title">Screen 3: CTA</div>
-          <div class="card-desc">"มาผูกดวงกัน!" → นำไป Birth Profile Setup</div>
-          <div class="card-tag tag-green">เริ่มต้น</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">💡 Behavior</div>
-          <ul>
-            <li>แสดงแค่ครั้งแรกเท่านั้น</li>
-            <li>Swipe ซ้าย-ขวา หรือกด Next/Skip</li>
-            <li>กด Skip ได้ → ข้ามไป Birth Profile</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">🔄 User Journey (สรุป)</div>
-          <ul>
-            <li>Register → Consent → Onboarding → Birth Profile → Home</li>
-            <li>ครั้งต่อไป Login → Home ตรง</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 7: BIRTH PROFILE -->
-  <div class="slide" data-slide="7">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-23 / Profile Setup</div>
-      <div class="slide-number">08 / 19</div>
-    </div>
-    <div class="slide-title">Birth Profile Setup</div>
-    <div class="slide-subtitle">สร้างโปรไฟล์ดวงแรก — Step Form เพื่อผูกข้อมูลดวง</div>
-    <div class="slide-content">
-      <div class="flow-container anim-item" style="margin-top: 10px;">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">1️⃣</span> ข้อมูลพื้นฐาน</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">2️⃣</span> ข้อมูลดวง</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">3️⃣</span> ยืนยัน & บันทึก</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">✅</span> เข้าหน้าหลัก</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 16px;">
-        <div class="card">
-          <div class="card-icon">👤</div>
-          <div class="card-title">Step 1: ข้อมูลพื้นฐาน</div>
-          <div class="card-desc">ชื่อโปรไฟล์ (max 20 ตัว), เลือก Avatar/สี, ความสัมพันธ์ (ตัวเอง/คู่รัก/ครอบครัว/เพื่อน)</div>
-          <div class="card-tag tag-blue">Required</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔮</div>
-          <div class="card-title">Step 2: ข้อมูลดวง</div>
-          <div class="card-desc">วันเกิด (Date picker), เวลาเกิด (Optional), ระบบดวงไทย (มหาหมอดู)</div>
-          <div class="card-tag tag-purple">Required + Optional</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">✅</div>
-          <div class="card-title">Step 3: ยืนยัน</div>
-          <div class="card-desc">แสดง Summary → กด "ยืนยัน" → บันทึก → Redirect หน้าหลัก</div>
-          <div class="card-tag tag-green">Complete</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">💾 Data Structure</div>
-          <ul>
-            <li>profile_name, avatar_color, relationship</li>
-            <li>birth_date, birth_time (optional)</li>
-            <li>horoscope_system, is_primary: true</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Note</div>
-          <ul>
-            <li>โปรไฟล์แรก = primary profile</li>
-            <li>ใช้คำนวณดวงทุกที่ในแอป</li>
-            <li>สร้างเพิ่มได้ภายหลัง (max 5)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 8: MULTI PROFILE -->
-  <div class="slide" data-slide="8">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-32 / Profile</div>
-      <div class="slide-number">09 / 19</div>
-    </div>
-    <div class="slide-title">Multi Profile (Add / Switch)</div>
-    <div class="slide-subtitle">เพิ่มและสลับโปรไฟล์ดวงสำหรับคนใกล้ชิด — สูงสุด 5 โปรไฟล์</div>
-    <div class="slide-content">
-      <div class="state-machine anim-item" style="margin-top: 10px;">
-        <div class="state-node highlight-blue">👤 Profile 1 (Active ✅)</div>
-        <div class="state-node highlight-purple">👥 Profile 2</div>
-        <div class="state-node highlight-orange">💛 Profile 3</div>
-        <div class="state-node" style="border-style:dashed;">➕ เพิ่ม</div>
-      </div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 16px;">
-        <div class="card">
-          <div class="card-icon">➕</div>
-          <div class="card-title">เพิ่มโปรไฟล์</div>
-          <div class="card-desc">กด "+เพิ่ม" → เช็คจำนวน (max 5) → Step Form เหมือน Birth Profile Setup</div>
-          <div class="card-tag tag-green">Add Flow</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔄</div>
-          <div class="card-title">สลับโปรไฟล์</div>
-          <div class="card-desc">กด Chip โปรไฟล์อื่น → Confirmation → ดวงเปลี่ยนทั้งแอป (Today + Calendar)</div>
-          <div class="card-tag tag-blue">Switch Flow</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🗑️</div>
-          <div class="card-title">ลบโปรไฟล์</div>
-          <div class="card-desc">กดแก้ไข → ลบได้ (ยกเว้นโปรไฟล์สุดท้าย) → Confirm popup</div>
-          <div class="card-tag tag-red">Delete Flow</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">📏 ข้อจำกัด</div>
-          <ul>
-            <li>สูงสุด 5 โปรไฟล์</li>
-            <li>ต้องมีอย่างน้อย 1 โปรไฟล์เสมอ</li>
-            <li>แต่ละโปรไฟล์มี avatar/สีแยก</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">🎯 Use Cases</div>
-          <ul>
-            <li>ดูดวงให้ตัวเอง + คู่รัก</li>
-            <li>ดูดวงให้ครอบครัว/ลูก</li>
-            <li>เปรียบเทียบดวงแต่ละคน</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 9: TODAY FEATURE -->
-  <div class="slide" data-slide="9">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-33 / Core Feature</div>
-      <div class="slide-number">10 / 19</div>
-    </div>
-    <div class="slide-title">หน้า Today — Core Feature</div>
-    <div class="slide-subtitle">หน้าหลักของแอป ประกอบด้วย 3 Sections: Daily Summary, Calendar, ทำนายดวง</div>
-    <div class="slide-content">
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 10px;">
-        <div class="card">
-          <div class="card-icon">⭐</div>
-          <div class="card-title">Section 1: Daily Summary</div>
-          <div class="card-desc">สรุปดวงวันนี้ — แสดงสถานะ (ดี/กลาง/ระวัง), AI Summary 2-3 บรรทัด, Highlight ด้านต่างๆ (การเงิน, ความรัก, สุขภาพ, การงาน), Lucky items</div>
-          <div class="card-tag tag-blue">DAIL-54</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">📅</div>
-          <div class="card-title">Section 2: Calendar</div>
-          <div class="card-desc">ปฏิทินดูดวง — Grid 7 คอลัมน์, จุดสี (🟢ดี 🟡ปกติ 🔴ระวัง), เลื่อนดูล่วงหน้า 1 ปี, กดวันดู Day Detail</div>
-          <div class="card-tag tag-purple">DAIL-73</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔮</div>
-          <div class="card-title">Section 3: ทำนายดวง Shortcuts</div>
-          <div class="card-desc">Shortcut cards → redirect ไป Tab ทำนาย: 🎋 เซียมซี, 🃏 ไพ่ทำนาย, 💭 ทำนายฝัน</div>
-          <div class="card-tag tag-orange">DAIL-74</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">DAILY SUMMARY FLOW (SECTION 1)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📱</span> เปิดแอป</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> เช็คผูกดวง?</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">⏳</span> Loading</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">⭐</span> แสดง Daily Summary</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 12px;">CALENDAR FLOW (SECTION 2)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-purple"><span class="icon">📅</span> แสดงปฏิทินเดือนนี้</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">👆</span> กดเลือกวัน</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">📋</span> Day Detail (AI สรุป)</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 10: FORTUNE TELLING SHORTCUTS (DAIL-74) -->
-  <div class="slide" data-slide="10">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-74 / Fortune</div>
-      <div class="slide-number">11 / 19</div>
-    </div>
-    <div class="slide-title">ทำนายดวงวันนี้ — Shortcut Cards + Engines</div>
-    <div class="slide-subtitle">Shortcut cards ในหน้า Today → Redirect ไป Tab ทำนาย พร้อม 3 Engines: เซียมซี, ไพ่ทำนาย, ทำนายฝัน</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">SHORTCUT CARDS (หน้า TODAY)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📱</span> เลื่อนถึง Section ทำนาย</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">🎋</span> เซียมซีวันนี้</div>
-          <div class="flow-step highlight-purple"><span class="icon">🃏</span> เปิดไพ่ทำนาย</div>
-          <div class="flow-step highlight-purple"><span class="icon">💭</span> ทำนายฝัน</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">🔮</span> Redirect → Tab ทำนาย</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 14px;">
-        <div class="card">
-          <div class="card-icon">🎋</div>
-          <div class="card-title">Engine A: เซียมซีวันนี้</div>
-          <div class="card-desc">Animation กระบอกเซียมซี → กดเขย่า/Shake → เซียมซีตก → แสดงเลขเซียมซี + คำทำนาย + AI Interpretation + ระดับ (ดี/กลาง/ระวัง) + ปุ่มแชร์/เขย่าใหม่</div>
-          <div class="card-tag tag-blue">Shake / กดเขย่า</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🃏</div>
-          <div class="card-title">Engine B: เปิดไพ่ทำนาย</div>
-          <div class="card-desc">แสดงไพ่คว่ำหน้า → เลือกเรื่องที่อยากดู(สูงสุด 3 เรื่อง) → เลือกไพ่ 3 ใบ → Animation พลิกไพ่ → ชื่อไพ่ + ภาพ + ความหมาย + AI Interpretation เชื่อมดวงวันนี้ + ปุ่มแชร์/เปิดใหม่</div>
-          <div class="card-tag tag-purple">เลือก 3 ใบ</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">💭</div>
-          <div class="card-title">Engine C: ทำนายฝัน</div>
-          <div class="card-desc">Text input "คุณฝันเห็นอะไร?" + Suggestion chips (งู, น้ำ, ปลา, เลขเด็ด) → กดทำนาย → ความหมายฝัน + AI Interpretation เชื่อมดวง + ปุ่มแชร์/ทำนายใหม่</div>
-          <div class="card-tag tag-orange">พิมพ์ / เลือก chip</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">🎯 Key Rules</div>
-          <ul>
-            <li>Section นี้ไม่ call API (static shortcut)</li>
-            <li>Cards scroll แนวนอนได้ (Scalable)</li>
-            <li>Engine ล่ม → ยังแสดง card แต่หน้า engine แสดง error</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">📊 Acceptance Criteria</div>
-          <ul>
-            <li>แสดง 3 Shortcut Cards ครบ (icon + ชื่อ + subtitle)</li>
-            <li>กด Card → redirect ไป Tab ทำนายตรง engine</li>
-            <li>ทุก engine มีปุ่มแชร์ผลลัพธ์</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 11: CALENDAR MONTHLY VIEW (DAIL-99) -->
-  <div class="slide" data-slide="11">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-99 / Calendar</div>
-      <div class="slide-number">12 / 19</div>
-    </div>
-    <div class="slide-title">Calendar — Monthly View</div>
-    <div class="slide-subtitle">ปฏิทินรายเดือน แสดงภาพรวมดวงทั้งเดือน เพื่อวางแผนล่วงหน้าว่าวันไหนดวงดี/ควรระวัง</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">MAIN FLOW</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📅</span> เข้าหน้า Calendar</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📊</span> แสดง Grid อา–ส (เดือนปัจจุบัน)</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔵</span> แต่ละวันมีจุดสีสถานะดวง</div>
-        </div>
-        <div class="flow-row" style="margin-top: 8px;">
-          <div class="flow-step highlight-blue"><span class="icon">◀️</span> เลื่อนเดือน ◀ ▶</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">👆</span> กดวัน → Day Detail</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📋</span> กด "ดูทั้งหมด" → ล่วงหน้า 1 ปี</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-3 anim-item" style="margin-top: 14px;">
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">🟢</div>
-          <div class="card-title">ดวงดี</div>
-          <div class="card-desc">จุดสีเขียว — วันนี้ดวงดี เหมาะทำกิจกรรมสำคัญ</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">🟡</div>
-          <div class="card-title">ดวงปกติ</div>
-          <div class="card-desc">จุดสีเหลือง — ดวงกลางๆ ดำเนินชีวิตตามปกติ</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">🔴</div>
-          <div class="card-title">ควรระวัง</div>
-          <div class="card-desc">จุดสีแดง — ควรระมัดระวัง หลีกเลี่ยงความเสี่ยง</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">📐 UI Spec</div>
-          <ul>
-            <li>Grid: อาทิตย์–เสาร์ (7 คอลัมน์)</li>
-            <li>วันปัจจุบันมี highlight แยกชัดเจน</li>
-            <li>มี Legend อธิบายสี</li>
-            <li>เลื่อนดูล่วงหน้าได้ 1 ปี</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Edge Cases</div>
-          <ul>
-            <li>เดือนที่ยังไม่มีข้อมูลดวง (เกิน 1 ปี) → empty state</li>
-            <li>วันที่ไม่มีข้อมูล → ไม่แสดงจุดสี</li>
-            <li>สถานะสีต้องตรงกับผลคำนวณดวง</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 12: DAY DETAIL (DAIL-100) -->
-  <div class="slide" data-slide="12">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-100 / Calendar</div>
-      <div class="slide-number">13 / 19</div>
-    </div>
-    <div class="slide-title">Calendar — Day Detail</div>
-    <div class="slide-subtitle">รายละเอียดดวงรายวัน พร้อมคำแนะนำที่นำไปใช้ในชีวิตจริงได้</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">MAIN FLOW</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">👆</span> กดเลือกวันจากปฏิทิน/Today</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📋</span> แสดงหน้า Day Detail</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">📤</span> แชร์ดวงวันนั้น</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">◀️</span> กด Back → กลับปฏิทิน</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-5 anim-item" style="margin-top: 14px;">
-        <div class="card">
-          <div class="card-icon">⭐</div>
-          <div class="card-title">สถานะดวง</div>
-          <div class="card-desc">ดี / กลาง / ระวัง พร้อม icon + visual indicator</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🤖</div>
-          <div class="card-title">AI Summary</div>
-          <div class="card-desc">ข้อความสรุปสั้นๆ อ่านจบในไม่กี่วินาที</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🎨</div>
-          <div class="card-title">สีมงคล</div>
-          <div class="card-desc">แยกตามเรื่อง: การงาน, การเงิน, ความรัก</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">✅</div>
-          <div class="card-title">Do & Don't</div>
-          <div class="card-desc">สิ่งที่ควรทำ / ไม่ควรทำ ประจำวัน</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🌟</div>
-          <div class="card-title">ดาวเกิด / ดาวจร</div>
-          <div class="card-desc">ตำแหน่งดาวประจำวันนั้น</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">📤 Share Feature</div>
-          <ul>
-            <li>แชร์เป็นรูปภาพไป Social</li>
-            <li>Copy link ได้</li>
-            <li>Share ล้มเหลว → error message</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Edge Cases</div>
-          <ul>
-            <li>วันที่ข้อมูลยังไม่พร้อม → loading/placeholder</li>
-            <li>วันในอดีตไม่มี AI Summary → แสดงเฉพาะข้อมูลดาว</li>
-            <li>AI Summary ต้องตรงกับ active profile</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 13: SHARE CARD -->
-  <div class="slide" data-slide="13">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-80 / Share</div>
-      <div class="slide-number">14 / 19</div>
-    </div>
-    <div class="slide-title">Share Card — แชร์ดวงให้คนใกล้ชิด</div>
-    <div class="slide-subtitle">แชร์ดวงรายวันเป็นการ์ดสวยๆ ผ่าน LINE, Facebook, IG โดยไม่เปิดเผยข้อมูลส่วนตัวผู้ใช้</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">SHARE FLOW</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📋</span> ดู Day Detail</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📤</span> กดปุ่ม "แชร์ดวงวันนี้"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🎨</span> ระบบสร้างการ์ดอัตโนมัติ</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">📲</span> เลือกช่องทางแชร์</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-2 anim-item" style="margin-top: 16px;">
-        <div class="card">
-          <div class="card-icon">🎴</div>
-          <div class="card-title">สิ่งที่แสดงในการ์ด</div>
-          <div class="card-desc">วันที่ + สถานะดวง (ดี/กลาง/ระวัง) + สีมงคลประจำวัน + คำแนะนำสั้นๆ + โลโก้ DailyMu</div>
-          <div class="card-tag tag-blue">Public Info</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔒</div>
-          <div class="card-title">สิ่งที่ไม่แสดง (ปกป้องความเป็นส่วนตัว)</div>
-          <div class="card-desc">ชื่อผู้ใช้, วันเกิด, เวลาเกิด, ข้อมูลส่วนตัวทั้งหมด — การ์ดปลอดภัยแชร์ได้ทุกที่</div>
-          <div class="card-tag tag-red">PII Protected</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">ช่องทางการแชร์</div>
-      <div class="cards-grid cols-4 anim-item" style="margin-top: 4px;">
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">💬</div>
-          <div class="card-title">LINE</div>
-          <div class="card-desc">ส่งรูปการ์ดให้เพื่อน/กลุ่ม</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">📘</div>
-          <div class="card-title">Facebook</div>
-          <div class="card-desc">โพสต์ลง Feed หรือ Story</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">📸</div>
-          <div class="card-title">Instagram</div>
-          <div class="card-desc">แชร์เป็น Story</div>
-        </div>
-        <div class="card" style="text-align:center;">
-          <div class="card-icon">📋</div>
-          <div class="card-title">Copy Link</div>
-          <div class="card-desc">คัดลอกลิงก์ไปวางที่อื่น</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">💡 จุดเด่น</div>
-          <ul>
-            <li>การ์ดสวยพร้อมแชร์ ไม่ต้องแคปหน้าจอ</li>
-            <li>ปลอดภัย ไม่เปิดเผยข้อมูลส่วนตัว</li>
-            <li>ช่วยให้เพื่อนรู้จักแอป (Organic Growth)</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Edge Cases</div>
-          <ul>
-            <li>ไม่มีแอปรองรับ → แสดง "Copy Link" แทน</li>
-            <li>แชร์ล้มเหลว → แจ้ง error + ลองใหม่</li>
-            <li>แชร์ได้จาก Day Detail และ Fortune ผลทำนาย</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 14: WEEKLY VIEW (DAIL-101) -->
-  <div class="slide" data-slide="14">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-101 / Calendar</div>
-      <div class="slide-number">15 / 19</div>
-    </div>
-    <div class="slide-title">Weekly View — ดวงรายสัปดาห์</div>
-    <div class="slide-subtitle">ภาพรวมดวงรายสัปดาห์ (อาทิตย์–เสาร์) พร้อม AI สรุปและไฮไลท์วันสำคัญ เพื่อวางแผนสัปดาห์</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">MAIN FLOW</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📅</span> เข้า Calendar → เลือก "รายสัปดาห์"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📊</span> แสดง Weekly View (อา–ส)</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">◀▶</span> เลื่อนซ้าย/ขวาดูสัปดาห์อื่น</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">👆</span> กดวัน → Day Detail</div>
-        </div>
-      </div>
-      <div class="cards-grid cols-4 anim-item" style="margin-top: 14px;">
-        <div class="card">
-          <div class="card-icon">🤖</div>
-          <div class="card-title">AI Summary สัปดาห์</div>
-          <div class="card-desc">ภาพรวมทั้งสัปดาห์ สรุปโดย AI</div>
-          <div class="card-tag tag-blue">Weekly</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">📊</div>
-          <div class="card-title">Timeline 7 วัน</div>
-          <div class="card-desc">แถบสีสถานะดวงแต่ละวัน (ดี/กลาง/ระวัง) เรียง อา–ส</div>
-          <div class="card-tag tag-purple">Visual</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">⭐</div>
-          <div class="card-title">วันไฮไลท์</div>
-          <div class="card-desc">วันดีที่สุด + วันควรระวัง พร้อมเหตุผลสั้นๆ</div>
-          <div class="card-tag tag-orange">Highlight</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">✅</div>
-          <div class="card-title">Do & Don't สัปดาห์</div>
-          <div class="card-desc">คำแนะนำระดับสัปดาห์ สิ่งที่ควรทำ/ไม่ควรทำ</div>
-          <div class="card-tag tag-green">Advice</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">📐 Spec</div>
-          <ul>
-            <li>แสดง 7 วัน (อาทิตย์–เสาร์) consistent กับ Monthly</li>
-            <li>สัปดาห์ข้ามเดือน → แสดงครบ 7 วัน ไม่ตัดตามเดือน</li>
-            <li>กดวันใน Timeline → เข้า Day Detail</li>
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">⚠️ Edge Cases</div>
-          <ul>
-            <li>สัปดาห์ในอนาคตที่ AI ยังไม่คำนวณ → แสดงเฉพาะข้อมูลดาว</li>
-            <li>ไม่แสดง AI summary สำหรับสัปดาห์ที่ยังไม่มีข้อมูล</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 15: NOTIFICATION -->
-  <div class="slide" data-slide="15">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-93 / Engagement</div>
-      <div class="slide-number">16 / 19</div>
-    </div>
-    <div class="slide-title">Notification Center</div>
-    <div class="slide-subtitle">ระบบแจ้งเตือน 2 Tabs + Push Notification + Settings ที่ปรับได้</div>
-    <div class="slide-content">
-      <div class="two-col" style="margin-top: 10px;">
-        <div class="col-section anim-item">
-          <div class="section-label">NOTIFICATION CENTER UI</div>
-          <div class="cards-grid cols-2">
-            <div class="card">
-              <div class="card-icon">🔔</div>
-              <div class="card-title">Tab 1: กิจกรรม</div>
-              <div class="card-desc">ดวงประจำวัน, แจ้งวันดวงดี/ระวัง, อัปเดตแอป</div>
-              <div class="card-tag tag-blue">Activity</div>
-            </div>
-            <div class="card">
-              <div class="card-icon">📢</div>
-              <div class="card-title">Tab 2: ข่าวสาร</div>
-              <div class="card-desc">โปรโมชัน, ฟีเจอร์ใหม่, ประกาศจากทีมงาน</div>
-              <div class="card-tag tag-purple">News</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-section anim-item">
-          <div class="section-label">PUSH NOTIFICATION TYPES</div>
-          <div class="mini-card" style="max-width:100%;">
-            <div class="mini-card-title">📲 Push ที่ส่ง</div>
-            <ul>
-              <li>ดวงประจำวัน (เช้า ตามเวลาที่ตั้ง)</li>
-              <li>วันดวงดี/ระวัง (แจ้งล่วงหน้า 1 วัน)</li>
-              <li>อัปเดตจากแอป (ฟีเจอร์ใหม่, โปรโมชัน)</li>
-            </ul>
-          </div>
-          <div class="mini-card" style="max-width:100%;margin-top:8px;">
-            <div class="mini-card-title">⚙️ Settings</div>
-            <ul>
-              <li>Toggle เปิด/ปิดแต่ละประเภท</li>
-              <li>เลือกเวลาแจ้งเตือน (default 07:00)</li>
-              <li>เช็ค OS permission → แจ้งให้เปิดใน Settings</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="flow-container anim-item" style="margin-top: 14px;">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">🔔</span> กดไอคอนแจ้งเตือน</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📋</span> Notification Center</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">👆</span> กดรายการ</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">📄</span> Navigate ไปหน้าที่เกี่ยวข้อง</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 16: PROFILE -->
-  <div class="slide" data-slide="16">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>DAIL-75 / Profile</div>
-      <div class="slide-number">17 / 19</div>
-    </div>
-    <div class="slide-title">Profile Management</div>
-    <div class="slide-subtitle">แก้ไขโปรไฟล์, จัดการโปรไฟล์ดวง, Settings (PDPA), About/Contact, Logout</div>
-    <div class="slide-content">
-      <div class="cards-grid cols-4 anim-item" style="margin-top: 10px;">
-        <div class="card">
-          <div class="card-icon">✏️</div>
-          <div class="card-title">แก้ไขโปรไฟล์</div>
-          <div class="card-desc">เปลี่ยน Avatar, Display Name, Email (read-only ถ้า social)</div>
-          <div class="card-tag tag-blue">DAIL-76</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">🔮</div>
-          <div class="card-title">โปรไฟล์ดูดวง</div>
-          <div class="card-desc">สร้าง/ลบ/สลับ Horoscope Profiles (max 5)</div>
-          <div class="card-tag tag-purple">DAIL-77</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">⚙️</div>
-          <div class="card-title">การตั้งค่า</div>
-          <div class="card-desc">Notification toggles, Privacy/PDPA, ลบบัญชี</div>
-          <div class="card-tag tag-orange">DAIL-78</div>
-        </div>
-        <div class="card">
-          <div class="card-icon">ℹ️</div>
-          <div class="card-title">เกี่ยวกับเรา / ติดต่อ</div>
-          <div class="card-desc">App info, Social links, FAQ, Logout</div>
-          <div class="card-tag tag-green">DAIL-79</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 14px;">DELETE ACCOUNT FLOW (DAIL-78)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-red"><span class="icon">🗑️</span> กด "ลบบัญชี"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">⚠️</span> Warning Page</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-red"><span class="icon">⌨️</span> พิมพ์ "ลบบัญชี"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-amber"><span class="icon">⏳</span> Grace Period 30 วัน</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Logout → Login</div>
-        </div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 10px;">
-        <div class="mini-card">
-          <div class="mini-card-title">⏳ Grace Period (30 วัน)</div>
-          <ul>
-            <li>สถานะเปลี่ยนเป็น "รอลบ" ยังไม่ลบทันที</li>
-            <li>Login กลับภายใน 30 วัน → บัญชีกลับมาใช้ได้ปกติ</li>
-            <li>ครบ 30 วัน ไม่กลับมา → ลบข้อมูลถาวร</li>
-          </ul>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 12px;">LOGOUT FLOW (DAIL-79)</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-orange"><span class="icon">🚪</span> กด "ออกจากระบบ"</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">❓</span> Confirm popup</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">🔒</span> ลบ session/token</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-blue"><span class="icon">🏠</span> Redirect → Login</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 17: SUMMARY JOURNEY -->
-  <div class="slide" data-slide="17">
-    <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span>Summary</div>
-      <div class="slide-number">18 / 19</div>
-    </div>
-    <div class="slide-title">User Journey (End-to-End)</div>
-    <div class="slide-subtitle">ภาพรวม journey ตั้งแต่เปิดแอปครั้งแรก จนถึงใช้งานประจำวัน</div>
-    <div class="slide-content">
-      <div class="section-label anim-item">FIRST-TIME USER JOURNEY</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">📝</span> Register</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📜</span> Consent</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">👋</span> Onboarding</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">⭐</span> Birth Profile</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">🏠</span> Home (Today)</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">RETURNING USER JOURNEY</div>
-      <div class="flow-container anim-item">
-        <div class="flow-row">
-          <div class="flow-step highlight-blue"><span class="icon">🔑</span> Login</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-orange"><span class="icon">🔍</span> Consent Check</div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-green"><span class="icon">🏠</span> Home (Today)</div>
-        </div>
-      </div>
-      <div class="section-label anim-item" style="margin-top: 16px;">APP NAVIGATION (DAILY USE)</div>
-      <div class="state-machine anim-item">
-        <div class="state-node highlight-blue">🏠 Today<br><span style="font-size:9px;">Daily Summary + Calendar</span></div>
-        <div class="state-arrow">⇄</div>
-        <div class="state-node highlight-purple">🔮 ทำนาย<br><span style="font-size:9px;">เซียมซี, ไพ่, ฝัน</span></div>
-        <div class="state-arrow">⇄</div>
-        <div class="state-node highlight-orange">🔔 แจ้งเตือน<br><span style="font-size:9px;">กิจกรรม + ข่าวสาร</span></div>
-        <div class="state-arrow">⇄</div>
-        <div class="state-node highlight-green">👤 Profile<br><span style="font-size:9px;">Settings + โปรไฟล์ดวง</span></div>
-      </div>
-      <div class="split-row anim-item" style="margin-top: 14px;">
-        <div class="mini-card">
-          <div class="mini-card-title">📊 สรุปจำนวน Flows</div>
-          <ul>
-            <li>11 Main Flows (Parent Tasks)</li>
-            <li>15 Sub-tasks (รวม Calendar Views)</li>
-  
-          </ul>
-        </div>
-        <div class="mini-card">
-          <div class="mini-card-title">🎯 Key Design Decisions</div>
-          <ul>
-            <li>Email เป็น Primary Identity</li>
-            <li>Social Login ไม่ต้องตั้ง Password</li>
-            <li>Consent (PDPA) เป็น Blocking screen</li>
-            <li>Multi Profile สูงสุด 5 โปรไฟล์</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SLIDE 18: THANK YOU -->
-  <div class="slide" data-slide="18">
-    <div class="slide-content end-content">
-      <div style="font-size: clamp(60px,8vw,100px);" class="anim-item">🔮</div>
-      <div class="end-title anim-item">Thank You</div>
-      <div class="slide-subtitle anim-item" style="max-width: 520px;">DailyMu Calendar — BA Flow Documentation</div>
-      <div class="cover-roles anim-item" style="margin-top: 24px;">
-        <div class="role-chip">📋 BA Team</div>
-        <div class="role-chip">🔮 DailyMu Calendar</div>
-      </div>
-    </div>
-  </div>
-
+  <footer>DailyMu Calendar &copy; 2026 &middot; Realfeactory</footer>
 </div>
-
-<button class="fullscreen-btn" id="fullscreenBtn" title="Fullscreen (F)">⛶</button>
-<div class="page-dropdown" id="pageDropdown"></div>
-
-<div class="nav-bar" id="navBar">
-  <button class="nav-btn" id="homeBtn" title="Home (H)" style="font-size: 18px;">⌂</button>
-  <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
-  <div class="nav-progress" id="navProgress"></div>
-  <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
-  <div class="nav-counter" id="navCounter">1 / 19</div>
-  <button class="nav-btn" id="menuBtn" title="Slide Menu">☰</button>
-</div>
-
-<script>
-(function() {
-  const slides = document.querySelectorAll('.slide');
-  const totalSlides = slides.length;
-  let currentSlide = 0;
-  let animTimer = null;
-  let dropdownOpen = false;
-
-  const slideTitles = [
-    'DailyMu Calendar',
-    'Flow ทั้งหมด (Overview)',
-    'Register Flow',
-    'Login Flow',
-    'Forgot / Reset Password',
-    'Consent (PDPA)',
-    'App Onboarding',
-    'Birth Profile Setup',
-    'Multi Profile',
-    'Today (Core Feature)',
-    'ทำนายดวง Shortcuts',
-    'Calendar Monthly View',
-    'Day Detail',
-    'Share Card',
-    'Weekly View',
-    'Notification Center',
-    'Profile Management',
-    'User Journey (Summary)',
-    'Thank You'
-  ];
-
-  const navProgress = document.getElementById('navProgress');
-  for (let i = 0; i < totalSlides; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => goToSlide(i));
-    navProgress.appendChild(dot);
-  }
-
-  const dropdown = document.getElementById('pageDropdown');
-  slideTitles.forEach((title, i) => {
-    const item = document.createElement('div');
-    item.className = 'page-dropdown-item' + (i === 0 ? ' active' : '');
-    item.innerHTML = '<span class="item-num">' + String(i + 1).padStart(2, '0') + '</span> ' + title;
-    item.addEventListener('click', (e) => { e.stopPropagation(); const t = i; toggleDropdown(false); requestAnimationFrame(() => goToSlide(t)); });
-    dropdown.appendChild(item);
-  });
-
-  function goToSlide(index) {
-    if (index === currentSlide || index < 0 || index >= totalSlides) return;
-    if (animTimer) { clearTimeout(animTimer); slides.forEach(s => { s.classList.remove('active', 'prev'); s.style.transform = ''; }); }
-    const prev = slides[currentSlide];
-    const next = slides[index];
-    const goingForward = index > currentSlide;
-    prev.classList.remove('active');
-    if (goingForward) prev.classList.add('prev');
-    next.style.transition = 'none';
-    next.style.transform = goingForward ? 'translateX(60px)' : 'translateX(-60px)';
-    next.style.opacity = '0';
-    next.offsetHeight;
-    next.style.transition = '';
-    next.style.transform = '';
-    next.style.opacity = '';
-    next.classList.add('active');
-    currentSlide = index;
-    updateUI();
-    animTimer = setTimeout(() => { prev.classList.remove('prev'); prev.style.transform = ''; animTimer = null; }, 500);
-  }
-
-  function updateUI() {
-    document.getElementById('navCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
-    const dots = navProgress.querySelectorAll('.nav-dot');
-    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-    document.getElementById('prevBtn').disabled = currentSlide === 0;
-    document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
-    document.getElementById('homeBtn').disabled = currentSlide === 0;
-    const items = dropdown.querySelectorAll('.page-dropdown-item');
-    items.forEach((item, i) => item.classList.toggle('active', i === currentSlide));
-  }
-
-  function toggleDropdown(state) { dropdownOpen = state !== undefined ? state : !dropdownOpen; dropdown.classList.toggle('open', dropdownOpen); }
-
-  document.getElementById('homeBtn').addEventListener('click', () => goToSlide(0));
-  document.getElementById('prevBtn').addEventListener('click', () => goToSlide(currentSlide - 1));
-  document.getElementById('nextBtn').addEventListener('click', () => goToSlide(currentSlide + 1));
-  document.getElementById('menuBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
-  document.getElementById('fullscreenBtn').addEventListener('click', () => { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goToSlide(currentSlide + 1); }
-    else if (e.key === 'ArrowLeft') { e.preventDefault(); goToSlide(currentSlide - 1); }
-    else if (e.key === 'Home' || e.key === 'h' || e.key === 'H') { e.preventDefault(); goToSlide(0); }
-    else if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
-    else if (e.key === 'f' || e.key === 'F') { document.getElementById('fullscreenBtn').click(); }
-    else if (e.key === 'Escape') { toggleDropdown(false); }
-  });
-
-  let touchStartX = 0;
-  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
-  document.addEventListener('touchend', (e) => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) { diff > 0 ? goToSlide(currentSlide + 1) : goToSlide(currentSlide - 1); } });
-  document.addEventListener('click', (e) => { if (dropdownOpen && !dropdown.contains(e.target) && e.target.id !== 'menuBtn') toggleDropdown(false); });
-
-  updateUI();
-
-  updateUI();
-})();
-</script>
 
 </body>
 </html>

@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyMu — Subscription User Flows</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --primary: #8B5CF6;
+    --primary-light: #A78BFA;
+    --primary-bg: #F5F3FF;
+    --premium: #D4AF37;
+    --premium-bg: #FFFBEB;
+    --plus: #6366F1;
+    --plus-bg: #EEF2FF;
+    --free: #6B7280;
+    --free-bg: #F9FAFB;
+    --success: #10B981;
+    --success-bg: #ECFDF5;
+    --warning: #F59E0B;
+    --warning-bg: #FFFBEB;
+    --error: #EF4444;
+    --error-bg: #FEF2F2;
+    --info: #3B82F6;
+    --info-bg: #EFF6FF;
+    --external: #F97316;
+    --external-bg: #FFF7ED;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --border: #E5E7EB;
+    --text: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.07), 0 4px 6px rgba(0,0,0,0.04);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Sans Thai', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #7C3AED 0%, #8B5CF6 50%, #A78BFA 100%);
+    color: white;
+    padding: 32px 40px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.85;
+    font-weight: 300;
+  }
+
+  /* Tab Navigation */
+  .tab-nav {
+    display: flex;
+    gap: 4px;
+    padding: 8px 40px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-nav::-webkit-scrollbar { height: 0; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 10px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { background: var(--primary-bg); color: var(--primary); }
+  .tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 2px 8px rgba(139,92,246,0.3);
+  }
+  .tab-btn .tab-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tab-btn.active .tab-num {
+    background: rgba(255,255,255,0.25);
+  }
+
+  /* Content */
+  .content { padding: 32px 40px 80px; max-width: 1400px; margin: 0 auto; }
+  .flow-section { display: none; }
+  .flow-section.active { display: block; }
+
+  .flow-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .flow-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  /* Flow Diagram Container */
+  .flow-diagram {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+    margin-bottom: 28px;
+  }
+
+  /* Swimlane */
+  .swimlane {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+  }
+  .swim-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+    position: relative;
+  }
+  .swim-col::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 40px;
+    bottom: 0;
+    width: 1px;
+    background: var(--border);
+  }
+  .swim-col:last-child::after { display: none; }
+
+  /* Flow Nodes */
+  .node {
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    margin: 6px 8px;
+    min-width: 150px;
+    max-width: 200px;
+    position: relative;
+    line-height: 1.4;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .node:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .node-start {
+    background: var(--primary);
+    color: white;
+    border-radius: 24px;
+    font-weight: 600;
+  }
+  .node-end {
+    background: var(--success);
+    color: white;
+    border-radius: 24px;
+    font-weight: 600;
+  }
+  .node-action {
+    background: var(--primary-bg);
+    border: 1.5px solid var(--primary-light);
+    color: var(--primary);
+  }
+  .node-screen {
+    background: white;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    box-shadow: var(--shadow);
+  }
+  .node-decision {
+    background: var(--warning-bg);
+    border: 1.5px solid var(--warning);
+    color: #92400E;
+    transform: rotate(0deg);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    padding: 24px 16px;
+    min-width: 130px;
+    font-size: 11px;
+  }
+  .node-decision:hover { transform: translateY(-1px); }
+  .node-external {
+    background: var(--external-bg);
+    border: 1.5px dashed var(--external);
+    color: #9A3412;
+  }
+  .node-error {
+    background: var(--error-bg);
+    border: 1.5px solid var(--error);
+    color: #991B1B;
+  }
+  .node-gate {
+    background: #FEF3C7;
+    border: 1.5px solid #F59E0B;
+    color: #92400E;
+  }
+  .node-info {
+    background: var(--info-bg);
+    border: 1.5px solid var(--info);
+    color: #1E40AF;
+  }
+  .node-premium {
+    background: var(--premium-bg);
+    border: 1.5px solid var(--premium);
+    color: #78350F;
+  }
+  .node-plus {
+    background: var(--plus-bg);
+    border: 1.5px solid var(--plus);
+    color: #3730A3;
+  }
+  .node-free {
+    background: var(--free-bg);
+    border: 1.5px solid #D1D5DB;
+    color: var(--text-secondary);
+  }
+  .node-success {
+    background: var(--success-bg);
+    border: 1.5px solid var(--success);
+    color: #065F46;
+  }
+
+  /* Arrow */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2px 0;
+    color: var(--text-muted);
+  }
+  .arrow-line {
+    width: 2px;
+    height: 20px;
+    background: var(--text-muted);
+  }
+  .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--text-muted);
+  }
+  .arrow-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin: 2px 0;
+    font-weight: 500;
+  }
+  .arrow-right {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    margin: 0 4px;
+  }
+  .arrow-right-line {
+    width: 24px;
+    height: 2px;
+    background: var(--text-muted);
+  }
+  .arrow-right-head {
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 6px solid var(--text-muted);
+  }
+
+  /* Horizontal Flow */
+  .h-flow {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 12px 0;
+    gap: 0;
+  }
+  .h-flow::-webkit-scrollbar { height: 4px; }
+  .h-flow::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* Vertical Flow */
+  .v-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 0;
+  }
+
+  /* Branch */
+  .branch {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 8px 0;
+  }
+  .branch-path {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .branch-label {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+  }
+  .branch-label.yes { background: #D1FAE5; color: #065F46; }
+  .branch-label.no { background: #FEE2E2; color: #991B1B; }
+  .branch-label.alt { background: #E0E7FF; color: #3730A3; }
+  .branch-label.state { background: #F3E8FF; color: #6B21A8; }
+
+  /* Zone */
+  .zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin: 12px 0;
+    position: relative;
+  }
+  .zone-label {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .zone-app { border-color: var(--primary-light); }
+  .zone-app .zone-label { color: var(--primary); }
+  .zone-web { border-color: var(--external); }
+  .zone-web .zone-label { color: var(--external); }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 20px;
+    background: #F9FAFB;
+    border-radius: var(--radius-sm);
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+  }
+  .legend-title {
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+  .legend-swatch {
+    width: 28px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.1);
+    flex-shrink: 0;
+  }
+
+  /* Info Cards */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .info-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .info-card ul {
+    list-style: none;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  .info-card li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .info-card li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-light);
+  }
+
+  /* Table */
+  .flow-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    margin: 16px 0;
+  }
+  .flow-table th {
+    background: #F9FAFB;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    border-bottom: 2px solid var(--border);
+  }
+  .flow-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #F3F4F6;
+    color: var(--text);
+  }
+  .flow-table tr:last-child td { border-bottom: none; }
+  .flow-table tr:hover td { background: #FAFAFA; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-plus { background: var(--plus-bg); color: var(--plus); }
+  .badge-premium { background: var(--premium-bg); color: #92400E; }
+  .badge-free { background: #F3F4F6; color: var(--free); }
+
+  /* Section Divider */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 20px;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-divider span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .header { padding: 24px 20px 20px; }
+    .tab-nav { padding: 8px 16px; }
+    .content { padding: 20px 16px 60px; }
+    .flow-diagram { padding: 20px 16px; }
+    .branch { flex-direction: column; align-items: center; }
+    .info-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>DailyMu Calendar — Subscription User Flows</h1>
+    <span class="header-badge">BA Spec Reference</span>
+  </div>
+  <p>Plan Subscription Flow (External Payment / Spotify Model) | Epic DAIL-729</p>
+</div>
+
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" onclick="showFlow(0)">
+    <span class="tab-num">1</span> Overall Journey
+  </button>
+  <button class="tab-btn" onclick="showFlow(1)">
+    <span class="tab-num">2</span> View Plans
+  </button>
+  <button class="tab-btn" onclick="showFlow(2)">
+    <span class="tab-num">3</span> Subscribe via Web
+  </button>
+  <button class="tab-btn" onclick="showFlow(3)">
+    <span class="tab-num">4</span> Feature Gate
+  </button>
+  <button class="tab-btn" onclick="showFlow(4)">
+    <span class="tab-num">5</span> Manage Subscription
+  </button>
+</nav>
+
+<div class="content">
+
+<!-- ============================================ -->
+<!-- FLOW 1: OVERALL JOURNEY -->
+<!-- ============================================ -->
+<div class="flow-section active" id="flow0">
+  <h2 class="flow-title">Flow 1: Overall Subscription Journey</h2>
+  <p class="flow-desc">ภาพรวมการเชื่อมโยงทุก flow ตั้งแต่เข้าถึง → สมัคร → จัดการสมาชิก</p>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#8B5CF6;"></div> Start / End</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F5F3FF; border-color:#A78BFA;"></div> Action (In-App)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFF; border-color:#E5E7EB;"></div> Screen</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFF7ED; border-color:#F97316;"></div> External Web</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF3C7; border-color:#F59E0B;"></div> Decision</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ECFDF5; border-color:#10B981;"></div> Success</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF2F2; border-color:#EF4444;"></div> Error</div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="v-flow">
+
+      <!-- Entry Points -->
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label alt">E-1</div>
+          <div class="node node-action">Settings / Profile<br><small>"อัปเกรด"</small></div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label alt">E-2</div>
+          <div class="node node-action">Upgrade Banner<br><small>หน้า Home (Free only)</small></div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label alt">E-3</div>
+          <div class="node node-gate">Feature Gate<br><small>กดฟีเจอร์ locked</small></div>
+        </div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Plan Comparison -->
+      <div class="node node-screen" style="min-width:280px;">
+        <strong>หน้า Plan Comparison</strong><br>
+        Free / Plus / Premium<br>
+        <small>แสดงฟีเจอร์ ไม่แสดงราคา</small>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Decision: Subscribe or Manage -->
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label yes">กดสมัคร</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-screen">Bottom Sheet<br><small>"จะพาไปเว็บไซต์..."</small></div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">กด "ไปเว็บไซต์"</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+          <div class="zone zone-web" style="padding:16px;">
+            <div class="zone-label">External Web Browser</div>
+            <div class="v-flow" style="padding-top:8px;">
+              <div class="node node-external">หน้า Subscription<br><small>เลือกแพลน + ดูราคา</small></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-external">ชำระเงิน<br><small>Credit Card / PromptPay</small></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-external">Success Page<br><small>ปุ่ม "เปิดแอป DailyMu"</small></div>
+            </div>
+          </div>
+
+          <div class="arrow"><div class="arrow-label">Deep Link</div><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+          <div class="zone zone-app" style="padding:16px;">
+            <div class="zone-label">กลับเข้าแอป</div>
+            <div class="v-flow" style="padding-top:8px;">
+              <div class="node node-success">Success Screen<br><small>แสดงแพลน + ฟีเจอร์ปลดล็อค</small></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-end">หน้า Home</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-path">
+          <div class="branch-label state">Subscriber</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-screen">สมาชิกของฉัน<br><small>แพลนปัจจุบัน + วันหมดอายุ</small></div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">กด "จัดการบนเว็บ"</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="zone zone-web" style="padding:16px;">
+            <div class="zone-label">External Web Browser</div>
+            <div class="v-flow" style="padding-top:8px;">
+              <div class="node node-external">จัดการสมาชิก<br><small>เปลี่ยนแพลน / ยกเลิก / อัปเดตบัตร</small></div>
+            </div>
+          </div>
+          <div class="arrow"><div class="arrow-label">กลับแอป</div><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-info">Sync สถานะ<br><small>อัปเดต UI อัตโนมัติ</small></div>
+        </div>
+
+        <div class="branch-path">
+          <div class="branch-label no">ยกเลิก</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-free">ปิด<br><small>กลับหน้าเดิม</small></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Subscription State Sync</h3>
+      <ul>
+        <li>Sync ทุกครั้งที่เปิดแอป (App Launch)</li>
+        <li>Sync เมื่อกลับมา foreground (Resume)</li>
+        <li>Sync เมื่อรับ Deep Link จากเว็บ</li>
+        <li>Sync เมื่อ Pull-to-refresh หน้า Home</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>Apple Guideline Constraints</h3>
+      <ul>
+        <li>ห้ามแสดงราคาในแอป (iOS)</li>
+        <li>ห้ามมีปุ่ม "ซื้อ" โดยตรง</li>
+        <li>ต้องใช้ External Browser ไม่ใช่ WebView</li>
+        <li>ใช้ Flow เดียวกันทั้ง iOS และ Android</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- FLOW 2: VIEW PLANS -->
+<!-- ============================================ -->
+<div class="flow-section" id="flow1">
+  <h2 class="flow-title">Flow 2: View Plans — หน้าเปรียบเทียบแพลน</h2>
+  <p class="flow-desc">Entry Points 3 จุด → หน้า Plan Comparison → แยก UI ตาม User Role | Jira: DAIL-730</p>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F5F3FF; border-color:#A78BFA;"></div> Action</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFF; border-color:#E5E7EB;"></div> Screen</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF3C7; border-color:#F59E0B;"></div> Gate / Trigger</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F3F4F6; border-color:#D1D5DB;"></div> Free User</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#EEF2FF; border-color:#6366F1;"></div> Plus</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFFBEB; border-color:#D4AF37;"></div> Premium</div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="v-flow">
+
+      <div class="node node-start">ผู้ใช้ต้องการดูแพลน</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Entry Points -->
+      <div class="section-divider"><span>Entry Points</span></div>
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label alt">E-1</div>
+          <div class="node node-action">Settings / Profile<br><small>ปุ่ม "อัปเกรด"</small></div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">ทุก Role เห็น<br>(Subscriber เห็นเป็น "จัดการสมาชิก")</div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label alt">E-2</div>
+          <div class="node node-action">Upgrade Banner<br><small>หน้า Home / Today</small></div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">เฉพาะ Free user<br>dismiss ได้ กลับมาวันถัดไป</div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label alt">E-3</div>
+          <div class="node node-gate">Feature Gate Prompt<br><small>กดฟีเจอร์ locked</small></div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">กด "ดูแพลนทั้งหมด"<br>จาก Bottom Sheet</div>
+        </div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Plan Comparison Screen -->
+      <div class="node node-screen" style="min-width:320px; padding:16px 20px;">
+        <strong style="font-size:14px;">หน้า Plan Comparison</strong><br><br>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <span class="badge badge-free">Free</span>
+          <span class="badge badge-plus">Plus</span>
+          <span class="badge badge-premium">Premium</span>
+        </div>
+        <br>
+        <small>รายการฟีเจอร์ (✓/✗/ตัวเลข)<br>Badge "แพลนปัจจุบัน" + "แนะนำ"<br><strong>ไม่แสดงราคา</strong></small>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Branch by Role -->
+      <div class="section-divider"><span>แยกตาม User Role</span></div>
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label state">Free User</div>
+          <div class="node node-free" style="min-width:180px;">
+            Badge "แพลนปัจจุบัน" ที่ Free<br><br>
+            <small>ปุ่ม <strong>"สมัคร Plus"</strong><br>ปุ่ม <strong>"สมัคร Premium"</strong></small>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">ไป Flow 3:<br>Subscribe via Web</div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label state">Plus Subscriber</div>
+          <div class="node node-plus" style="min-width:180px;">
+            Badge "แพลนปัจจุบัน" ที่ Plus<br><br>
+            <small>ปุ่ม <strong>"อัปเกรด Premium"</strong><br>Free = disabled</small>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">ไป Flow 3:<br>Subscribe via Web</div>
+        </div>
+        <div class="branch-path">
+          <div class="branch-label state">Premium Subscriber</div>
+          <div class="node node-premium" style="min-width:180px;">
+            Badge "แพลนปัจจุบัน" ที่ Premium<br><br>
+            <small>ไม่มีปุ่มสมัคร<br>แสดงข้อมูลอย่างเดียว</small>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-end">จบ</div>
+        </div>
+      </div>
+
+      <!-- Error States -->
+      <div class="section-divider"><span>Error / Loading States</span></div>
+      <div class="branch">
+        <div class="branch-path">
+          <div class="node node-info">Loading<br><small>Skeleton / Shimmer ของ 3 cards</small></div>
+        </div>
+        <div class="branch-path">
+          <div class="node node-error">Error<br><small>Error message + ปุ่ม "ลองใหม่"</small></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>UX Decision ที่ต้องตัดสินใจ</h3>
+      <ul>
+        <li>Layout: Card swipe แนวนอน? หรือ ตารางเต็มจอ scroll แนวตั้ง?</li>
+        <li>Upgrade Banner: ขนาด, ตำแหน่ง, frequency หลัง dismiss?</li>
+        <li>Badge: ใช้คำว่า "แนะนำ" หรือ "ยอดนิยม"? อยู่ที่แพลนไหน?</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- FLOW 3: SUBSCRIBE VIA WEB -->
+<!-- ============================================ -->
+<div class="flow-section" id="flow2">
+  <h2 class="flow-title">Flow 3: Subscribe via External Web</h2>
+  <p class="flow-desc">กดสมัคร → Bottom Sheet ยืนยัน → Browser → ชำระเงิน → Deep Link กลับแอป → Success | Jira: DAIL-732</p>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F5F3FF; border-color:#A78BFA;"></div> In-App</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFF7ED; border-color:#F97316;"></div> External Web</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ECFDF5; border-color:#10B981;"></div> Success</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF2F2; border-color:#EF4444;"></div> Error</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#EFF6FF; border-color:#3B82F6;"></div> System</div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="v-flow">
+
+      <div class="node node-start">กดปุ่ม "สมัคร Plus/Premium"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Bottom Sheet -->
+      <div class="zone zone-app">
+        <div class="zone-label">In-App</div>
+        <div class="v-flow" style="padding-top:8px;">
+          <div class="node node-screen" style="min-width:300px; text-align:left; padding:14px 18px;">
+            <strong>Bottom Sheet ยืนยัน</strong><br><br>
+            "จะพาคุณไปเว็บไซต์ DailyMu<br>เพื่อดูรายละเอียดและสมัครสมาชิก"<br><br>
+            <small style="color:var(--text-muted);">"คุณจะสามารถดูราคาและเลือก<br>รอบการชำระเงินได้บนเว็บไซต์"</small><br><br>
+            <span class="badge" style="background:#8B5CF6;color:white;">ไปเว็บไซต์</span>
+            <span class="badge" style="background:#F3F4F6;color:#6B7280;margin-left:4px;">ยกเลิก</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Branch -->
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label yes">ไปเว็บไซต์</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+          <div class="zone zone-web">
+            <div class="zone-label">External Web Browser</div>
+            <div class="v-flow" style="padding-top:12px;">
+              <div class="node node-external">หน้า Subscription DailyMu<br><small>เลือกแพลน + ดูราคา + Billing cycle</small></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-external">กรอกข้อมูลชำระเงิน<br><small>Credit Card / PromptPay / TrueMoney</small></div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+              <div class="branch">
+                <div class="branch-path">
+                  <div class="branch-label yes">สำเร็จ</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-success">Success Page<br><small>ปุ่ม "เปิดแอป DailyMu"</small></div>
+                </div>
+                <div class="branch-path">
+                  <div class="branch-label no">ไม่สำเร็จ</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-error">Payment Failed<br><small>แสดง error + ลองใหม่</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="arrow"><div class="arrow-label">Deep Link กลับแอป</div><div class="arrow-line" style="height:28px;"></div><div class="arrow-head"></div></div>
+
+          <div class="zone zone-app">
+            <div class="zone-label">กลับเข้าแอป</div>
+            <div class="v-flow" style="padding-top:12px;">
+              <div class="node node-info">ตรวจสอบสถานะ Subscription</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="branch">
+                <div class="branch-path">
+                  <div class="branch-label yes">ยืนยันสำเร็จ</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-success" style="min-width:220px; text-align:left; padding:14px 18px;">
+                    <strong>Success Screen</strong><br><br>
+                    <small>ชื่อแพลนที่สมัคร<br>สรุปฟีเจอร์ที่ปลดล็อค<br><br></small>
+                    <span class="badge" style="background:#10B981;color:white;">เริ่มใช้งาน</span>
+                  </div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-end">หน้า Home<br><small>ซ่อน ads + ปลดล็อคฟีเจอร์</small></div>
+                </div>
+                <div class="branch-path">
+                  <div class="branch-label alt">รอยืนยัน</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-info">"กำลังตรวจสอบ<br>กรุณารอสักครู่..."<br><small>Retry ทุก 3 วิ x 5 ครั้ง</small></div>
+                </div>
+                <div class="branch-path">
+                  <div class="branch-label no">ไม่สำเร็จ</div>
+                  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+                  <div class="node node-error">"กรุณาเปิดแอป<br>ใหม่อีกครั้ง"<br><small>ปุ่ม [ลองใหม่]</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-path">
+          <div class="branch-label no">ยกเลิก</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-free">ปิด Bottom Sheet<br><small>กลับหน้า Plan Comparison</small></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-card" style="margin-top:0;">
+    <h3>กรณีไม่กดกลับเข้าแอป</h3>
+    <ul>
+      <li>ผู้ใช้สมัครบนเว็บสำเร็จแต่ไม่กด "เปิดแอป"</li>
+      <li>เมื่อเปิดแอปเอง → แอป sync สถานะอัตโนมัติ → อัปเดต UI + แสดง Welcome message</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- FLOW 4: FEATURE GATE -->
+<!-- ============================================ -->
+<div class="flow-section" id="flow3">
+  <h2 class="flow-title">Flow 4: Feature Gate — ฟีเจอร์ Locked / Quota หมด</h2>
+  <p class="flow-desc">แสดง prompt เมื่อผู้ใช้เจอฟีเจอร์ที่ต้อง upgrade หรือใช้ quota หมด | Jira: DAIL-734</p>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF3C7; border-color:#F59E0B;"></div> Trigger / Gate</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#EEF2FF; border-color:#6366F1;"></div> ต้องการ Plus</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFFBEB; border-color:#D4AF37;"></div> ต้องการ Premium</div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="v-flow">
+
+      <div class="node node-start">ผู้ใช้กดฟีเจอร์ / ใช้ quota</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Check -->
+      <div class="node node-info">ตรวจสอบ: มีสิทธิ์ใช้ไหม?</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <div class="branch">
+        <div class="branch-path">
+          <div class="branch-label yes">มีสิทธิ์</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-end">ใช้งานได้ปกติ</div>
+        </div>
+
+        <div class="branch-path" style="min-width:260px;">
+          <div class="branch-label no">ฟีเจอร์ถูก Lock</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-screen" style="min-width:260px; text-align:left; padding:14px 18px;">
+            <strong>Bottom Sheet — Variant A</strong><br><br>
+            <div style="text-align:center;margin-bottom:8px;">
+              <span style="font-size:24px;">&#128274;</span>
+            </div>
+            "ฟีเจอร์ <strong>{ชื่อ}</strong> สำหรับ<br>สมาชิก <strong>{Plus/Premium}</strong> ขึ้นไป"<br><br>
+            <small style="color:var(--text-muted);">คำอธิบายสั้นๆ ว่าฟีเจอร์ทำอะไร</small><br><br>
+            <span class="badge" style="background:#8B5CF6;color:white;">ดูแพลนทั้งหมด</span>
+            <span class="badge" style="background:#F3F4F6;color:#6B7280;margin-left:4px;">ปิด</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="branch">
+            <div class="branch-path">
+              <div class="branch-label yes">ดูแพลน</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-action">ไป Flow 2:<br>Plan Comparison</div>
+            </div>
+            <div class="branch-path">
+              <div class="branch-label no">ปิด</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-free">กลับหน้าเดิม</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="branch-path" style="min-width:260px;">
+          <div class="branch-label alt">Quota หมด</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-screen" style="min-width:260px; text-align:left; padding:14px 18px;">
+            <strong>Bottom Sheet — Variant B</strong><br><br>
+            <div style="text-align:center;margin-bottom:8px;">
+              <span style="font-size:24px;">&#9203;</span>
+            </div>
+            "คุณใช้ <strong>{ชื่อ}</strong> ครบ<br><strong>{N}</strong> ครั้งแล้ววันนี้"<br><br>
+            <small style="color:var(--text-muted);">"อัปเกรดเพื่อใช้งานเพิ่ม<br>หรือกลับมาใหม่พรุ่งนี้"</small><br><br>
+            <span class="badge" style="background:#8B5CF6;color:white;">ดูแพลนทั้งหมด</span>
+            <span class="badge" style="background:#F3F4F6;color:#6B7280;margin-left:4px;">ปิด</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="branch">
+            <div class="branch-path">
+              <div class="branch-label yes">ดูแพลน</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-action">ไป Flow 2:<br>Plan Comparison</div>
+            </div>
+            <div class="branch-path">
+              <div class="branch-label no">ปิด</div>
+              <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+              <div class="node node-free">กลับหน้าเดิม</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Trigger Table -->
+  <div class="section-divider"><span>Feature Gate Trigger Points</span></div>
+
+  <div class="flow-diagram" style="padding:20px;">
+    <table class="flow-table">
+      <thead>
+        <tr>
+          <th>ฟีเจอร์</th>
+          <th>แพลนขั้นต่ำ</th>
+          <th>Trigger</th>
+          <th>Variant</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>ไพ่ทาโรต์</td><td><span class="badge badge-plus">Plus</span></td><td>Free user กดเมนู</td><td>A — Lock</td></tr>
+        <tr><td>ทำนายฝัน</td><td><span class="badge badge-plus">Plus</span></td><td>Free user กดเมนู</td><td>A — Lock</td></tr>
+        <tr><td>ปาจื่อ</td><td><span class="badge badge-plus">Plus</span></td><td>Free user กดดูดวง</td><td>A — Lock</td></tr>
+        <tr><td>AI สรุป</td><td><span class="badge badge-premium">Premium</span></td><td>Free/Plus user กดปุ่ม</td><td>A — Lock</td></tr>
+        <tr><td>AI Chat</td><td><span class="badge badge-premium">Premium</span></td><td>Free/Plus user กดเมนู</td><td>A — Lock</td></tr>
+        <tr><td>รายงานสัปดาห์/เดือน</td><td><span class="badge badge-premium">Premium</span></td><td>Free/Plus user กดดูรายงาน</td><td>A — Lock</td></tr>
+        <tr><td>เพิ่มโปรไฟล์เกิน quota</td><td><span class="badge badge-plus">Plus</span> / <span class="badge badge-premium">Premium</span></td><td>กดเพิ่มโปรไฟล์เกินสิทธิ์</td><td>B — Quota</td></tr>
+        <tr><td>เซียมซี (ครบ/วัน)</td><td><span class="badge badge-plus">Plus</span></td><td>Free: ครบ 1 ครั้ง / Plus: ครบ 3 ครั้ง</td><td>B — Quota</td></tr>
+        <tr><td>ไพ่ทาโรต์ (ครบ/วัน)</td><td><span class="badge badge-premium">Premium</span></td><td>Plus: ครบ 2 ครั้ง</td><td>B — Quota</td></tr>
+        <tr><td>ทำนายฝัน (ครบ/วัน)</td><td><span class="badge badge-premium">Premium</span></td><td>Plus: ครบ 5 ครั้ง</td><td>B — Quota</td></tr>
+        <tr><td>แชร์การ์ด (ครบ/วัน)</td><td><span class="badge badge-plus">Plus</span></td><td>Free: ครบ 2 ครั้ง / Plus: ครบ 5 ครั้ง</td><td>B — Quota</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- FLOW 5: MANAGE SUBSCRIPTION -->
+<!-- ============================================ -->
+<div class="flow-section" id="flow4">
+  <h2 class="flow-title">Flow 5: Manage Subscription — จัดการสมาชิก</h2>
+  <p class="flow-desc">ดูสถานะแพลน + จัดการผ่าน External Web แยกตาม 5 Subscription States | Jira: DAIL-735</p>
+
+  <div class="legend">
+    <div class="legend-title">Legend</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F3F4F6; border-color:#D1D5DB;"></div> Free</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ECFDF5; border-color:#10B981;"></div> Active</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FFFBEB; border-color:#F59E0B;"></div> Grace Period</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FEF2F2; border-color:#EF4444;"></div> Expired</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F3E8FF; border-color:#8B5CF6;"></div> Cancelled</div>
+  </div>
+
+  <div class="flow-diagram">
+    <div class="v-flow">
+
+      <div class="node node-start">Settings → "จัดการสมาชิก"</div>
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <div class="node node-screen" style="min-width:280px;">
+        <strong>หน้า "สมาชิกของฉัน"</strong><br>
+        <small>ตรวจสอบ Subscription State</small>
+      </div>
+
+      <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+      <!-- Branch by State -->
+      <div class="branch" style="flex-wrap:wrap; justify-content:center;">
+
+        <!-- Free -->
+        <div class="branch-path" style="min-width:200px;">
+          <div class="branch-label" style="background:#F3F4F6;color:#6B7280;">Free</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-free" style="min-width:190px;">
+            "คุณกำลังใช้แพลนฟรี"<br><br>
+            <span class="badge" style="background:#8B5CF6;color:white;">ดูแพลนทั้งหมด</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">ไป Flow 2:<br>Plan Comparison</div>
+        </div>
+
+        <!-- Active -->
+        <div class="branch-path" style="min-width:200px;">
+          <div class="branch-label" style="background:#D1FAE5;color:#065F46;">Active</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-success" style="min-width:190px;">
+            แพลน: <strong>{Plus/Premium}</strong><br>
+            วันต่ออายุ: <strong>{วันที่}</strong><br>
+            สถานะ: Active<br><br>
+            <span class="badge" style="background:#10B981;color:white;">จัดการบนเว็บไซต์</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-external">External Browser<br><small>เปลี่ยนแพลน / billing /<br>อัปเดตบัตร / ยกเลิก</small></div>
+        </div>
+
+        <!-- Grace Period -->
+        <div class="branch-path" style="min-width:200px;">
+          <div class="branch-label" style="background:#FEF3C7;color:#92400E;">Grace Period</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-gate" style="min-width:190px;">
+            <strong>Banner เตือน</strong><br>
+            "กรุณาต่ออายุสมาชิก"<br><br>
+            <small>ยังใช้ฟีเจอร์ได้ปกติ<br>(เหลือ {N} วัน)</small><br><br>
+            <span class="badge" style="background:#F59E0B;color:white;">ต่ออายุ</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-external">External Browser<br><small>ชำระเงินต่ออายุ</small></div>
+        </div>
+
+        <!-- Cancelled -->
+        <div class="branch-path" style="min-width:200px;">
+          <div class="branch-label" style="background:#F3E8FF;color:#6B21A8;">Cancelled</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action" style="min-width:190px; background:#F3E8FF; border-color:#A78BFA;">
+            แพลน: <strong>{Plus/Premium}</strong><br>
+            <strong>"จะหมดอายุวันที่ {วันที่}"</strong><br><br>
+            <small>ยังใช้ฟีเจอร์ได้จนหมดอายุ</small><br><br>
+            <span class="badge" style="background:#8B5CF6;color:white;">สมัครใหม่</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-external">External Browser<br><small>สมัครสมาชิกใหม่</small></div>
+        </div>
+
+        <!-- Expired -->
+        <div class="branch-path" style="min-width:200px;">
+          <div class="branch-label" style="background:#FEE2E2;color:#991B1B;">Expired</div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-error" style="min-width:190px;">
+            <strong>"สมาชิกหมดอายุแล้ว"</strong><br><br>
+            <small>Downgrade เป็น Free<br>ข้อมูลยังอยู่ แต่จำกัดสิทธิ์</small><br><br>
+            <span class="badge" style="background:#EF4444;color:white;">สมัครใหม่</span>
+          </div>
+          <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+          <div class="node node-action">ไป Flow 2:<br>Plan Comparison</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- State Transition -->
+  <div class="section-divider"><span>Subscription State Lifecycle</span></div>
+
+  <div class="flow-diagram">
+    <div class="h-flow" style="justify-content:center; gap:0;">
+      <div class="node node-free" style="min-width:100px;">Free</div>
+      <div class="arrow-right"><div class="arrow-right-line"></div><div class="arrow-right-head"></div></div>
+      <div class="node node-success" style="min-width:100px;">Active</div>
+      <div class="arrow-right"><div class="arrow-right-line"></div><div class="arrow-right-head"></div></div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:0;">
+          <div class="node" style="background:#F3E8FF;border:1.5px solid #A78BFA;color:#6B21A8;min-width:100px;">Cancelled</div>
+          <div class="arrow-right"><div class="arrow-right-line"></div><div class="arrow-right-head"></div></div>
+          <div class="node node-gate" style="min-width:110px;">Grace Period</div>
+          <div class="arrow-right"><div class="arrow-right-line"></div><div class="arrow-right-head"></div></div>
+          <div class="node node-error" style="min-width:100px;">Expired</div>
+          <div class="arrow-right"><div class="arrow-right-line"></div><div class="arrow-right-head"></div></div>
+          <div class="node node-free" style="min-width:100px;">Free</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h3>Business Rules</h3>
+      <ul>
+        <li>Downgrade ไม่สูญเสียข้อมูล — ข้อมูลยังอยู่ แต่จำกัดสิทธิ์เข้าถึง</li>
+        <li>Grace Period 3-7 วัน (ต้องยืนยันกับทีม Business)</li>
+        <li>Cancelled ยังใช้ฟีเจอร์ได้จนจบ billing cycle</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h3>UX Decision ที่ต้องตัดสินใจ</h3>
+      <ul>
+        <li>Banner เตือน: สีอะไร? ตำแหน่งไหน? (Home / Settings / ทั้งสองที่?)</li>
+        <li>Grace Period: แสดง countdown หรือแค่วันที่?</li>
+        <li>Downgrade: ให้เลือก keep โปรไฟล์ไหน? (ถ้ามี 5 แต่เหลือสิทธิ์ 1)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+
+<script>
+function showFlow(index) {
+  document.querySelectorAll('.flow-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('flow' + index).classList.add('active');
+  document.querySelectorAll('.tab-btn')[index].classList.add('active');
+}
+</script>
+
+<!-- Document Hub Button -->
+<a href="../index.html" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:50px;font-size:13px;font-weight:600;color:#fff;background:linear-gradient(135deg,#8B5CF6,#6366F1);text-decoration:none;cursor:pointer;border:none;box-shadow:0 2px 12px rgba(139,92,246,0.35);transition:all 0.25s ease;font-family:'IBM Plex Sans Thai',sans-serif;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 16px rgba(139,92,246,0.45)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(139,92,246,0.35)'">&#x2190; Document Hub</a>
+</body>
+</html>
