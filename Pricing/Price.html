@@ -168,31 +168,35 @@
     /* Pricing Cards */
     .pricing-row {
       display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: clamp(10px, 1.2vw, 18px); max-width: 1100px; margin: 0 auto; width: 100%;
+      gap: clamp(14px, 1.8vw, 28px); max-width: 1000px; margin: 0 auto; width: 100%;
+      align-items: stretch;
     }
     .pricing-card {
-      padding: clamp(14px, 1.5vw, 24px); border-radius: 16px;
+      padding: clamp(20px, 2.2vw, 36px); border-radius: 20px;
       border: 1px solid var(--border-color); background: var(--bg-card);
       transition: all var(--transition-fast) ease; position: relative; overflow: hidden;
+      display: flex; flex-direction: column;
     }
-    .pricing-card:hover { transform: translateY(-3px); }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(123,31,162,0.1); }
     .pricing-card.featured {
-      border-color: var(--primary); background: rgba(123,31,162,0.08);
-      box-shadow: 0 4px 20px rgba(123,31,162,0.15);
+      border: 2px solid var(--primary); background: rgba(123,31,162,0.06);
+      box-shadow: 0 6px 28px rgba(123,31,162,0.18);
+      transform: scale(1.03);
     }
+    .pricing-card.featured:hover { transform: scale(1.03) translateY(-4px); }
     .pricing-card.featured::before {
-      content: 'แนะนำ'; position: absolute; top: 12px; right: -28px;
-      background: var(--primary); color: white; font-size: 10px; font-weight: 700;
-      padding: 3px 32px; transform: rotate(45deg);
+      content: 'แนะนำ'; position: absolute; top: 14px; right: -26px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-size: 10px; font-weight: 700;
+      padding: 4px 34px; transform: rotate(45deg);
     }
-    .pricing-tier { font-size: clamp(14px, 1.4vw, 20px); font-weight: 800; margin-bottom: 4px; }
-    .pricing-price { font-size: clamp(22px, 2.5vw, 38px); font-weight: 900; color: var(--primary); }
-    .pricing-price small { font-size: 0.45em; font-weight: 500; color: var(--text-muted); }
-    .pricing-annual { font-size: clamp(9px, 0.85vw, 12px); color: var(--accent-amber); font-weight: 600; margin-bottom: 10px; }
-    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .pricing-tier { font-size: clamp(16px, 1.6vw, 24px); font-weight: 800; margin-bottom: 6px; }
+    .pricing-price { font-size: clamp(28px, 3.2vw, 48px); font-weight: 900; color: var(--primary); margin-bottom: 2px; }
+    .pricing-price small { font-size: 0.4em; font-weight: 500; color: var(--text-muted); }
+    .pricing-annual { font-size: clamp(10px, 1vw, 14px); color: var(--accent-amber); font-weight: 600; margin-bottom: 16px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
     .pricing-features li {
-      font-size: clamp(10px, 0.9vw, 13px); color: var(--text-secondary);
-      display: flex; align-items: center; gap: 6px;
+      font-size: clamp(11px, 1.05vw, 15px); color: var(--text-secondary);
+      display: flex; align-items: center; gap: 8px; line-height: 1.4;
     }
     .pricing-features li .check { color: var(--primary); font-weight: 700; }
     .pricing-features li .x-mark { color: var(--text-muted); }
@@ -599,7 +603,7 @@
           <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Sesheta</strong></td><td>Sub + Ink credit</td><td><span class="hl hl-pink">฿69 / ฿199 / ฿499 /mo</span></td><td><strong>BaZi + Tong Shu + AI &mdash; คู่แข่งตรง!</strong></td></tr>
           <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Ai-Ming</strong></td><td>Subscription (ปี)</td><td><span class="hl hl-pink">฿2,990/ปี (~฿249/mo)</span></td><td><strong>AI Chat หมอดู + Calendar &mdash; คู่แข่งตรง!</strong></td></tr>
           <tr style="background:rgba(194,24,91,0.06);"><td><strong style="color:var(--secondary);">&#9733; Num Eiang</strong></td><td>Subscription</td><td><span class="hl hl-pink">฿59/mo &bull; ฿599/yr</span></td><td><strong>ดวงรายวัน + เลขมงคล + ธาตุ &mdash; คู่แข่งตรง!</strong></td></tr>
-          <tr><td><strong>ไพ่ทาโร่ ดูดวงฯ</strong></td><td>Subscription</td><td><span class="hl hl-purple">฿275/เดือน</span></td><td>Tarot Premium + Energy</td></tr>
+          <tr><td><strong>ไพ่ทาโรต์ ดูดวงฯ</strong></td><td>Subscription</td><td><span class="hl hl-purple">฿275/เดือน</span></td><td>Tarot Premium + Energy</td></tr>
           <tr><td><strong>การอ่านไพ่ทาโรต์</strong></td><td>Subscription</td><td><span class="hl hl-purple">~฿420/เดือน</span></td><td>DOSA Apps (ต่างประเทศ)</td></tr>
           <tr><td><strong>ดวง Live</strong></td><td>เหรียญ (1฿=1 coin)</td><td><span class="hl hl-pink">฿69-399/ครั้ง</span></td><td>Marketplace หมอดู 2,000+</td></tr>
           <tr><td><strong>Horoworld</strong></td><td>เหรียญ (นาที)</td><td>฿15/นาที</td><td>Marketplace หมอดูจริง 200+</td></tr>
@@ -648,8 +652,8 @@
       <!-- Row 2: Subscription apps -->
       <div class="cards-grid cols-3" style="gap:clamp(8px,1vw,14px);margin-top:clamp(8px,1vw,14px);align-items:start;">
         <div class="card anim-item" style="padding:clamp(10px,1vw,14px);text-align:center;cursor:pointer;" onclick="openDetail('hive5')">
-          <img src="img_app_compare/hive5_tarot.jpg" alt="ไพ่ทาโร่" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
-          <div class="card-title">ไพ่ทาโร่ ดูดวงฯ</div>
+          <img src="img_app_compare/hive5_tarot.jpg" alt="ไพ่ทาโรต์" style="width:100%;border-radius:10px;margin-bottom:6px;aspect-ratio:16/9;object-fit:contain;background:var(--bg-dark);pointer-events:none;">
+          <div class="card-title">ไพ่ทาโรต์ ดูดวงฯ</div>
           <div class="card-desc">Hive 5 Studio &mdash; 4.6&#9733;</div>
           <div class="card-tag tag-purple" style="margin-top:4px;">฿275/เดือน (Premium Sub)</div>
         </div>
@@ -723,247 +727,155 @@
       </div>
       <div class="insight-box anim-item" style="margin-top:clamp(14px,1.6vw,22px);">
         <strong>DailyMu อยู่ตรงไหน?</strong> เราเป็น <span class="hl hl-purple">"โหราศาสตร์ไทย + ปาจื่อ + AI"</span> &mdash; ครบ 2 ศาสตร์ในแอปเดียว (Sesheta มีแค่ Chinese)<br>
-        &#x2192; <strong>Pricing range:</strong> Sesheta Basic ฿69 &rarr; Pro ฿499 &mdash; DailyMu ควรอยู่ในช่วง <span class="hl hl-pink">฿99-349/เดือน</span> (Option A: ฿99/฿299, Option B: ฿149/฿349)
+        &#x2192; <strong>Pricing range:</strong> Sesheta Basic ฿69 &rarr; Pro ฿499 &mdash; DailyMu อยู่ในช่วง <span class="hl hl-pink">฿149-349/เดือน</span> (Plus ฿149 / Premium ฿349)
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 5: 2 Pricing Options -->
+  <!-- SLIDE 5: Pricing Tiers -->
   <div class="slide" data-slide="4">
     <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span> Pricing Options</div>
+      <div class="slide-badge"><span class="dot"></span> Pricing Tiers</div>
       <div class="slide-number">05</div>
     </div>
-    <div class="slide-title anim-item">2 ทางเลือกราคา</div>
-    <div class="slide-subtitle anim-item">Option A = <strong>"เลือกศาสตร์ โควต้าเยอะ"</strong> vs Option B = <strong>"ครบ 2 ศาสตร์ จำกัดโควต้า"</strong></div>
+    <div class="slide-title anim-item">โครงสร้างราคา</div>
+    <div class="slide-subtitle anim-item">ครบ 2 ศาสตร์ตั้งแต่ Plus จำกัดโควต้า &mdash; <strong>฿149 / ฿349</strong> <span style="color:var(--text-muted);">(Free max 5 profiles)</span></div>
     <div class="slide-content" style="justify-content:flex-start;">
-      <!-- Single comparison table -->
       <style>
-        .opt-table { border-collapse:separate; border-spacing:0; width:100%; max-width:1100px; margin:0 auto; font-size:clamp(10px,1vw,14px); border-radius:12px; overflow:hidden; border:1px solid var(--border-color); }
+        .opt-table { border-collapse:separate; border-spacing:0; width:100%; max-width:900px; margin:0 auto; font-size:clamp(10px,1vw,14px); border-radius:12px; overflow:hidden; border:1px solid var(--border-color); }
         .opt-table th, .opt-table td { padding:clamp(6px,0.7vw,10px) clamp(8px,0.8vw,12px); border-bottom:1px solid var(--border-color); }
         .opt-table th { background:var(--bg-card); font-weight:700; text-transform:uppercase; font-size:0.85em; letter-spacing:0.5px; }
-        .opt-table .col-a { background:rgba(123,31,162,0.05); }
-        .opt-table .col-b { background:rgba(194,24,91,0.04); }
-        .opt-table .div-a { border-left:3px solid var(--primary); }
-        .opt-table .div-b { border-left:3px solid var(--secondary); }
-        .opt-table .th-a { background:rgba(123,31,162,0.12); color:var(--primary); }
-        .opt-table .th-b { background:rgba(194,24,91,0.10); color:var(--secondary); }
+        .opt-table .col-plus { background:rgba(123,31,162,0.05); }
+        .opt-table .col-prem { background:rgba(194,24,91,0.04); }
+        .opt-table .div-plus { border-left:3px solid var(--primary); }
+        .opt-table .div-prem { border-left:3px solid var(--secondary); }
+        .opt-table .th-plus { background:rgba(123,31,162,0.12); color:var(--primary); }
+        .opt-table .th-prem { background:rgba(194,24,91,0.10); color:var(--secondary); }
         .opt-table tbody tr:last-child td { border-bottom:none; }
         .opt-table .row-price td { border-top:2px solid var(--border-color); font-weight:700; }
       </style>
       <table class="opt-table anim-item">
         <thead>
           <tr>
-            <th style="width:13%;"></th>
-            <th style="width:11%;text-align:center;">Free<br><span style="font-weight:400;font-size:0.9em;">฿0</span></th>
-            <th class="th-a div-a" style="width:18%;text-align:center;">Option A<br>Plus <strong>฿99</strong>/mo</th>
-            <th class="th-a" style="width:18%;text-align:center;">Option A<br>Premium <strong>฿299</strong>/mo</th>
-            <th class="th-b div-b" style="width:18%;text-align:center;">Option B<br>Plus <strong>฿149</strong>/mo</th>
-            <th class="th-b" style="width:18%;text-align:center;">Option B<br>Premium <strong>฿349</strong>/mo</th>
+            <th style="width:16%;"></th>
+            <th style="width:28%;text-align:center;">Free<br><span style="font-weight:400;font-size:0.9em;">฿0</span></th>
+            <th class="th-plus div-plus" style="width:28%;text-align:center;">Plus<br><strong>฿149</strong>/mo</th>
+            <th class="th-prem div-prem" style="width:28%;text-align:center;">Premium<br><strong>฿349</strong>/mo</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>ศาสตร์</strong></td>
-            <td style="text-align:center;">ไทย (จำกัด)</td>
-            <td class="col-a div-a" style="text-align:center;"><strong style="color:var(--primary);">เลือก 1</strong></td>
-            <td class="col-a" style="text-align:center;"><strong>ทั้ง 2</strong></td>
-            <td class="col-b div-b" style="text-align:center;"><strong style="color:var(--secondary);">ทั้ง 2 &#9733;</strong></td>
-            <td class="col-b" style="text-align:center;"><strong>ทั้ง 2</strong></td>
+            <td style="text-align:center;">ทั้ง 2 (จำกัด)</td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong style="color:var(--primary);">ทั้ง 2 &#9733;</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;"><strong style="color:var(--secondary);">ทั้ง 2</strong></td>
           </tr>
           <tr>
             <td>โปรไฟล์</td>
-            <td style="text-align:center;">1</td>
-            <td class="col-a div-a" style="text-align:center;">3</td>
-            <td class="col-a" style="text-align:center;">5</td>
-            <td class="col-b div-b" style="text-align:center;">2</td>
-            <td class="col-b" style="text-align:center;">5</td>
+            <td style="text-align:center;">5</td>
+            <td class="col-plus div-plus" style="text-align:center;">5</td>
+            <td class="col-prem div-prem" style="text-align:center;">5</td>
           </tr>
           <tr>
             <td>ปฏิทิน</td>
-            <td style="text-align:center;">7 วัน</td>
-            <td class="col-a div-a" style="text-align:center;">30 วัน</td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;">14 วัน</td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+            <td style="text-align:center;">15 วัน</td>
+            <td class="col-plus div-plus" style="text-align:center;">90 วัน</td>
+            <td class="col-prem div-prem" style="text-align:center;">365 วัน</td>
           </tr>
           <tr>
             <td>เซียมซี</td>
             <td style="text-align:center;">1/วัน</td>
-            <td class="col-a div-a" style="text-align:center;"><strong>3/วัน</strong></td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;"><strong>3/วัน</strong></td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;">ไม่จำกัด</td>
           </tr>
           <tr>
             <td>ไพ่ทาโรต์</td>
-            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a div-a" style="text-align:center;"><strong>1/วัน</strong></td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;"><strong>2/วัน</strong></td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+            <td style="text-align:center;">1/วัน</td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;">ไม่จำกัด</td>
           </tr>
           <tr>
             <td>ทำนายฝัน</td>
-            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a div-a" style="text-align:center;"><strong>3/วัน</strong></td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;"><strong>5/วัน</strong></td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+            <td style="text-align:center;">1/วัน</td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong>3/วัน</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;">ไม่จำกัด</td>
           </tr>
           <tr>
-            <td>AI สรุปดวง</td>
-            <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a div-a" style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
+            <td>แชร์การ์ด</td>
+            <td style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-plus div-plus" style="text-align:center;">ไม่จำกัด</td>
+            <td class="col-prem div-prem" style="text-align:center;">ไม่จำกัด</td>
           </tr>
           <tr>
             <td>AI Chat</td>
             <td style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a div-a" style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด</td>
-            <td class="col-b div-b" style="text-align:center;color:var(--text-muted);">&#10007;</td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด</td>
-          </tr>
-          <tr>
-            <td>แชร์การ์ด</td>
-            <td style="text-align:center;">2/วัน</td>
-            <td class="col-a div-a" style="text-align:center;">3/วัน</td>
-            <td class="col-a" style="text-align:center;">ไม่จำกัด + ธีม</td>
-            <td class="col-b div-b" style="text-align:center;">5/วัน</td>
-            <td class="col-b" style="text-align:center;">ไม่จำกัด + ธีม</td>
-          </tr>
-          <tr>
-            <td>โฆษณา</td>
-            <td style="text-align:center;">มี</td>
-            <td class="col-a div-a" style="text-align:center;color:var(--primary);font-weight:600;">ไม่มี</td>
-            <td class="col-a" style="text-align:center;color:var(--primary);font-weight:600;">ไม่มี</td>
-            <td class="col-b div-b" style="text-align:center;color:var(--secondary);font-weight:600;">ไม่มี</td>
-            <td class="col-b" style="text-align:center;color:var(--secondary);font-weight:600;">ไม่มี</td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong>X token</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;"><strong>X token</strong></td>
           </tr>
           <tr class="row-price">
             <td><strong>รายปี</strong></td>
             <td style="text-align:center;">-</td>
-            <td class="col-a div-a" style="text-align:center;"><strong>฿899</strong></td>
-            <td class="col-a" style="text-align:center;"><strong>฿2,790</strong></td>
-            <td class="col-b div-b" style="text-align:center;"><strong>฿1,390</strong></td>
-            <td class="col-b" style="text-align:center;"><strong>฿3,290</strong></td>
+            <td class="col-plus div-plus" style="text-align:center;"><strong>฿1,390</strong></td>
+            <td class="col-prem div-prem" style="text-align:center;"><strong>฿3,290</strong></td>
           </tr>
         </tbody>
       </table>
-      <div class="insight-box anim-item" style="margin-top:clamp(10px,1.2vw,16px);max-width:1100px;margin-left:auto;margin-right:auto;">
-        <strong>Option A</strong> = <span class="hl hl-purple">1 ศาสตร์ โควต้าพอใช้ ราคาเข้าถึงง่าย</span> &mdash; <strong>Option B</strong> = <span class="hl hl-pink">2 ศาสตร์ตั้งแต่ Plus แต่โควต้าน้อยกว่า</span><br>
-        <strong>คำแนะนำ:</strong> เริ่มด้วย Option A &mdash; ราคาแข่งขันได้ เข้าถึงง่าย แล้ว <span class="hl hl-amber">A/B test</span> กับ Option B ใน R1.1
+      <div class="insight-box anim-item" style="margin-top:clamp(10px,1.2vw,16px);max-width:900px;margin-left:auto;margin-right:auto;">
+        <span class="hl hl-purple">ครบ 2 ศาสตร์ตั้งแต่ Plus</span> จำกัดโควต้า &mdash; <span class="hl hl-pink">Premium ปลดล็อกทุกอย่างไม่จำกัด</span><br>
+        Free สูงสุด 5 โปรไฟล์ &mdash; ไพ่ทาโรต์ / เซียมซี / ทำนายฝัน อย่างละ 1 ครั้ง/วัน &mdash; แชร์การ์ดไม่จำกัด
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 7: Detailed Tier Features (Option A) -->
+  <!-- SLIDE 6: Detailed Tier Features -->
   <div class="slide" data-slide="5">
     <div class="slide-header">
-      <div class="slide-badge"><span class="dot"></span> Tier Detail — A vs B</div>
+      <div class="slide-badge"><span class="dot"></span> Tier Detail</div>
       <div class="slide-number">06</div>
     </div>
-    <div class="slide-title anim-item">ฟีเจอร์แต่ละ Tier &mdash; Option A vs B</div>
-    <div class="slide-content" style="justify-content:flex-start;">
-      <!-- Option A: เลือกศาสตร์ โควต้าเยอะ -->
-      <div class="section-label anim-item" style="color:var(--primary);border-color:var(--primary);margin-bottom:clamp(6px,0.6vw,10px);font-size:clamp(11px,1.1vw,15px);">Option A: เลือกศาสตร์ โควต้าเยอะ &mdash; ฿99 / ฿299 (แนะนำ)</div>
-      <div class="pricing-row" style="margin-bottom:clamp(12px,1.2vw,18px);">
-        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
+    <div class="slide-title anim-item">ฟีเจอร์แต่ละ Tier</div>
+    <div class="slide-subtitle anim-item">ครบ 2 ศาสตร์ตั้งแต่ Plus จำกัดโควต้า &mdash; <strong>฿149 / ฿349</strong> <span style="color:var(--text-muted);">(Free max 5 profiles)</span></div>
+    <div class="slide-content" style="justify-content:center;align-items:center;">
+      <div class="pricing-row anim-item">
+        <div class="pricing-card">
           <div class="pricing-tier">Free</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿0</div>
-          <div class="pricing-annual" style="color:var(--text-muted);">โหราศาสตร์ไทย (จำกัด)</div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
-            <li><span class="check">&#10003;</span> 1 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน 7 วัน</li>
+          <div class="pricing-price">฿0</div>
+          <div class="pricing-annual" style="color:var(--text-muted);">สูงสุด 5 โปรไฟล์</div>
+          <ul class="pricing-features">
+            <li><span class="check">&#10003;</span> ปฏิทิน 15 วัน</li>
+            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ 1 ครั้ง/วัน</li>
             <li><span class="check">&#10003;</span> เซียมซี 1 ครั้ง/วัน</li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด 2 ครั้ง/วัน</li>
-            <li><span class="x-mark">&#10007;</span> AI / ไพ่ / ทำนายฝัน</li>
-            <li><span class="x-mark">&#10007;</span> ปาจื่อ</li>
-            <li style="color:var(--text-muted);font-style:italic;">มีโฆษณา</li>
+            <li><span class="check">&#10003;</span> ทำนายฝัน 1 ครั้ง/วัน</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด</li>
+            <li><span class="x-mark">&#10007;</span> AI Chat</li>
           </ul>
         </div>
-        <div class="pricing-card featured anim-item" style="padding:clamp(10px,1vw,16px);">
+        <div class="pricing-card featured">
           <div class="pricing-tier" style="color:var(--primary);">Plus &#9733;</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿99<small>/เดือน</small></div>
-          <div class="pricing-annual">฿899/ปี &mdash; เลือก 1 ศาสตร์</div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
-            <li style="color:var(--primary);font-weight:700;">&#9733; เลือก: ไทย หรือ ปาจื่อ</li>
-            <li><span class="check">&#10003;</span> 3 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน 30 วัน</li>
-            <li><span class="check">&#10003;</span> เซียมซี <strong>3 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ <strong>1 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> ทำนายฝัน <strong>3 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด 3 ครั้ง/วัน</li>
-            <li><span class="x-mark">&#10007;</span> AI สรุป / AI Chat</li>
-            <li><span class="x-mark">&#10007;</span> ปาจื่อ (ต้อง Premium)</li>
-            <li style="color:var(--primary);font-weight:600;">ไม่มีโฆษณา</li>
-          </ul>
-        </div>
-        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
-          <div class="pricing-tier" style="color:var(--secondary);">Premium</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">฿299<small style="-webkit-text-fill-color:var(--text-muted);">/เดือน</small></div>
-          <div class="pricing-annual">฿2,790/ปี &mdash; ทั้ง 2 ศาสตร์</div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
-            <li style="color:var(--secondary);font-weight:700;">&#9733; โหราศาสตร์ไทย + ปาจื่อ</li>
-            <li><span class="check">&#10003;</span> 5 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> AI สรุป ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> เซียมซี / ไพ่ / ฝัน ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> AI Chat ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด + ธีมพิเศษ</li>
-            <li><span class="check">&#10003;</span> รายงานสัปดาห์/เดือน</li>
-          </ul>
-        </div>
-      </div>
-      <!-- Option B: ครบ 2 ศาสตร์ จำกัดโควต้า -->
-      <div class="section-label anim-item" style="color:var(--secondary);border-color:var(--secondary);margin-bottom:clamp(6px,0.6vw,10px);font-size:clamp(11px,1.1vw,15px);">Option B: ครบ 2 ศาสตร์ตั้งแต่ Plus จำกัดโควต้า &mdash; ฿149 / ฿349</div>
-      <div class="pricing-row">
-        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);">
-          <div class="pricing-tier">Free</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿0</div>
-          <div class="pricing-annual" style="color:var(--text-muted);">โหราศาสตร์ไทย (จำกัด)</div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
-            <li><span class="check">&#10003;</span> 1 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน 7 วัน</li>
-            <li><span class="check">&#10003;</span> เซียมซี 1 ครั้ง/วัน</li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด 2 ครั้ง/วัน</li>
-            <li><span class="x-mark">&#10007;</span> AI / ไพ่ / ทำนายฝัน</li>
-            <li><span class="x-mark">&#10007;</span> ปาจื่อ</li>
-            <li style="color:var(--text-muted);font-style:italic;">มีโฆษณา</li>
-          </ul>
-        </div>
-        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);border:2px solid var(--border-color);">
-          <div class="pricing-tier" style="color:var(--primary);">Plus</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);">฿149<small>/เดือน</small></div>
+          <div class="pricing-price">฿149<small>/เดือน</small></div>
           <div class="pricing-annual">฿1,390/ปี &mdash; <strong style="color:var(--secondary);">ครบ 2 ศาสตร์!</strong></div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
-            <li style="color:var(--secondary);font-weight:700;">&#9733; ไทย + ปาจื่อ ครบทั้งคู่</li>
-            <li><span class="check">&#10003;</span> 2 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน 14 วัน</li>
+          <ul class="pricing-features">
+            <li style="color:var(--primary);font-weight:700;">&#9733; ไทย + ปาจื่อ ครบทั้งคู่</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 90 วัน</li>
+            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ <strong>3 ครั้ง/วัน</strong></li>
             <li><span class="check">&#10003;</span> เซียมซี <strong>3 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ <strong>2 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> ทำนายฝัน <strong>5 ครั้ง/วัน</strong></li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด 5 ครั้ง/วัน</li>
-            <li><span class="x-mark">&#10007;</span> AI สรุป / AI Chat</li>
-            <li style="color:var(--primary);font-weight:600;">ไม่มีโฆษณา</li>
+            <li><span class="check">&#10003;</span> ทำนายฝัน <strong>3 ครั้ง/วัน</strong></li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI Chat <strong>X token</strong></li>
           </ul>
         </div>
-        <div class="pricing-card anim-item" style="padding:clamp(10px,1vw,16px);border:2px solid var(--border-color);">
+        <div class="pricing-card">
           <div class="pricing-tier" style="color:var(--secondary);">Premium</div>
-          <div class="pricing-price" style="font-size:clamp(20px,2.2vw,32px);background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">฿349<small style="-webkit-text-fill-color:var(--text-muted);">/เดือน</small></div>
+          <div class="pricing-price" style="background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">฿349<small style="-webkit-text-fill-color:var(--text-muted);">/เดือน</small></div>
           <div class="pricing-annual">฿3,290/ปี &mdash; ทั้ง 2 ศาสตร์ ไม่จำกัด</div>
-          <ul class="pricing-features" style="font-size:clamp(9px,0.8vw,11px);">
+          <ul class="pricing-features">
             <li style="color:var(--secondary);font-weight:700;">&#9733; โหราศาสตร์ไทย + ปาจื่อ</li>
-            <li><span class="check">&#10003;</span> 5 โปรไฟล์</li>
-            <li><span class="check">&#10003;</span> ปฏิทิน ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> AI สรุป ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> เซียมซี / ไพ่ / ฝัน ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> AI Chat ไม่จำกัด</li>
-            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด + ธีมพิเศษ</li>
-            <li><span class="check">&#10003;</span> รายงานสัปดาห์/เดือน</li>
+            <li><span class="check">&#10003;</span> ปฏิทิน 365 วัน</li>
+            <li><span class="check">&#10003;</span> ไพ่ทาโรต์ ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> เซียมซี ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> ทำนายฝัน ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> แชร์การ์ด ไม่จำกัด</li>
+            <li><span class="check">&#10003;</span> AI Chat <strong>X token</strong></li>
           </ul>
         </div>
       </div>
@@ -1101,23 +1013,23 @@
     <div class="slide-content">
       <div class="two-col">
         <div class="col-section anim-item">
-          <div class="section-label" style="color:var(--primary);">Plus ฿99/เดือน &mdash; Option A (เลือก 1 ศาสตร์)</div>
+          <div class="section-label" style="color:var(--primary);">Plus ฿149/เดือน &mdash; ครบ 2 ศาสตร์ จำกัดโควต้า</div>
           <ul class="bullet-list">
-            <li><span class="bullet"></span><strong>เท่า Netflix Mobile (฿99)</strong> &mdash; จุดราคาที่คนไทยคุ้นเคยจ่ายอยู่แล้ว</li>
-            <li><span class="bullet"></span><strong>ถูกกว่าดวง Live 1 ครั้ง</strong> &mdash; ดวง Live ฿69-399/ครั้ง &mdash; DailyMu ฿99 ได้ทั้งเดือน</li>
-            <li><span class="bullet"></span><strong>สูงกว่า Sesheta Basic (฿69)</strong> &mdash; แต่ DailyMu มี 2 ศาสตร์ให้เลือก</li>
-            <li><span class="bullet"></span><strong>ถูกกว่า Num Eiang (฿59) เล็กน้อย</strong> &mdash; แต่ DailyMu มีไพ่ทาโรต์ + ทำนายฝัน</li>
-            <li><span class="bullet"></span><strong>สูงกว่า "ลบ ad" (฿35) อย่างชัดเจน</strong> &mdash; สื่อว่าเราให้มากกว่าแค่ลบโฆษณา</li>
+            <li><span class="bullet"></span><strong>ใกล้เคียง Netflix Mobile (฿99-159)</strong> &mdash; จุดราคาที่คนไทยคุ้นเคยจ่ายอยู่แล้ว</li>
+            <li><span class="bullet"></span><strong>ถูกกว่าดวง Live 1 ครั้ง</strong> &mdash; ดวง Live ฿69-399/ครั้ง &mdash; DailyMu ฿149 ได้ทั้งเดือน</li>
+            <li><span class="bullet"></span><strong>สูงกว่า Sesheta Basic (฿69)</strong> &mdash; แต่ DailyMu ครบ 2 ศาสตร์ตั้งแต่ Plus</li>
+            <li><span class="bullet"></span><strong>ครบทั้ง ไพ่ทาโรต์ + เซียมซี + ทำนายฝัน</strong> &mdash; คู่แข่งส่วนใหญ่ให้แค่อย่างเดียว</li>
+            <li><span class="bullet"></span><strong>แชร์การ์ดไม่จำกัดตั้งแต่ Free</strong> &mdash; ช่วยการเติบโตแบบ viral</li>
           </ul>
         </div>
         <div class="col-section anim-item">
-          <div class="section-label" style="color:var(--secondary);">Premium ฿299/เดือน &mdash; Option A (ทั้ง 2 ศาสตร์)</div>
+          <div class="section-label" style="color:var(--secondary);">Premium ฿349/เดือน &mdash; ทั้ง 2 ศาสตร์ ไม่จำกัด</div>
           <ul class="bullet-list">
-            <li><span class="bullet" style="background:var(--secondary);"></span><strong>฿299 &cong; Ai-Ming (฿249/mo)</strong> &mdash; ราคาใกล้กัน แต่ DailyMu มี 2 ศาสตร์ + ไม่จำกัด</li>
-            <li><span class="bullet" style="background:var(--secondary);"></span><strong>฿299 &gt; Hive 5 (฿275) เล็กน้อย</strong> &mdash; แต่ได้ AI + 2 ศาสตร์ ครบกว่า</li>
-            <li><span class="bullet" style="background:var(--secondary);"></span><strong>ถูกกว่า Sesheta Pro (฿499) มาก</strong> &mdash; DailyMu ได้ 2 ศาสตร์ + ไม่จำกัด (ไม่มี Ink)</li>
-            <li><span class="bullet" style="background:var(--secondary);"></span><strong>AI สรุป + AI Chat = premium exclusive</strong> &mdash; คุยกับ AI หมอดูได้ไม่จำกัด</li>
-            <li><span class="bullet" style="background:var(--secondary);"></span><strong>Gap ฿99 &rarr; ฿299 = 3x</strong> &mdash; upgrade path ชัด "จ่ายเพิ่ม ได้ศาสตร์ที่ 2 + AI ครบ"</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>฿349 &cong; Ai-Ming (฿249/mo)</strong> &mdash; ราคาใกล้กัน แต่ DailyMu มี 2 ศาสตร์ + ทุกอย่างไม่จำกัด</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>ถูกกว่า Sesheta Pro (฿499) มาก</strong> &mdash; DailyMu ได้ 2 ศาสตร์ + ไม่จำกัด</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>ปฏิทิน 365 วัน + ไพ่ทาโรต์/เซียมซี/ฝัน ไม่จำกัด</strong> &mdash; ปลดล็อกทุกอย่าง</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>AI Chat = premium value</strong> &mdash; คุยกับ AI หมอดูได้ (X token)</li>
+            <li><span class="bullet" style="background:var(--secondary);"></span><strong>Gap ฿149 &rarr; ฿349 = 2.3x</strong> &mdash; upgrade path ชัด "จ่ายเพิ่ม ได้ไม่จำกัดทุกอย่าง"</li>
           </ul>
         </div>
       </div>
@@ -1136,15 +1048,15 @@
         <div class="agenda-item anim-item">
           <div class="agenda-num" style="background:var(--primary);">1</div>
           <div>
-            <div class="agenda-text">เลือก Option ราคาไหน?</div>
-            <div class="agenda-sub">Option A: ฿99/฿299 (เลือกศาสตร์ โควต้าเยอะ) หรือ Option B: ฿149/฿349 (ครบ 2 ศาสตร์ จำกัดโควต้า)?</div>
+            <div class="agenda-text">ยืนยันโครงสร้างราคา?</div>
+            <div class="agenda-sub">Free ฿0 / Plus ฿149 / Premium ฿349 &mdash; ครบ 2 ศาสตร์ตั้งแต่ Plus จำกัดโควต้า</div>
           </div>
         </div>
         <div class="agenda-item anim-item">
           <div class="agenda-num" style="background:var(--secondary);">2</div>
           <div>
             <div class="agenda-text">อนุมัติโครงสร้าง Tier?</div>
-            <div class="agenda-sub">A: Plus เลือก 1 ศาสตร์ โควต้าเยอะ / B: Plus ครบ 2 ศาสตร์ จำกัดโควต้า / Premium ไม่จำกัดทั้งคู่</div>
+            <div class="agenda-sub">Free (max 5 profiles, โควต้า 1/วัน) / Plus ฿149 (โควต้า 3/วัน) / Premium ฿349 (ไม่จำกัด)</div>
           </div>
         </div>
         <div class="agenda-item anim-item">
@@ -1285,7 +1197,7 @@ var appDetails = {
     note: 'เป็น Marketplace เชื่อมต่อกับหมอดูจริง &mdash; ราคาขึ้นกับหมอดูแต่ละท่าน ค่าเฉลี่ยต่อครั้ง ~\u0E3F150-500+<br><em>(ข้อมูลจาก App Store + horoworld.com เม.ย. 2569)</em>'
   },
   hive5: {
-    name: 'ไพ่ทาโร่ ดูดวงและโหราศาสตร์',
+    name: 'ไพ่ทาโรต์ ดูดวงและโหราศาสตร์',
     dev: 'Hive 5 Studio / Touchzing Media',
     rating: '4.6\u2605 (Google Play) / 4.7\u2605 (iOS, 476 ratings)',
     img: 'img_app_compare/hive5_tarot.jpg',
@@ -1392,8 +1304,8 @@ function openLightbox(src) {
     'คู่แข่งที่มีราคา — 9 แอป',
     'หน้าตาแอปคู่แข่งที่มีราคา',
     'สิ่งที่เราพบจากการสำรวจ',
-    '2 ทางเลือกราคา',
-    'ฟีเจอร์แต่ละ Tier — A vs B',
+    'โครงสร้างราคา',
+    'ฟีเจอร์แต่ละ Tier',
     'ลองคำนวณรายได้',
     'กฎหมายและการจดทะเบียน',
     'ทำไมราคานี้? — อ้างอิงคู่แข่งจริง',
