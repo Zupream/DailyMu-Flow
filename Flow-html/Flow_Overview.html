@@ -298,7 +298,7 @@ body {
       <div class="slide-number">02 / 19</div>
     </div>
     <div class="slide-title">Flow ทั้งหมดของ DailyMu</div>
-    <div class="slide-subtitle">รวม 11 User Flows หลัก + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Profile Management รวมถึง Calendar Views และ Share Card</div>
+    <div class="slide-subtitle">รวม 11 User Flows หลัก + 5 Subscription Flows + 15 Sub-tasks ครอบคลุมตั้งแต่ Register จนถึง Subscription Management</div>
     <div class="slide-content">
       <div class="cards-grid cols-5" style="margin-top: 16px;">
         <div class="card anim-item">
@@ -368,6 +368,39 @@ body {
           <div class="card-tag tag-purple">DAIL-75</div>
         </div>
       </div>
+      <div class="section-label anim-item" style="margin-top: 16px;">SUBSCRIPTION FLOWS (EPIC DAIL-729)</div>
+      <div class="cards-grid cols-5 anim-item" style="margin-top: 4px;">
+        <div class="card">
+          <div class="card-icon">💳</div>
+          <div class="card-title">Overall Journey</div>
+          <div class="card-desc">Entry → Plan → Subscribe → Active</div>
+          <div class="card-tag tag-orange">Flow 1</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📋</div>
+          <div class="card-title">View Plans</div>
+          <div class="card-desc">เปรียบเทียบ Free / Plus / Premium</div>
+          <div class="card-tag tag-orange">Flow 2</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <div class="card-title">Subscribe via Web</div>
+          <div class="card-desc">ชำระเงินผ่านเว็บ (External Payment)</div>
+          <div class="card-tag tag-orange">Flow 3</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <div class="card-title">Feature Gate</div>
+          <div class="card-desc">ฟีเจอร์ Locked / โควต้าหมด</div>
+          <div class="card-tag tag-red">Flow 4</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">Manage Subscription</div>
+          <div class="card-desc">อัปเกรด / ดาวน์เกรด / ยกเลิก</div>
+          <div class="card-tag tag-red">Flow 5</div>
+        </div>
+      </div>
       <div class="section-label anim-item" style="margin-top: 16px;">FORTUNE ENGINES (MICROSERVICES)</div>
       <div class="cards-grid cols-3 anim-item" style="margin-top: 4px;">
         <div class="card">
@@ -378,7 +411,7 @@ body {
         </div>
         <div class="card">
           <div class="card-icon">🃏</div>
-          <div class="card-title">เปิดไพ่ทำนาย</div>
+          <div class="card-title">เปิดไพ่ทาโรต์</div>
           <div class="card-desc">เลือกเรื่องที่อยากดู(สูงสุด 3 เรื่อง) + เลือกไพ่ 3 ใบ พลิกดูดวงวันนี้ + AI เชื่อมดวง</div>
           <div class="card-tag tag-purple">DAIL-74 / Engine B</div>
         </div>
@@ -866,13 +899,13 @@ body {
         <div class="card">
           <div class="card-icon">📅</div>
           <div class="card-title">Section 2: Calendar</div>
-          <div class="card-desc">ปฏิทินดูดวง — Grid 7 คอลัมน์, จุดสี (🟢ดี 🟡ปกติ 🔴ระวัง), เลื่อนดูล่วงหน้า 1 ปี, กดวันดู Day Detail</div>
+          <div class="card-desc">ปฏิทินดูดวง — Grid 7 คอลัมน์, จุดสี (🟢ดี 🟡ปกติ 🔴ระวัง), ดูล่วงหน้าตามแพลน (Free 15 วัน / Plus 90 วัน / Premium 365 วัน), กดวันดู Day Detail</div>
           <div class="card-tag tag-purple">DAIL-73</div>
         </div>
         <div class="card">
           <div class="card-icon">🔮</div>
           <div class="card-title">Section 3: ทำนายดวง Shortcuts</div>
-          <div class="card-desc">Shortcut cards → redirect ไป Tab ทำนาย: 🎋 เซียมซี, 🃏 ไพ่ทำนาย, 💭 ทำนายฝัน</div>
+          <div class="card-desc">Shortcut cards → redirect ไป Tab ทำนาย: 🎋 เซียมซี, 🃏 ไพ่ทาโรต์, 💭 ทำนายฝัน</div>
           <div class="card-tag tag-orange">DAIL-74</div>
         </div>
       </div>
@@ -908,7 +941,7 @@ body {
       <div class="slide-number">11 / 19</div>
     </div>
     <div class="slide-title">ทำนายดวงวันนี้ — Shortcut Cards + Engines</div>
-    <div class="slide-subtitle">Shortcut cards ในหน้า Today → Redirect ไป Tab ทำนาย พร้อม 3 Engines: เซียมซี, ไพ่ทำนาย, ทำนายฝัน</div>
+    <div class="slide-subtitle">Shortcut cards ในหน้า Today → Redirect ไป Tab ทำนาย พร้อม 3 Engines: เซียมซี, ไพ่ทาโรต์, ทำนายฝัน</div>
     <div class="slide-content">
       <div class="section-label anim-item">SHORTCUT CARDS (หน้า TODAY)</div>
       <div class="flow-container anim-item">
@@ -916,7 +949,7 @@ body {
           <div class="flow-step highlight-blue"><span class="icon">📱</span> เลื่อนถึง Section ทำนาย</div>
           <div class="flow-arrow">→</div>
           <div class="flow-step highlight-purple"><span class="icon">🎋</span> เซียมซีวันนี้</div>
-          <div class="flow-step highlight-purple"><span class="icon">🃏</span> เปิดไพ่ทำนาย</div>
+          <div class="flow-step highlight-purple"><span class="icon">🃏</span> เปิดไพ่ทาโรต์</div>
           <div class="flow-step highlight-purple"><span class="icon">💭</span> ทำนายฝัน</div>
           <div class="flow-arrow">→</div>
           <div class="flow-step highlight-green"><span class="icon">🔮</span> Redirect → Tab ทำนาย</div>
@@ -931,7 +964,7 @@ body {
         </div>
         <div class="card">
           <div class="card-icon">🃏</div>
-          <div class="card-title">Engine B: เปิดไพ่ทำนาย</div>
+          <div class="card-title">Engine B: เปิดไพ่ทาโรต์</div>
           <div class="card-desc">แสดงไพ่คว่ำหน้า → เลือกเรื่องที่อยากดู(สูงสุด 3 เรื่อง) → เลือกไพ่ 3 ใบ → Animation พลิกไพ่ → ชื่อไพ่ + ภาพ + ความหมาย + AI Interpretation เชื่อมดวงวันนี้ + ปุ่มแชร์/เปิดใหม่</div>
           <div class="card-tag tag-purple">เลือก 3 ใบ</div>
         </div>
@@ -986,7 +1019,7 @@ body {
           <div class="flow-arrow">→</div>
           <div class="flow-step highlight-green"><span class="icon">👆</span> กดวัน → Day Detail</div>
           <div class="flow-arrow">→</div>
-          <div class="flow-step highlight-purple"><span class="icon">📋</span> กด "ดูทั้งหมด" → ล่วงหน้า 1 ปี</div>
+          <div class="flow-step highlight-purple"><span class="icon">📋</span> กด "ดูทั้งหมด" → ล่วงหน้าตามแพลน</div>
         </div>
       </div>
       <div class="cards-grid cols-3 anim-item" style="margin-top: 14px;">
@@ -1013,13 +1046,13 @@ body {
             <li>Grid: อาทิตย์–เสาร์ (7 คอลัมน์)</li>
             <li>วันปัจจุบันมี highlight แยกชัดเจน</li>
             <li>มี Legend อธิบายสี</li>
-            <li>เลื่อนดูล่วงหน้าได้ 1 ปี</li>
+            <li>ดูล่วงหน้าตามแพลน (Free 15 วัน / Plus 90 วัน / Premium 365 วัน)</li>
           </ul>
         </div>
         <div class="mini-card">
           <div class="mini-card-title">⚠️ Edge Cases</div>
           <ul>
-            <li>เดือนที่ยังไม่มีข้อมูลดวง (เกิน 1 ปี) → empty state</li>
+            <li>เดือนที่เกินระยะแพลน → empty state / upgrade prompt</li>
             <li>วันที่ไม่มีข้อมูล → ไม่แสดงจุดสี</li>
             <li>สถานะสีต้องตรงกับผลคำนวณดวง</li>
           </ul>
@@ -1378,11 +1411,74 @@ body {
     </div>
   </div>
 
-  <!-- SLIDE 17: SUMMARY JOURNEY -->
+  <!-- SLIDE 17: SUBSCRIPTION FLOW -->
   <div class="slide" data-slide="17">
     <div class="slide-header">
+      <div class="slide-badge"><span class="dot"></span>DAIL-729 / Subscription</div>
+      <div class="slide-number">18 / 20</div>
+    </div>
+    <div class="slide-title">Subscription Flow</div>
+    <div class="slide-subtitle">ระบบสมัครสมาชิก Free / Plus ฿149 / Premium ฿349 — External Payment (Spotify Model) — ราคาคิดเป็นราย Profile</div>
+    <div class="slide-content">
+      <div class="section-label anim-item">SUBSCRIPTION JOURNEY</div>
+      <div class="flow-container anim-item">
+        <div class="flow-row">
+          <div class="flow-step highlight-blue"><span class="icon">🔒</span> Feature Gate / โควต้าหมด</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-purple"><span class="icon">📋</span> Plan Comparison</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-orange"><span class="icon">🌐</span> Subscribe via Web</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step highlight-green"><span class="icon">✅</span> Active Subscriber</div>
+        </div>
+      </div>
+      <div class="section-label anim-item" style="margin-top: 14px;">TIER STRUCTURE</div>
+      <div class="cards-grid cols-3 anim-item" style="margin-top: 4px;">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon">🆓</div>
+          <div class="card-title">Free — ฿0</div>
+          <div class="card-desc">สูงสุด 5 โปรไฟล์<br>ดูปฏิทินล่วงหน้า 15 วัน<br>ไพ่ทาโรต์ / เซียมซี / ทำนายฝัน 1 ครั้ง/วัน<br>แชร์การ์ดไม่จำกัด<br>ไม่มี AI Chat</div>
+        </div>
+        <div class="card" style="text-align:center;border:2px solid var(--primary);background:rgba(147,51,234,0.04);">
+          <div class="card-icon">⭐</div>
+          <div class="card-title" style="color:var(--primary);">Plus — ฿149/เดือน</div>
+          <div class="card-desc">ครบ 2 ศาสตร์ (ไทย + ปาจื่อ)<br>ดูปฏิทินล่วงหน้า 90 วัน<br>ไพ่ทาโรต์ / เซียมซี / ทำนายฝัน 3 ครั้ง/วัน<br>แชร์การ์ดไม่จำกัด<br>AI Chat X token</div>
+        </div>
+        <div class="card" style="text-align:center;border:2px solid var(--secondary);background:rgba(236,72,153,0.04);">
+          <div class="card-icon">👑</div>
+          <div class="card-title" style="color:var(--secondary);">Premium — ฿349/เดือน</div>
+          <div class="card-desc">ครบ 2 ศาสตร์ (ไทย + ปาจื่อ)<br>ดูปฏิทินล่วงหน้า 365 วัน<br>ไพ่ทาโรต์ / เซียมซี / ทำนายฝัน ไม่จำกัด<br>แชร์การ์ดไม่จำกัด<br>AI Chat X token</div>
+        </div>
+      </div>
+      <div class="split-row anim-item" style="margin-top: 14px;">
+        <div class="mini-card">
+          <div class="mini-card-title">📌 5 Sub-flows</div>
+          <ul>
+            <li>1. Overall Subscription Journey</li>
+            <li>2. View Plans (Plan Comparison)</li>
+            <li>3. Subscribe via External Web</li>
+            <li>4. Feature Gate (Locked / โควต้าหมด)</li>
+            <li>5. Manage Subscription (อัปเกรด/ยกเลิก)</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mini-card-title">⚠️ Key Rules</div>
+          <ul>
+            <li>ชำระเงินผ่านเว็บเท่านั้น (Apple Guideline)</li>
+            <li>ในแอปไม่แสดงราคา แสดงได้แค่ชื่อแพลน + ฟีเจอร์</li>
+            <li>บนเว็บแสดงราคาได้ (฿149 / ฿349)</li>
+            <li>ราคาคิดเป็นราย Profile</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: SUMMARY JOURNEY -->
+  <div class="slide" data-slide="18">
+    <div class="slide-header">
       <div class="slide-badge"><span class="dot"></span>Summary</div>
-      <div class="slide-number">18 / 19</div>
+      <div class="slide-number">19 / 20</div>
     </div>
     <div class="slide-title">User Journey (End-to-End)</div>
     <div class="slide-subtitle">ภาพรวม journey ตั้งแต่เปิดแอปครั้งแรก จนถึงใช้งานประจำวัน</div>
@@ -1426,8 +1522,8 @@ body {
           <div class="mini-card-title">📊 สรุปจำนวน Flows</div>
           <ul>
             <li>11 Main Flows (Parent Tasks)</li>
+            <li>5 Subscription Flows (DAIL-729)</li>
             <li>15 Sub-tasks (รวม Calendar Views)</li>
-  
           </ul>
         </div>
         <div class="mini-card">
@@ -1437,14 +1533,16 @@ body {
             <li>Social Login ไม่ต้องตั้ง Password</li>
             <li>Consent (PDPA) เป็น Blocking screen</li>
             <li>Multi Profile สูงสุด 5 โปรไฟล์</li>
+            <li>Subscription: Free / Plus ฿149 / Premium ฿349</li>
+            <li>ชำระเงินผ่านเว็บ (External Payment)</li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 18: THANK YOU -->
-  <div class="slide" data-slide="18">
+  <!-- SLIDE 19: THANK YOU -->
+  <div class="slide" data-slide="19">
     <div class="slide-content end-content">
       <div style="font-size: clamp(60px,8vw,100px);" class="anim-item">🔮</div>
       <div class="end-title anim-item">Thank You</div>
@@ -1496,6 +1594,7 @@ body {
     'Weekly View',
     'Notification Center',
     'Profile Management',
+    'Subscription Flow',
     'User Journey (Summary)',
     'Thank You'
   ];
