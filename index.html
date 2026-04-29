@@ -140,16 +140,22 @@ header p {
 .card--wireframe{ --accent: #6366F1; }
 .card--overview { --accent: #EC4899; }
 .card--pricing  { --accent: #D4AF37; }
+.card--docs     { --accent: #10B981; }
+.card--roadmap  { --accent: #F59E0B; }
 
 .card--flow .card-icon      { background: #F5F3FF; color: #8B5CF6; }
 .card--wireframe .card-icon { background: #EEF2FF; color: #6366F1; }
 .card--overview .card-icon  { background: #FDF2F8; color: #EC4899; }
 .card--pricing .card-icon   { background: #FFFBEB; color: #D4AF37; }
+.card--docs .card-icon      { background: #ECFDF5; color: #10B981; }
+.card--roadmap .card-icon   { background: #FEF3C7; color: #D97706; }
 
 .card--flow .card-tag      { background: #F5F3FF; color: #7C3AED; }
 .card--wireframe .card-tag { background: #EEF2FF; color: #4F46E5; }
 .card--overview .card-tag  { background: #FDF2F8; color: #DB2777; }
 .card--pricing .card-tag   { background: #FFFBEB; color: #B8860B; }
+.card--docs .card-tag      { background: #ECFDF5; color: #059669; }
+.card--roadmap .card-tag   { background: #FEF3C7; color: #B45309; }
 
 footer {
   text-align: center; margin-top: 48px;
@@ -177,6 +183,16 @@ footer {
   </header>
 
   <div class="cards">
+
+    <a href="Document/" class="card card--docs">
+      <div class="card-icon">&#128274;</div>
+      <div class="card-body">
+        <div class="card-title">Document</div>
+        <div class="card-desc">BRD / PRD / SRS &mdash; เอกสาร Requirement ของโปรเจกต์ (ต้องใส่รหัส)</div>
+      </div>
+      <span class="card-tag">Docs</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
 
     <a href="Flow-html/Flow_Overview.html" class="card card--overview">
       <div class="card-icon">&#128203;</div>
@@ -215,6 +231,16 @@ footer {
         <div class="card-desc">Interactive wireframe prototype ของหน้าจอต่างๆ ในระบบ Subscription</div>
       </div>
       <span class="card-tag">Wireframe</span>
+      <span class="card-arrow">&rarr;</span>
+    </a>
+
+    <a href="https://dailymu-roadmap.tanakorn-dev.workers.dev/" target="_blank" class="card card--roadmap">
+      <div class="card-icon">&#128506;</div>
+      <div class="card-body">
+        <div class="card-title">Roadmap</div>
+        <div class="card-desc">แผนการพัฒนา DailyMu Calendar &mdash; Timeline และ Milestones</div>
+      </div>
+      <span class="card-tag">Roadmap</span>
       <span class="card-arrow">&rarr;</span>
     </a>
 

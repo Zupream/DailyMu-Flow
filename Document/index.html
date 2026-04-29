@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyMu Calendar — Documents</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #8B5CF6;
+  --primary-dark: #7C3AED;
+  --primary-light: #A78BFA;
+  --primary-bg: #F5F3FF;
+  --green: #10B981;
+  --green-bg: #ECFDF5;
+  --bg: #FAFAFE;
+  --card: #FFFFFF;
+  --border: #E5E7EB;
+  --text: #1F2937;
+  --text-sec: #6B7280;
+  --text-muted: #9CA3AF;
+  --error: #EF4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'IBM Plex Sans Thai', 'Inter', sans-serif;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg-pattern {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(139,92,246,0.12), transparent),
+    radial-gradient(ellipse 50% 40% at 80% 80%, rgba(16,185,129,0.08), transparent);
+}
+
+/* Password Gate */
+.gate {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.gate-box {
+  text-align: center; max-width: 380px; width: 100%; padding: 0 24px;
+}
+
+.gate-icon {
+  font-size: 3rem; margin-bottom: 16px;
+}
+
+.gate-title {
+  font-size: 1.5rem; font-weight: 700; margin-bottom: 6px;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+.gate-subtitle {
+  font-size: 0.9rem; color: var(--text-sec); margin-bottom: 24px;
+}
+
+.gate-input-wrap {
+  position: relative; margin-bottom: 8px;
+}
+
+.gate-input {
+  width: 100%; padding: 14px 18px; border-radius: 14px;
+  border: 2px solid var(--border); background: var(--card);
+  font-size: 1rem; font-family: inherit; color: var(--text);
+  outline: none; transition: border-color 0.2s ease;
+  text-align: center; letter-spacing: 2px;
+}
+
+.gate-input:focus { border-color: var(--primary-light); }
+.gate-input.error { border-color: var(--error); animation: shake 0.4s ease; }
+
+.gate-hint {
+  font-size: 0.78rem; color: var(--text-muted); margin-top: 10px; font-style: italic;
+}
+
+.gate-error {
+  font-size: 0.82rem; color: var(--error); margin-top: 8px;
+  opacity: 0; transition: opacity 0.2s ease;
+}
+
+.gate-error.show { opacity: 1; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* Content */
+.content {
+  position: relative; z-index: 1;
+  max-width: 860px; margin: 0 auto;
+  padding: 60px 24px 80px;
+  display: none;
+}
+
+.content.visible { display: block; }
+
+header { text-align: center; margin-bottom: 48px; }
+
+header h1 {
+  font-size: 2rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 8px;
+}
+
+header p { color: var(--text-sec); font-size: 0.95rem; }
+
+.docs { display: grid; gap: 16px; }
+
+.doc-card {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px 28px;
+  transition: all 0.25s ease;
+  position: relative; overflow: hidden;
+}
+
+.doc-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; border-radius: 4px 0 0 4px;
+  background: var(--green); opacity: 0; transition: opacity 0.25s ease;
+}
+
+.doc-card:hover {
+  border-color: rgba(16,185,129,0.3);
+  box-shadow: 0 8px 30px rgba(16,185,129,0.08);
+  transform: translateY(-2px);
+}
+
+.doc-card:hover::before { opacity: 1; }
+
+.doc-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; flex-shrink: 0;
+  background: var(--green-bg); color: var(--green);
+}
+
+.doc-body { flex: 1; min-width: 0; }
+
+.doc-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 4px; }
+
+.doc-desc { font-size: 0.85rem; color: var(--text-sec); line-height: 1.5; }
+
+.doc-meta {
+  font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;
+}
+
+.doc-download {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: 12px;
+  font-size: 0.82rem; font-weight: 600;
+  color: var(--green); background: var(--green-bg);
+  border: 1px solid rgba(16,185,129,0.2);
+  text-decoration: none; cursor: pointer;
+  transition: all 0.2s ease; flex-shrink: 0;
+  font-family: inherit;
+}
+
+.doc-download:hover {
+  background: rgba(16,185,129,0.15);
+  border-color: rgba(16,185,129,0.35);
+  transform: translateY(-1px);
+}
+
+/* Back button */
+.back-btn {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 20px; border-radius: 50px;
+  font-size: 13px; font-weight: 600;
+  color: #fff; background: linear-gradient(135deg, #8B5CF6, #6366F1);
+  text-decoration: none; cursor: pointer; border: none;
+  box-shadow: 0 2px 12px rgba(139,92,246,0.35);
+  transition: all 0.25s ease; font-family: inherit;
+}
+
+.back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139,92,246,0.45);
+}
+
+footer {
+  text-align: center; margin-top: 48px;
+  color: var(--text-muted); font-size: 0.8rem;
+}
+
+@media (max-width: 600px) {
+  .content { padding: 40px 16px 60px; }
+  header h1 { font-size: 1.6rem; }
+  .doc-card { padding: 18px 20px; gap: 14px; flex-wrap: wrap; }
+  .doc-icon { width: 44px; height: 44px; font-size: 1.3rem; }
+  .doc-download { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+
+<!-- Password Gate -->
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <div class="gate-icon">&#128274;</div>
+    <div class="gate-title">Document</div>
+    <div class="gate-subtitle">เอกสารนี้ต้องใส่รหัสเพื่อเข้าถึง</div>
+    <div class="gate-input-wrap">
+      <input type="password" class="gate-input" id="passInput" placeholder="Enter password" autocomplete="off" autofocus>
+    </div>
+    <div class="gate-error" id="passError">รหัสไม่ถูกต้อง กรุณาลองใหม่</div>
+    <div class="gate-hint">Hint: รหัสคือ prefix ของ task jira project DailyMu ตัวเล็กทั้งหมด</div>
+  </div>
+</div>
+
+<!-- Content (hidden until password correct) -->
+<div class="content" id="content">
+  <header>
+    <h1>Document</h1>
+    <p>BRD / PRD / SRS &mdash; DailyMu Calendar</p>
+  </header>
+
+  <div class="docs">
+    <div class="doc-card">
+      <div class="doc-icon">&#128196;</div>
+      <div class="doc-body">
+        <div class="doc-title">DailyMu BRD V1.0</div>
+        <div class="doc-desc">Business Requirement Document &mdash; เอกสารความต้องการทางธุรกิจ</div>
+        <div class="doc-meta">DailyMu_BRD_V1.0.md</div>
+      </div>
+      <a class="doc-download" href="DailyMu_BRD_V1.0.md" download>&#11015; Download</a>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon">&#128221;</div>
+      <div class="doc-body">
+        <div class="doc-title">DailyMu PRD V1.0</div>
+        <div class="doc-desc">Product Requirement Document &mdash; เอกสารข้อกำหนดผลิตภัณฑ์</div>
+        <div class="doc-meta">DailyMu_PRD_V1.0.md</div>
+      </div>
+      <a class="doc-download" href="DailyMu_PRD_V1.0.md" download>&#11015; Download</a>
+    </div>
+
+    <div class="doc-card">
+      <div class="doc-icon">&#128209;</div>
+      <div class="doc-body">
+        <div class="doc-title">DailyMu SRS V1.0</div>
+        <div class="doc-desc">Software Requirement Specification &mdash; ข้อกำหนดความต้องการซอฟต์แวร์</div>
+        <div class="doc-meta">DailyMu_SRS_V1.0.md</div>
+      </div>
+      <a class="doc-download" href="DailyMu_SRS_V1.0.md" download>&#11015; Download</a>
+    </div>
+  </div>
+
+  <footer>DailyMu Calendar &copy; 2026 &middot; Realfeactory</footer>
+</div>
+
+<a href="../index.html" class="back-btn">&#x2190; Document Hub</a>
+
+<script>
+(function() {
+  const gate = document.getElementById('gate');
+  const content = document.getElementById('content');
+  const backBtn = document.getElementById('backBtn');
+  const input = document.getElementById('passInput');
+  const error = document.getElementById('passError');
+  const SECRET = 'dail';
+
+  function unlock() {
+    gate.classList.add('hidden');
+    content.classList.add('visible');
+    backBtn.style.display = '';
+  }
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      if (input.value === SECRET) {
+        unlock();
+      } else {
+        input.classList.add('error');
+        error.classList.add('show');
+        setTimeout(function() {
+          input.classList.remove('error');
+        }, 400);
+      }
+    } else {
+      error.classList.remove('show');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
